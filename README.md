@@ -1,57 +1,63 @@
-# Project Name
+# MQTT Application Samples
 
-(short, 1-3 sentenced, description of the project)
+Guidance to build Pub/Sub applications targeting Edge and Cloud MQTT Brokers in different programming languages.
 
-## Features
+## Prerequisites
 
-This project framework provides the following features:
+To run this samples you need an MQTT Broker configured with mTLS to authenticate clients with X509 certificates, we provide instructions for:
 
-* Feature 1
-* Feature 2
-* ...
+- Azure DMQTT (aka E4K), for Kubernetes
+- Azure Event Grid PubSub (aka AzPubSub)
+- Mosquitto for reference
 
-## Getting Started
+Samples are provided in different programming languages: C#, Python and C.
 
-### Prerequisites
+### Broker and Certificates setup
 
-(ideally very short, if any)
+- MQTT Broker
+  - E4K can be installed in a K8s cluster such as AKS EE, or AKS
+  - AzPubSub can be deployed in Azure following this instructions
+  - Mosquitto can run in Windows, WSL, Docker, or K8s
 
-- OS
-- Library version
-- ...
+- A X509 certificate chain with one Root certificate - to be used as a CA- and different Leaf certificates. Intermediate CAs are optional. Certificate can use ECC and/or RSA keys
+  - Create CA Certificate
+  - Create TLS Certificate
+  - Create mTLS (aka client) Certificates
 
-### Installation
+- Configure Broker Authentication to use X509
+  - Configure E4k with X509 
+  - Configure AzPub with X509
+  - Configure Mosquitto with X509
 
-(ideally very short)
-
-- npm install [package name]
-- mvn install
-- ...
-
-### Quickstart
-(Add steps to get up and running quickly)
-
-1. git clone [repository clone url]
-2. cd [repository name]
-3. ...
+- Programming language environment
+  - dotnet 6
+  - Python 3
+  - C (CMake 3.14 + Ninja in WSL, Linux)
 
 
-## Demo
+## Getting Started Samples
 
-A demo app is included to show how to use the project.
+Getting started samples show how to perform basic MQTT tasks:
 
-To run the demo, follow these steps:
+- Connect with MQTT 3.1.1
+  - Validate TLS certificate enforcing TLS 1.2
+  - Authenticate with client certificates
+  - Configure connection settings such as KeepAlive and CleanSession
+- Publish 
+  - Send messages encoded with different payload encodings: JSON/UTF8 and Protobuf using QoS0 and QoS1
+- Subscribe
+  - Subscribe to a topic to receive and decode messages
+ 
+## MQTT 5 Samples
 
-(Add steps to start up the demo)
+Create an advanced sample using MQTT5 to make use of v5 features
 
-1.
-2.
-3.
+- Error Handling inspecting ReasonCodes
+- User Properties in messages 
+- Request Response with correlation
 
-## Resources
+# Scenario Samples
 
-(Any additional resources or related projects)
 
-- Link to supporting information
-- Link to similar sample
-- ...
+
+
