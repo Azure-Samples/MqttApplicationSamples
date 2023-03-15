@@ -9,7 +9,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="MQTTnet" Version="4.1.4.563" />
-		<PackageReference Include="MQTTnet.Extensions.MultiCloud" Version="0.6.2" />
 	</ItemGroup>
 
 	<ItemGroup>
