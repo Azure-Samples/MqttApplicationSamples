@@ -5,9 +5,7 @@ namespace MQTTnet.Extensions.MultiCloud.Connections
 {
     internal static class X509ChainValidator
     {
-        internal static bool ValidateChain(X509Certificate cert) => ValidateChain(cert, string.Empty);
-
-        internal static bool ValidateChain(X509Certificate cert, string caCertFile)
+        internal static bool ValidateChain(X509Certificate cert, X509Certificate2Collection? certChain = null)
         {
             X509Chain chain = new();
             chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
@@ -15,14 +13,10 @@ namespace MQTTnet.Extensions.MultiCloud.Connections
             chain.ChainPolicy.VerificationFlags = X509VerificationFlags.NoFlag;
             chain.ChainPolicy.VerificationTime = DateTime.Now;
             chain.ChainPolicy.UrlRetrievalTimeout = new TimeSpan(0, 0, 0);
-            if (!string.IsNullOrEmpty(caCertFile))
+            if (certChain != null)
             {
-                X509Certificate2Collection caCerts = new();
-                caCerts.ImportFromPemFile(caCertFile);
-                chain.ChainPolicy.CustomTrustStore.AddRange(caCerts);
+                chain.ChainPolicy.CustomTrustStore.AddRange(certChain);
                 chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
-                Trace.TraceWarning($"Loaded {caCerts.Count} certs from caFile: {caCertFile} ");
-                caCerts.ToList().ForEach(c => Trace.TraceWarning(c.Subject));
             }
             var x5092 = new X509Certificate2(cert);
             var res = chain.Build(x5092);
@@ -33,5 +27,7 @@ namespace MQTTnet.Extensions.MultiCloud.Connections
             }
             return res;
         }
+
+        
     }
 }

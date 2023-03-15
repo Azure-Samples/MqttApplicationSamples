@@ -60,7 +60,7 @@ public class X509ClientCertificateLocator
         {
             Trace.TraceWarning("Cert found with no private key");
         }
-        Trace.TraceInformation("Loaded Cert: " + cert.SubjectName.Name + " " + cert.Thumbprint);
+        Trace.TraceInformation($"Loaded Cert: {cert.SubjectName.Name} {cert.Thumbprint} issued by {cert.Issuer}");
         return cert;
     }
 }

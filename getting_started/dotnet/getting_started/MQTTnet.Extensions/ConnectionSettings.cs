@@ -4,7 +4,6 @@ namespace MQTTnet.Extensions.MultiCloud.Connections;
 
 public enum AuthType
 {
-    Sas,
     X509,
     Basic
 }

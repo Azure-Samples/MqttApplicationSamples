@@ -1,5 +1,6 @@
 ﻿using MQTTnet.Client;
 using System.Security;
+using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 
 namespace MQTTnet.Extensions.MultiCloud.Connections;
@@ -15,9 +16,10 @@ public static partial class MqttNetExtensions
         if (cs.UseTls)
         {
             var certs = new List<X509Certificate2>();
+            X509Certificate2 cert;
             if (!string.IsNullOrEmpty(cs.X509Key))
             {
-                var cert = X509ClientCertificateLocator.Load(cs.X509Key);
+                cert = X509ClientCertificateLocator.Load(cs.X509Key);
                 if (cert.HasPrivateKey == false)
                 {
                     throw new SecurityException("Provided Cert Has not Private Key");
@@ -34,7 +36,8 @@ public static partial class MqttNetExtensions
                 X509Certificate2Collection caCerts = new();
                 caCerts.ImportFromPemFile(cs.CaFile);
                 certs.AddRange(caCerts);
-                tls.CertificateValidationHandler = ea => X509ChainValidator.ValidateChain(ea.Certificate, cs.CaFile);
+                foreach (var c in caCerts) Trace.WriteLine($"cert trust chain: {c.Subject}");
+                tls.CertificateValidationHandler = ea => X509ChainValidator.ValidateChain(ea.Certificate, caCerts);
             }
             else
             {
