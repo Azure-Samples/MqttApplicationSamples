@@ -18,11 +18,6 @@ public static partial class MqttNetExtensions
             builder.WithCredentials(cs.UserName, cs.Password);
         }
 
-        if (cs.ClientId == "{machineName}")
-        {
-            cs.ClientId = Environment.MachineName;
-        }
-
         builder.WithClientId(cs.ClientId);
         return builder;
     }

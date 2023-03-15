@@ -5,7 +5,9 @@ namespace MQTTnet.Extensions.MultiCloud.Connections
 {
     internal static class X509ChainValidator
     {
-        internal static bool ValidateChain(X509Certificate cert, string caCertFile = "")
+        internal static bool ValidateChain(X509Certificate cert) => ValidateChain(cert, string.Empty);
+
+        internal static bool ValidateChain(X509Certificate cert, string caCertFile)
         {
             X509Chain chain = new();
             chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
