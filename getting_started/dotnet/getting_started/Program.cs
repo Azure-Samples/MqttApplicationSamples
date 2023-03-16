@@ -1,14 +1,14 @@
 ﻿
 using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Extensions.MultiCloud.Connections;
+using MQTTnet.Client.Extensions;
 
 System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
 
 var cs = new ConnectionSettings(Environment.GetEnvironmentVariable("Broker")!);
 Console.WriteLine($"Connecting to {cs}");
 
-var mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger()) as MqttClient;
+var mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
 
 var connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder().WithConnectionSettings(cs).Build());
 
