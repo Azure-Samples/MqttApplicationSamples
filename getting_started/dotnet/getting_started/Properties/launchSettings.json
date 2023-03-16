@@ -1,0 +1,22 @@
+{
+  "profiles": {
+    "mosquitto": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "Broker": "HostName=localhost;X509Key=vehicle01.pfx|1234;CaFile=ca_chain.crt"
+      }
+    },
+    "cloud": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "Broker": "HostName=mqttappsamples.centraluseuap-1.ts.eventgrid.azure.net;X509Key=vehicle01.pfx|1234"
+      }
+    },
+    "edge": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "Broker": "HostName=52.143.95.227;X509Key=vehicle01.pfx|1234;CaFile=ca_chain.crt"
+      }
+    }
+  }
+}
