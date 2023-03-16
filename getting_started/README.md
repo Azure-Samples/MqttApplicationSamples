@@ -6,7 +6,7 @@ The connection requires client certificates issued by a known CA.
 
 ## Locate CA cert files
 
-Generate a CA for this samples as described in [certs](../certs), by default the root and intermediate certificates are stored in:
+Generate a CA for this samples as described in [setup](../setup), by default the root and intermediate certificates are stored in:
 
 - `~/.certs/root_ca.crt`
 - `~/.certs/intermediate_ca.crt`
