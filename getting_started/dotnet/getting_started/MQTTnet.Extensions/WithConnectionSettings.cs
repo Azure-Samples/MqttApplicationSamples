@@ -1,6 +1,6 @@
 ﻿using MQTTnet.Client;
 
-namespace MQTTnet.Extensions.MultiCloud.Connections;
+namespace MQTTnet.Client.Extensions;
 
 public static partial class MqttNetExtensions
 {

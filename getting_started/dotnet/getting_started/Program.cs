@@ -1,7 +1,7 @@
 ﻿
 using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Extensions.MultiCloud.Connections;
+using MQTTnet.Client.Extensions;
 
 System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
 

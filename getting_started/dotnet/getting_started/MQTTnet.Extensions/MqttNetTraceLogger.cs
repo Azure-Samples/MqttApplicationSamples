@@ -1,7 +1,7 @@
 ﻿using MQTTnet.Diagnostics;
 using System.Diagnostics;
 
-namespace MQTTnet.Extensions.MultiCloud.Connections;
+namespace MQTTnet.Client.Extensions;
 
 public class MqttNetTraceLogger
 {

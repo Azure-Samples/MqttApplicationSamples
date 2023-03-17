@@ -9,7 +9,7 @@
     "cloud": {
       "commandName": "Project",
       "environmentVariables": {
-        "Broker": "HostName=mqttappsamples.centraluseuap-1.ts.eventgrid.azure.net;X509Key=vehicle01.pfx|1234"
+        "Broker": "HostName=mqttappsamples.centraluseuap-1.ts.eventgrid.azure.net;X509Key=../../../../../vehicle02.pem|../../../../../vehicle02.key"
       }
     },
     "edge": {

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 
-namespace MQTTnet.Extensions.MultiCloud.Connections
+namespace MQTTnet.Client.Extensions
 {
     internal static class X509ChainValidator
     {

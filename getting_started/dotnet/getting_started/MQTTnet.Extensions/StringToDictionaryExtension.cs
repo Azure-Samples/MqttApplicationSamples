@@ -1,7 +1,7 @@
-﻿using MQTTnet.Extensions.MultiCloud.Connections;
+﻿using MQTTnet.Client.Extensions;
 using System.Text.RegularExpressions;
 
-namespace MQTTnet.Extensions.MultiCloud.Connections;
+namespace MQTTnet.Client.Extensions;
 
 internal static class StringToDictionaryExtension
 {
