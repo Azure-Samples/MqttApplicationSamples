@@ -15,10 +15,12 @@ All samples require to register the root CA certificates used to generate the cl
 step ca init
 ```
 
-Follow the cli instructions, when done take note of the path to the generated certificates
+Follow the cli instructions, when done take note of the path to the generated certificates and keys, by default those are stored in:
 
-- root_ca.crt
-- intermediate_ca.crt
+- `~/.step/certs/root_ca.crt`
+- `~/.step/certs/intermediate_ca.crt`
+- `~/.step/secrets/root_ca_key`
+- `~/.step/secrets/intermediate_ca_key`
 
 ## Configure Event Grid Namepsaces
 
@@ -51,28 +53,22 @@ e4kdmqtt:
 To validate client certificates, E4K must trust the CA. Create the chain with:
 
 ```bash
-cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > root_ca_cert.pem
+cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
 ```
 
 Deploy E4K with
 
 ```bash
-helm install e4k oci://e4kpreview.azurecr.io/helm/az-e4k --version 0.2.0 -f ./values.yaml --set-file e4kdmqtt.authentication.x509.clientTrustedRoots=root_ca_cert.pem
+helm install e4k oci://e4kpreview.azurecr.io/helm/az-e4k --version 0.2.0 -f ./values.yaml --set-file e4kdmqtt.authentication.x509.clientTrustedRoots=chain.pem
 ```
 
 Create a server certificate for your cluster (need to replace the Service IP, than can be obtained with `kubectl get svc`)
 
 ```bash
-step certificate create azedge-dmqtt-frontend azedge-dmqtt-frontend.crt azedge-dmqtt-frontend.priv.key --profile leaf --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key --san azedge-dmqtt-frontend --san <DMQTT-Service-IP>
+step certificate create azedge-dmqtt-frontend azedge-dmqtt-frontend.crt azedge-dmqtt-frontend.key --profile leaf --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key --not-after 2400h --no-password --insecure --san azedge-dmqtt-frontend --san <DMQTT-Service-IP>
 ```
 
-To register the certificate in the K8s cluster, we must provide a key without password:
-
-```bash
-openssl ec -in azedge-dmqtt-frontend.priv.key -out azedge-dmqtt-frontend.key
-```
-
-Create the secret with the service certificate and key
+To register the certificate in the K8s cluster create the secret with the service certificate and key
 
 ```bash
 kubectl create secret tls test-server-cert --cert azedge-dmqtt-frontend.crt --key azedge-dmqtt-frontend.key
@@ -84,14 +80,14 @@ kubectl create secret tls test-server-cert --cert azedge-dmqtt-frontend.crt --ke
 Using the test ca, create certificates for `localhost`. 
 
 ```bash
-step certificate create localhost localhost.crt localhost.key --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key
+step certificate create localhost localhost.crt localhost.key --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key --no-password --insecure --not-after 2400h
 ```
 
 Copy the certificate files: root_ca.crt, localhost.crt and localhost.key to a local folder where mosquitto should start.
 
 > Mosquitto requires to rename the `cafile` to use the .PEM extension
 
-`local.conf`
+`tls.conf`
 
 ```text
 per_listener_settings true
@@ -102,7 +98,7 @@ allow_anonymous true
 listener 8883
 allow_anonymous true
 require_certificate true
-cafile root_ca.pem
+cafile chain.pem
 certfile localhost.crt
 keyfile localhost.key
 tls_version tlsv1.2
@@ -111,5 +107,5 @@ tls_version tlsv1.2
 Run mosquitto with:
 
 ```bash
-mosquitto -c local.conf
+mosquitto -c tls.conf
 ```
