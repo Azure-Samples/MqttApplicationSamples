@@ -1,17 +1,11 @@
-namespace telemetry_consumer
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            IHost host = Host.CreateDefaultBuilder(args)
-                .ConfigureServices(services =>
-                {
-                    services.AddHostedService<Worker>();
-                })
-                .Build();
+using telemetry_consumer;
 
-            host.Run();
-        }
-    }
-}
+IHost host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices(services =>
+    {
+        services.AddHostedService<Worker>();
+    })
+    .Build();
+
+host.Run();
+
