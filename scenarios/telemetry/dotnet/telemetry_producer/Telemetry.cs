@@ -6,14 +6,14 @@ namespace telemetry_producer;
 internal class Telemetry<T>
 {
     private readonly IMqttClient _mqttClient;
-    internal string TopicPattern { get; set; } = "vehicles/{clientId}/position";
-    public Telemetry(IMqttClient mqttClient)
+    private readonly string _topic;
+    public Telemetry(IMqttClient mqttClient, string topic)
     {
         _mqttClient = mqttClient;
-        TopicPattern = TopicPattern.Replace("{clientId}", mqttClient.Options.ClientId);
+        _topic = topic.Replace("{clientId}", mqttClient.Options.ClientId);
     }
 
     public Task<MqttClientPublishResult> SendMessage(T message, CancellationToken ct = default) => 
-        _mqttClient.PublishStringAsync(TopicPattern, JsonSerializer.Serialize(message), MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce, false, ct);
+        _mqttClient.PublishStringAsync(_topic, JsonSerializer.Serialize(message), MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce, false, ct);
     
 }

@@ -22,11 +22,11 @@ public class Worker : BackgroundService
 
         var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
 
-        mqttClient.ConnectedAsync += async cea =>
+        mqttClient.InternalClient.ConnectedAsync += async cea =>
         {
             _logger.LogWarning($"Client {mqttClient.InternalClient.Options.ClientId} connected: {cea.ConnectResult.ResultCode}");
 
-            var telemetryPosition = new Telemetry<Point>(mqttClient.InternalClient);
+            var telemetryPosition = new Telemetry<Point>(mqttClient.InternalClient, "vehicles/{clientId}/position");
 
             while (!stoppingToken.IsCancellationRequested)
             {
