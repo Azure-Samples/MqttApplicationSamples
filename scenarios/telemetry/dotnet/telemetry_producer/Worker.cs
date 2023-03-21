@@ -1,7 +1,6 @@
-using MQTTnet.Client.Extensions;
-using MQTTnet.Client;
 using MQTTnet;
-using GeoJSON.Text.Geometry;
+using MQTTnet.Client;
+using MQTTnet.Client.Extensions;
 using MQTTnet.Extensions.ManagedClient;
 
 namespace telemetry_producer;
@@ -9,24 +8,20 @@ namespace telemetry_producer;
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-
-    public Worker(ILogger<Worker> logger)
-    {
-        _logger = logger;
-    }
+    public Worker(ILogger<Worker> logger) => _logger = logger;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var cs = new ConnectionSettings(Environment.GetEnvironmentVariable("Broker")!);
-        Console.WriteLine($"Connecting to {cs}");
+        _logger.LogInformation("Connecting to {cs}", cs);
 
         var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
 
         mqttClient.InternalClient.ConnectedAsync += async cea =>
         {
-            _logger.LogWarning($"Client {mqttClient.InternalClient.Options.ClientId} connected: {cea.ConnectResult.ResultCode}");
+            _logger.LogWarning("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
 
-            var telemetryPosition = new Telemetry<Point>(mqttClient.InternalClient, "vehicles/{clientId}/position");
+            var telemetryPosition = new Telemetry<GeoJSON.Text.Geometry.Point>(mqttClient.InternalClient, "vehicles/{clientId}/position");
 
             while (!stoppingToken.IsCancellationRequested)
             {
