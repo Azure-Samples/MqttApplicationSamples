@@ -1,10 +1,5 @@
 ﻿using MQTTnet.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace telemetry_producer;
 
@@ -19,6 +14,6 @@ internal class Telemetry<T>
     }
 
     public Task<MqttClientPublishResult> SendMessage(T message, CancellationToken ct = default) => 
-        _mqttClient.PublishStringAsync(TopicPattern, JsonSerializer.Serialize(message));
+        _mqttClient.PublishStringAsync(TopicPattern, JsonSerializer.Serialize(message), MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce, false, ct);
     
 }

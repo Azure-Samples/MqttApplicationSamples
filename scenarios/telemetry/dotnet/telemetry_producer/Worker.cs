@@ -2,6 +2,7 @@ using MQTTnet.Client.Extensions;
 using MQTTnet.Client;
 using MQTTnet;
 using GeoJSON.Text.Geometry;
+using MQTTnet.Extensions.ManagedClient;
 
 namespace telemetry_producer;
 
@@ -19,19 +20,27 @@ public class Worker : BackgroundService
         var cs = new ConnectionSettings(Environment.GetEnvironmentVariable("Broker")!);
         Console.WriteLine($"Connecting to {cs}");
 
-        var mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger()) as MqttClient;
+        var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
 
-        var connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder().WithConnectionSettings(cs).Build(), stoppingToken);
-
-        Console.WriteLine($"Client Connected: {mqttClient.IsConnected} with CONNACK: {connAck.ResultCode}");
-
-        var telemetryPosition = new Telemetry<Point>(mqttClient);
-
-        while (!stoppingToken.IsCancellationRequested)
+        mqttClient.ConnectedAsync += async cea =>
         {
-            var pubAck = await telemetryPosition.SendMessage(new Point(new Position(51.899523, -2.124156)), stoppingToken);
-            _logger.LogInformation("Message published with PUBACK {code}", pubAck.ReasonCode);
-            await Task.Delay(5000, stoppingToken);
-        }
+            _logger.LogWarning($"Client {mqttClient.InternalClient.Options.ClientId} connected: {cea.ConnectResult.ResultCode}");
+
+            var telemetryPosition = new Telemetry<Point>(mqttClient.InternalClient);
+
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                var pubAck = await telemetryPosition.SendMessage(new Point(new Position(51.899523, -2.124156)), stoppingToken);
+                _logger.LogInformation("Message published with PUBACK {code}", pubAck.ReasonCode);
+                await Task.Delay(5000, stoppingToken);
+            }
+        };
+
+        await mqttClient!.StartAsync(new ManagedMqttClientOptionsBuilder()
+            .WithClientOptions(new MqttClientOptionsBuilder()
+                .WithConnectionSettings(cs)
+                .Build())
+            .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
+            .Build());
     }
 }

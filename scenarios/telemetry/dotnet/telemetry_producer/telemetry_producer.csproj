@@ -16,7 +16,7 @@
   <ItemGroup>
     <PackageReference Include="GeoJSON.Text" Version="1.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-    <PackageReference Include="MQTTnet" Version="4.1.4.563" />
+    <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.1.4.563" />
   </ItemGroup>
   
 </Project>

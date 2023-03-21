@@ -29,7 +29,7 @@ namespace telemetry_consumer
                 .Build());
 
             Console.WriteLine($"Client Connected: {mqttClient.IsConnected}.");
-
+            
             mqttClient.Connect("vehicles/+/position")
                 .Select(m => {
                     string topic = m.ApplicationMessage.Topic;
