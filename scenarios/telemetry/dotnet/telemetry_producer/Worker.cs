@@ -1,3 +1,4 @@
+using GeoJSON.Text.Geometry;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
@@ -21,7 +22,7 @@ public class Worker : BackgroundService
         {
             _logger.LogWarning("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
 
-            var telemetryPosition = new Telemetry<GeoJSON.Text.Geometry.Point>(mqttClient.InternalClient, "vehicles/{clientId}/position");
+            var telemetryPosition = new Telemetry<Point>(mqttClient.InternalClient, "vehicles/{clientId}/position");
 
             while (!stoppingToken.IsCancellationRequested)
             {
