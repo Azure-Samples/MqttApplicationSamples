@@ -43,6 +43,7 @@ public static partial class MqttNetExtensions
             {
                 tls.CertificateValidationHandler += ea => X509ChainValidator.ValidateChain(ea.Certificate);
             }
+            tls.IgnoreCertificateChainErrors = true;
             tls.Certificates = certs;
             tls.IgnoreCertificateRevocationErrors = cs.DisableCrl;
             builder.WithTls(tls);
