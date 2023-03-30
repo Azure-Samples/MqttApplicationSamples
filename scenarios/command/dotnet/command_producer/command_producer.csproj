@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>dotnet-command_producer-1251812c-e1c3-4f30-b405-c33f522bdb76</UserSecretsId>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Include="..\..\..\..\getting_started\dotnet\getting_started\MQTTnet.Client.Extensions\*">
+			<Link>MqttClientExtensions\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+		<PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.1.4.563" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\proto_messages\proto_messages.csproj" />
+	</ItemGroup>
+</Project>
