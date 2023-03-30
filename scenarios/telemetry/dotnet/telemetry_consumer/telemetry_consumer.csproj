@@ -15,5 +15,6 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 		<PackageReference Include="MQTTnet.Extensions.External.RxMQTT.Client" Version="4.0.53" />
+		<PackageReference Include="GeoJSON.Text" Version="1.0.1" />
 	</ItemGroup>
 </Project>
