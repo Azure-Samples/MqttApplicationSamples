@@ -8,7 +8,7 @@ System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListen
 var cs = new ConnectionSettings(Environment.GetEnvironmentVariable("Broker")!);
 Console.WriteLine($"Connecting to {cs}");
 
-var mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger()) as MqttClient;
+var mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
 
 var connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder().WithConnectionSettings(cs).Build());
 
