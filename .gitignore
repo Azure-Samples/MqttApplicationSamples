@@ -8,6 +8,7 @@ _certs/
 *.pfx
 *.pem
 *.crt
+.env
 
 # User-specific files
 *.rsuser
