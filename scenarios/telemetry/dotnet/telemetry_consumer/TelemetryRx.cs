@@ -1,17 +1,11 @@
 ﻿using MQTTnet;
 using MQTTnet.Extensions.External.RxMQTT.Client;
 using System.Reactive.Linq;
+using System.Text.Json;
 
 namespace telemetry_consumer;
 
-internal class TelemetryMessage
-{
-    public string? ClientIdFromTopic { get; set; }
-    public string? PayloadString { get; set; }
-}
-
-
-internal class TelemetryRx
+internal class TelemetryRx<T>
 {
     private readonly IRxMqttClient _mqttClient;
 
@@ -20,17 +14,17 @@ internal class TelemetryRx
         _mqttClient = mqttClient;
     }
 
-    public IObservable<TelemetryMessage> Start(string topic)
+    public IObservable<TelemetryMessage<T>> Start(string topic)
     {
        return _mqttClient.Connect(topic)
                 .Select(m =>
                 {
                     string topic = m.ApplicationMessage.Topic;
                     string cid = topic.Split('/')[1];
-                    return new TelemetryMessage
+                    return new TelemetryMessage<T>
                     { 
                         ClientIdFromTopic = cid, 
-                        PayloadString = m.ApplicationMessage.ConvertPayloadToString() 
+                        Payload = JsonSerializer.Deserialize<T>(m.ApplicationMessage.ConvertPayloadToString()) 
                     };
                 });
     }

@@ -1,3 +1,4 @@
+using GeoJSON.Text.Geometry;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
@@ -23,9 +24,10 @@ public class Worker : BackgroundService
         {
             _logger.LogWarning("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientOptions.ClientId, cea.ConnectResult.ResultCode);
 
-            new TelemetryRx(mqttClient)
+            new TelemetryRx<Point>(mqttClient)
                 .Start("vehicles/+/position")
-                .Subscribe(m => _logger.LogInformation("{id} sent {msg}", m.ClientIdFromTopic, m.PayloadString));
+                .Subscribe(m => _logger.LogInformation("Received msg from {id}. Coordinates lat: {x}, lon: {y}", 
+                    m.ClientIdFromTopic, m.Payload!.Coordinates.Latitude, m.Payload.Coordinates.Longitude));
 
             await Task.Yield();
         };
