@@ -7,16 +7,12 @@ public static partial class MqttNetExtensions
     public static MqttClientOptionsBuilder WithConnectionSettings(this MqttClientOptionsBuilder builder, ConnectionSettings cs)
     {
         builder
-            .WithTimeout(TimeSpan.FromSeconds(30))
             .WithTcpServer(cs.HostName, cs.TcpPort)
             .WithKeepAlivePeriod(TimeSpan.FromSeconds(cs.KeepAliveInSeconds))
+            .WithCredentials(cs.UserName, cs.Password)
             .WithCleanSession(cs.CleanSession)
+            .WithProtocolVersion(Formatter.MqttProtocolVersion.V500)
             .WithTlsSettings(cs);
-
-        if (!string.IsNullOrEmpty(cs.Password))
-        {
-            builder.WithCredentials(cs.UserName, cs.Password);
-        }
 
         builder.WithClientId(cs.ClientId);
         return builder;
