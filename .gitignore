@@ -9,6 +9,7 @@ _certs/
 *.pem
 *.crt
 .env
+launchSettings.json
 
 # User-specific files
 *.rsuser
