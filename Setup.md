@@ -1,11 +1,11 @@
-# Setup Environemnt
+# Setup Environment
 
-These samples are intended to run in 3 MQTT environments:
+These samples can work with any MQTT Broker configured to accept authenticated connections with X509 certificates. This document describes how to configure:
 
-- Cloud with Event Grid
-- Edge with E4K
-- Local with mosquitto
+- Azure Event Grid Namespaces
+- Mosquitto
 
+> To create the server and client certificates use the `step cli` [https://smallstep.com/docs/step-cli/installation/](https://smallstep.com/docs/step-cli/installation/)
 
 ## Create CA
 
@@ -22,7 +22,7 @@ Follow the cli instructions, when done take note of the path to the generated ce
 - `~/.step/secrets/root_ca_key`
 - `~/.step/secrets/intermediate_ca_key`
 
-## Configure Event Grid Namepsaces
+## Configure Event Grid Namespace
 
 Access the Azure portal by using [this link](https://portal.azure.com/?microsoft_azure_marketplace_ItemHideKey=PubSubNamespace&microsoft_azure_eventgrid_assettypeoptions={"PubSubNamespace":{"options":""}}).
 
@@ -30,50 +30,10 @@ Access the Azure portal by using [this link](https://portal.azure.com/?microsoft
 2. Select `Event Grid Namespace`
 3. Select your resource group and deploy to a supported region (US Central EUAP)
 4. Navigate to the new created resource
-5. Configure the CA certificate
+5. Configure the CA certificate by registering the intermediate ca cert file (~/.step/certs/intermediate_ca.crt)
 6. Configure Clients, TopicSpaces and Permissions
 
-## Configure E4K with TLS and X509 certificates
-
-Deploy E4K with this configuration in values.yaml
-
-```yaml
-e4kdmqtt:
-  broker:
-    frontend:
-      ports:
-        - port: 1883
-        - port: 8883
-          tls:
-            secret: "test-server-cert"
-  authenticationMethods:
-    - method: x509
-```
-
-To validate client certificates, E4K must trust the CA. Create the chain with:
-
-```bash
-cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
-```
-
-Deploy E4K with
-
-```bash
-helm install e4k oci://e4kpreview.azurecr.io/helm/az-e4k --version 0.2.0 -f ./values.yaml --set-file e4kdmqtt.authentication.x509.clientTrustedRoots=chain.pem
-```
-
-Create a server certificate for your cluster (need to replace the Service IP, than can be obtained with `kubectl get svc`)
-
-```bash
-step certificate create azedge-dmqtt-frontend azedge-dmqtt-frontend.crt azedge-dmqtt-frontend.key --profile leaf --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key --not-after 2400h --no-password --insecure --san azedge-dmqtt-frontend --san <DMQTT-Service-IP>
-```
-
-To register the certificate in the K8s cluster create the secret with the service certificate and key
-
-```bash
-kubectl create secret tls test-server-cert --cert azedge-dmqtt-frontend.crt --key azedge-dmqtt-frontend.key
-```
-
+> Each scenario includes detailed instructions to configure TopicSpaces, Clients and Permissions, along with `az cli` scripts.
 
 ## Configure Mosquitto with TLS and X509 Authentication
 
@@ -82,7 +42,6 @@ Using the test ca, create certificates for `localhost`.
 ```bash
 step certificate create localhost localhost.crt localhost.key --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key --no-password --insecure --not-after 2400h
 ```
-
 Copy the certificate files: root_ca.crt, localhost.crt and localhost.key to a local folder where mosquitto should start.
 
 > Mosquitto requires to rename the `cafile` to use the .PEM extension

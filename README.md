@@ -1,32 +1,33 @@
 # MQTT Application Samples
 
-Guidance to build Pub/Sub applications targeting Edge and Cloud MQTT Brokers in different programming languages.
+Guidance to build Pub/Sub applications targeting MQTT Brokers in different programming languages.
+
+| [Setup](./Setup.md) | [Getting Started](./getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |
 
 ## Prerequisites
 
 To run this samples you need an MQTT Broker configured with mTLS to authenticate clients with X509 certificates, we provide instructions for:
 
-- Azure DMQTT (aka E4K), for Kubernetes
-- Azure Event Grid PubSub (aka AzPubSub)
-- Mosquitto for reference
+- Azure Event Grid Namespaces 
+- Mosquitto for local development
 
 Samples are provided in different programming languages: C#, Python and C.
 
 ### Broker and Certificates setup
 
 - MQTT Broker
-  - E4K can be installed in a K8s cluster such as AKS EE, or AKS
-  - AzPubSub can be deployed in Azure following this instructions
+  - Event Grid Namespace
   - Mosquitto can run in Windows, WSL, Docker, or K8s
 
-- A X509 certificate chain with one Root certificate - to be used as a CA- and different Leaf certificates. Intermediate CAs are optional. Certificate can use ECC and/or RSA keys
+- A X509 certificate chain with one Root certificate - to be used as a CA- and different Leaf certificates. Intermediate CAs are optional. 
+
+Certificates can use ECC and/or RSA keys
   - Create CA Certificate
   - Create TLS Certificate
   - Create mTLS (aka client) Certificates
 
 - Configure Broker Authentication to use X509
-  - Configure E4k with X509 
-  - Configure AzPub with X509
+  - Configure Event Grid Namespaces certificates
   - Configure Mosquitto with X509
 
 - Programming language environment
@@ -34,6 +35,7 @@ Samples are provided in different programming languages: C#, Python and C.
   - Python 3
   - C (CMake 3.14 + Ninja in WSL, Linux)
 
+See [Setup](./Setup.md) for detailed instructions.
 
 ## Getting Started Samples
 
@@ -43,19 +45,10 @@ Getting started samples show how to perform basic MQTT tasks:
   - Validate TLS certificate enforcing TLS 1.2
   - Authenticate with client certificates
   - Configure connection settings such as KeepAlive and CleanSession or ConnectionTimeout
-- Publish 
-  - Send messages encoded with different payload encodings: JSON/UTF8 and Protobuf using QoS0 and QoS1
-- Subscribe
-  - Subscribe to a topic to receive and decode messages
- 
-## MQTT 5 Samples
+- Publish messages to a topic
+- Subscribe to a topic to receive messages
 
-Show how use some of the new MQTT5 features available in E4K and AzPubSub
-
-- Error Handling inspecting ReasonCodes
-- User Properties in messages 
-- Request Response with correlation
-- Message expiry
+See [Getting Started](./getting_started/) for code samples
 
 # Scenario Samples
 
@@ -86,6 +79,8 @@ Messages will use [GeoJSON](https://geojson.org) to represent the coordinates.
     "coordinates": [125.6, 10.1]
 }
 ```
+
+See [Telemetry](./scenarios/telemetry/) for code samples.
 
 ##  Command (Request/Response)
 
@@ -121,6 +116,8 @@ service Commands {
 	rpc unlock(unlockRequest) returns (unlockResponse)
 }
 ```
+
+See [Command](./scenarios/command/) for code samples.
 
 ## Command (Fan-Out)
 
