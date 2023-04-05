@@ -1,22 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-telemetry_producer-e8daaa2f-b03c-47da-ba60-f517d6e38bbd</UserSecretsId>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>dotnet-telemetry_producer-e8daaa2f-b03c-47da-ba60-f517d6e38bbd</UserSecretsId>
+	</PropertyGroup>
 
-  <ItemGroup>
-	  <Compile Include="..\..\..\..\getting_started\dotnet\getting_started\MQTTnet.Client.Extensions\*">
-		  <Link>MqttClientExtensions\%(RecursiveDir)%(Filename)%(Extension)</Link>
-	  </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\..\..\..\getting_started\dotnet\getting_started\MQTTnet.Client.Extensions\*">
+			<Link>MqttClientExtensions\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="GeoJSON.Text" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-    <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.1.4.563" />
-  </ItemGroup>
-  
+	<ItemGroup>
+		<PackageReference Include="GeoJSON.Text" Version="1.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+		<PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.1.4.563" />
+		<PackageReference Include="Google.Protobuf" Version="3.22.1" />
+	</ItemGroup>
+
 </Project>
