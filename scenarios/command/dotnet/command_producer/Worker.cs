@@ -25,11 +25,9 @@ public class Worker : BackgroundService
         {
             _logger.LogWarning("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
 
-            Command<unlockRequest, unlockResponse> commandUnlock = new(mqttClient.InternalClient, "unlock", unlockRequest.Parser)
-            {
-                RequestTopicPattern  = "vehicles/{clientId}/commands/{commandName}/request",
-                ResponseTopicPattern = "vehicles/{clientId}/commands/{commandName}/response",
-                OnMessage = Unlock
+            UnlockCommandProducer commandUnlock = new(mqttClient.InternalClient)
+            { 
+                OnCommandReceived= Unlock
             };
             await Task.Yield();
         };

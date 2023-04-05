@@ -22,11 +22,7 @@ public class Worker : BackgroundService
         _logger.LogInformation("Connecting to {cs}", cs);
 
         var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
-        CommandClient<unlockRequest, unlockResponse> commandClient = new(mqttClient.InternalClient, "unlock")
-        {
-            RequestTopicPattern = "vehicles/{clientId}/command/{commandName}/request",
-            ResponseTopicPattern = "vehicles/{clientId}/command/{commandName}/response",
-        };
+        UnlockCommandConsumer commandClient = new(mqttClient.InternalClient);
 
         mqttClient.InternalClient.ConnectedAsync += async cea =>
         {
@@ -40,7 +36,7 @@ public class Worker : BackgroundService
                     {
                         When = DateTime.Now.ToUniversalTime().ToTimestamp(),
                         RequestedFrom = mqttClient.InternalClient.Options.ClientId
-                    });
+                    }, 2);
                 _logger.LogInformation("Command response: {res}", response.Succeed);
                 await Task.Delay(5000, stoppingToken);
             }
