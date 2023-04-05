@@ -13,8 +13,8 @@ internal class CommandClient<T, TResp>
     IMessageSerializer _serializer;
     Guid _correlationId;
 
-    public string RequestTopicPattern { get; set; } = "device/{clientId}/commands/{commandName}/request";
-    public string ResponseTopicPattern { get; set; } = "device/{clientId}/commands/{commandName}/response";
+    public string RequestTopicPattern { get; set; } = "device/{clientId}/command/{commandName}/request";
+    public string ResponseTopicPattern { get; set; } = "device/{clientId}/command/{commandName}/response";
 
     public CommandClient(IMqttClient mqttClient, string cmdName)
     {

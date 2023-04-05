@@ -24,8 +24,8 @@ public class Worker : BackgroundService
         var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
         CommandClient<unlockRequest, unlockResponse> commandClient = new(mqttClient.InternalClient, "unlock")
         {
-            RequestTopicPattern = "vehicles/{clientId}/commands/{commandName}/request",
-            ResponseTopicPattern = "vehicles/{clientId}/commands/{commandName}/response",
+            RequestTopicPattern = "vehicles/{clientId}/command/{commandName}/request",
+            ResponseTopicPattern = "vehicles/{clientId}/command/{commandName}/response",
         };
 
         mqttClient.InternalClient.ConnectedAsync += async cea =>

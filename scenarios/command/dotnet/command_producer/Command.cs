@@ -9,8 +9,8 @@ internal class Command<T, TResp>
 {
     public Func<T, Task<TResp>>? OnMessage { get; set; }
 
-    public string RequestTopicPattern { get; set; } = "vehicles/{clientId}/commands/{commandName}/request";
-    public string ResponseTopicPattern { get; set; } = "vehicles/{clientId}/commands/{commandName}/response";
+    public string RequestTopicPattern { get; set; } = "vehicles/{clientId}/command/{commandName}/request";
+    public string ResponseTopicPattern { get; set; } = "vehicles/{clientId}/command/{commandName}/response";
 
     private readonly IMessageSerializer _serializer;
 
