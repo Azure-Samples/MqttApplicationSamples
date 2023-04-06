@@ -39,7 +39,7 @@
   - Consumer. To subscribe to telemetry messages
   - Message Payload. Use GeoJSON to indicate `lat/lon`
 
-- Connect to the broker using MQTT 3.1
+- Connect to the broker using MQTT 3.1.1
 - Create JSON payloads with _fake_ data
 - Publish messages in a loop, with 5s delay
 - Subscribe to the same topic, expose received messages in a callback function
