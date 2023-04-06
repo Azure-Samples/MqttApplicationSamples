@@ -1,0 +1,75 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Getting Started",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_getting_started",
+            "program": "${workspaceFolder}/getting_started/dotnet/getting_started/bin/Debug/net7.0/getting_started.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/getting_started/dotnet/getting_started",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "launchSettingsProfile": "cloud"
+        },
+        {
+            "name": "Telemetry_Producer",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_telemetry",
+            "program": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_producer/bin/Debug/net7.0/telemetry_producer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_producer",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "launchSettingsProfile": "cloud"
+        },
+        {
+            "name": "Telemetry_Consumer",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_telemetry",
+            "program": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_consumer/bin/Debug/net7.0/telemetry_consumer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_consumer",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "launchSettingsProfile": "cloud"
+        },
+        {
+            "name": "Command_Consumer",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_command",
+            "program": "${workspaceFolder}/scenarios/command/dotnet/command_consumer/bin/Debug/net7.0/command_consumer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/scenarios/command/dotnet/command_consumer",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "launchSettingsProfile": "cloud"
+        },
+        {
+            "name": "Command_Producer",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_command",
+            "program": "${workspaceFolder}/scenarios/command/dotnet/command_producer/bin/Debug/net7.0/command_producer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/scenarios/command/dotnet/command_producer",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "launchSettingsProfile": "cloud"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Telemetry",
+            "configurations": ["Telemetry_Producer", "Telemetry_Consumer" ]
+        },
+        {
+            "name": "Command",
+            "configurations": ["Command_Producer", "Command_Consumer" ]
+        }
+    ]
+}
