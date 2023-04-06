@@ -47,9 +47,11 @@
 Producer
 
 ```c
-connAck = mqtt.connect(/* connection settings */);
-telemetry = telemetry(mqtt, "sample/topic", &geo_json_serializer);
-pub_ack = telemetry.send(lat, lon);
+conn_ack = mqtt.connect(/* connection settings */);
+if (conn_ack.result == conn_result_codes.OK) {
+    telemetry = telemetry(mqtt, "sample/topic", &geo_json_serializer);
+    pub_ack = telemetry.send(lat, lon);
+}
 ```
 
 Consumer
