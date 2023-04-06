@@ -1,4 +1,4 @@
-# Sample Goals
+# Goals for MQTT Application Samples
 
 - Show how to create MQTT applications with different programming languages, starting with C#, Python and C
 - Each language will use a popular MQTT Library, MQTTNet for C# and Paho for Python and C
@@ -29,7 +29,7 @@
 
 ### Troubleshooting
 
-- How to validate the connection with `mosquitto_sub` and `openssl`, map concepts to connections.
+- How to validate the connection with `mosquitto_sub` and `openssl`
 
 
 ## Scenario 1. Telemetry
@@ -63,6 +63,51 @@ void on_message_received(char* client_id, int lat, int lon) {
 conn_ack = mqtt.connect(/* connection settings */);
 if (conn_ack.result == conn_result_codes.OK) {
     telemetry_consumer = telemetry_consumer(mqtt, &geo_json_serializer, &on_message_received);
-    telemetry_consumer.start_monitoring("sample/+/topic");
+    telemetry_consumer.start("sample/+/topic");
+}
+```
+## Scenario 2. Commands
+
+- Show how to implement the `Command` pattern (aka RPC) using the MQTT Protocol
+- Use MQTT5 features: Correlation ID, and ResponseTopic
+- Use Protobuf to show how to use binary payloads
+
+- Implement two console applications to host long running operations
+- CommandServer to encapsulate:
+  - Sub to request topic
+  - Deserialize the request
+  - Invoke callback with the deserialized payload
+  - Pub response to response topic with correlation
+
+- CommandClient to Invoke the command
+  - Pub to request topic with correlation
+  - Serialize payload 
+  - Wait for response with a timeout (waiting thread?)
+  - Sub to response topic, validate correlation
+
+  Command Server
+  
+```c
+&response_payload request_callback(&request_payload) {
+    //command implementation
+    // process request
+    return response;
+}
+
+
+conn_ack = mqtt.connect(/* connection settings */);
+if (conn_ack.result == conn_result_codes.OK) {
+    command = command_server(mqtt, char* request_topic, &proto_serializer);
+    command.on_request(&request_callback);
+}
+```
+
+Command Client
+
+```c
+conn_ack = mqtt.connect(/* connection settings */);
+if (conn_ack.result == conn_result_codes.OK) {
+    command_client = command_client(mqtt, &proto_serializer);
+    response = command_client.invoke(char* client_id, request);
 }
 ```
