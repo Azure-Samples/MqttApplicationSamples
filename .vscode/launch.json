@@ -1,0 +1,40 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C Telemetry Producer",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/scenarios/telemetry/c/build/scenarios/telemetry/c/mosq_mqtt_telemetry_producer",
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build C Telemetry"
+        },
+        {
+            "name": "C Telemetry Consumer",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/scenarios/telemetry/c/build/scenarios/telemetry/c/mosq_mqtt_telemetry_consumer",
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build C Telemetry"
+        }
+    ]
+}
