@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "stdlib.h": "c",
-        "mqttclient.h": "c",
-        "mosquitto.h": "c",
-        "stdio.h": "c"
-    }
-}
