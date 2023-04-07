@@ -3,5 +3,12 @@
 	"features": {
 		"ghcr.io/devcontainers/features/azure-cli:1": {}
 	},
-	"postCreateCommand": "bash ./.devcontainer/postCreateCommand.sh"
+	"postCreateCommand": "bash ./.devcontainer/postCreateCommand.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-dotnettools.csharp"
+			]
+		}
+	}
 }
