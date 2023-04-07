@@ -20,7 +20,7 @@
             ],
             "preLaunchTask": "Build C Telemetry",
             "presentation": {
-                "hidden": false,
+                "hidden": true,
                 "group": "C"
             }
         },
