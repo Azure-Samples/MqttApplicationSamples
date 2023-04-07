@@ -7,25 +7,30 @@ project (mqtt_samples LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)
 
-find_package(mosquitto CONFIG)
-if(NOT mosquitto_FOUND)
-  find_package(mosquitto REQUIRED)
-endif()
+include(FetchContent)
 
-find_package(OpenSSL CONFIG)
-if(NOT OpenSSL_FOUND)
-  find_package(OpenSSL REQUIRED)
-endif()
+option( DOCUMENTATION OFF )
+option( WITH_CJSON OFF )
+FetchContent_Declare(
+    MOSQUITTO
+    GIT_REPOSITORY https://github.com/eclipse/mosquitto.git
+    GIT_TAG        v2.0.15
+    GIT_PROGRESS   TRUE
+)
 
-include_directories(${MOSQUITTO_INCLUDE_DIRS})
+if(MOSQUITTO_PATH)
+  message(INFO " MOSQUITTO_PATH specified: {MOSQUITTO_PATH}, skipping fetch for Mosquitto")
+else()
+  set(FETCHCONTENT_QUIET FALSE) # To see progress
+  FetchContent_MakeAvailable(MOSQUITTO)
+
+  set(MOSQUITTO_PATH ${mosquitto_SOURCE_DIR})
+  message(INFO "MOSQUITTO_PATH set to ${MOSQUITTO_PATH}")
+endif()
 
 # External deps
 link_libraries(
-    ${MOSQUITTO_LIBRARIES}
-    ${PTHREAD_LIBRARIES}
-    OpenSSL::SSL
-    OpenSSL::Crypto
+    mosquitto
 )
-message(${PRESET_PATH})
 
 add_subdirectory(${PRESET_PATH})

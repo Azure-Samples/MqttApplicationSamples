@@ -18,7 +18,11 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "Build C Telemetry"
+            "preLaunchTask": "Build C Telemetry",
+            "presentation": {
+                "hidden": false,
+                "group": "C"
+            }
         },
         {
             "name": "C Telemetry Consumer",
@@ -34,7 +38,21 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "Build C Telemetry"
+            "preLaunchTask": "Build C Telemetry",
+            "presentation": {
+                "hidden": true,
+                "group": "C"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "C Telemetry",
+            "configurations": ["C Telemetry Consumer", "C Telemetry Producer" ],
+            "stopAll": true,
+            "presentation": {
+                "group": "C"
+            }
         }
     ]
 }
