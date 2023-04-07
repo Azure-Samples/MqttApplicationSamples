@@ -24,11 +24,11 @@ az resource create --id "$resid/caCertificates/caCert" --properties '{
   "encodedCertificate": ""
 }'
 
-az resource create --id "$resid/clients/client1" --properties '{
+az resource create --id "$resid/clients/vehicle01" --properties '{
     "state": "Enabled",
-    "authentication": {
+    "clientCertificateAuthentication": {
         "certificateSubject": {
-            "commonName": "client1"
+            "commonName": "vehicle01"
         }
     },
     "attributes": {},
