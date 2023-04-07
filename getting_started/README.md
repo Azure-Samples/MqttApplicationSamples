@@ -17,7 +17,7 @@ To generate a client certificate, use the `step certificate create` command from
 
 ```bash
 cd getting_started
-step certificate create vehicle01 vehicle01.pem vehicle01.key --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key
+step certificate create vehicle01 vehicle01.pem vehicle01.key --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key --no-password --insecure --not-after 2400h
 ```
 
 ## Trust the server certificate used by mosquitto

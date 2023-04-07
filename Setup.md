@@ -12,7 +12,7 @@ These samples can work with any MQTT Broker configured to accept authenticated c
 All samples require to register the root CA certificates used to generate the client certs.
 
 ```bash
-step ca init
+step ca init --deployment-type standalone --name MqttAppSamplesCA --dns localhost --address 127.0.0.1:443 --provisioner MqttAppSamplesCAProvisioner
 ```
 
 Follow the cli instructions, when done take note of the path to the generated certificates and keys, by default those are stored in:

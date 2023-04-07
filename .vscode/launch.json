@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Getting Started",
+            "name": "dotnet getting_started",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build_getting_started",

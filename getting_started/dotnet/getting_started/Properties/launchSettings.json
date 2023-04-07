@@ -1,19 +1,19 @@
 {
   "profiles": {
-    "mosquitto": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "HostName" : "localhost",
-        "X509Key" : "./../../../vehicle02.pem|./../../../vehicle02.key",
-        "CaFile" : "./../../../../../_certs/chain.pem"
-      }
-    },
     "cloud": {
       "commandName": "Project",
       "environmentVariables": {
         "HostName" : "cloudbroker.eastus2euap-1.ts.eventgrid.azure.net",
         "UserName" : "vehicle01",
-        "X509Key" : "./../../../vehicle01.pem|./../../../vehicle01.key"
+        "X509Key" : "./../../vehicle01.pem|./../../vehicle01.key"
+      }
+    },
+    "mosquitto": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "HostName" : "localhost",
+        "X509Key" : "./../../vehicle02.pem|./../../vehicle02.key",
+        "CaFile" : "./../../../../../_certs/chain.pem"
       }
     }
   }
