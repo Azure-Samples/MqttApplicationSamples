@@ -5,7 +5,7 @@
       "environmentVariables": {
         "HostName" : "localhost",
         "X509Key" :"./../../vehicle01.pem|../../vehicle01.key",
-        "CaFile" : "./../../_certs/chain.pem"
+        "CaFile" : "./../../../../_mosquitto/chain.pem"
       }
     },
     "cloud": {

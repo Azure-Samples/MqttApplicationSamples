@@ -23,10 +23,10 @@
             "cwd": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_producer",
             "console": "internalConsole",
             "stopAtEntry": false,
-            "launchSettingsProfile": "cloud"
+            "launchSettingsProfile": "mosquitto"
         },
         {
-            "name": "Telemetry_Consumer",
+            "name": "telemetry_consumer/dotnet",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build_telemetry",
@@ -35,10 +35,10 @@
             "cwd": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_consumer",
             "console": "internalConsole",
             "stopAtEntry": false,
-            "launchSettingsProfile": "cloud"
+            "launchSettingsProfile": "mosquitto"
         },
         {
-            "name": "Command_Consumer",
+            "name": "command_consumer/dotnet",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build_command",
@@ -47,10 +47,10 @@
             "cwd": "${workspaceFolder}/scenarios/command/dotnet/command_consumer",
             "console": "internalConsole",
             "stopAtEntry": false,
-            "launchSettingsProfile": "cloud"
+            "launchSettingsProfile": "mosquitto"
         },
         {
-            "name": "Command_Producer",
+            "name": "command_producer/dotnet",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build_command",
@@ -59,17 +59,17 @@
             "cwd": "${workspaceFolder}/scenarios/command/dotnet/command_producer",
             "console": "internalConsole",
             "stopAtEntry": false,
-            "launchSettingsProfile": "cloud"
+            "launchSettingsProfile": "mosquitto"
         }
     ],
     "compounds": [
         {
-            "name": "Telemetry",
-            "configurations": ["Telemetry_Producer", "Telemetry_Consumer" ]
+            "name": "telemetry/dotnet",
+            "configurations": ["telemetry_producer/dotnet", "telemetry_consumer/dotnet" ]
         },
         {
-            "name": "Command",
-            "configurations": ["Command_Producer", "Command_Consumer" ]
+            "name": "command/dotnet",
+            "configurations": ["command_producer/dotnet", "command_consumer/dotnet" ]
         }
     ]
 }

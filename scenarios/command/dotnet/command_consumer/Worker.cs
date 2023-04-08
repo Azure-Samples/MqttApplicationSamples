@@ -18,7 +18,7 @@ public class Worker : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
 
-        var cs = new ConnectionSettings(Environment.GetEnvironmentVariable("Broker")!);
+        var cs = ConnectionSettings.CreateFromEnvVars();
         _logger.LogInformation("Connecting to {cs}", cs);
 
         var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
@@ -31,7 +31,7 @@ public class Worker : BackgroundService
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Invoking Command: {time}", DateTimeOffset.Now);
-                unlockResponse response = await commandClient.InvokeAsync("vehicle01",
+                unlockResponse response = await commandClient.InvokeAsync("vehicle02",
                     new unlockRequest
                     {
                         When = DateTime.Now.ToUniversalTime().ToTimestamp(),
