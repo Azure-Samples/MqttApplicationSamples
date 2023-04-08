@@ -9,7 +9,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/getting_started/dotnet/getting_started/getting_started.csproj",
+                "${workspaceFolder}/scenarios/getting_started/dotnet/getting_started/getting_started.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

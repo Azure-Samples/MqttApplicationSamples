@@ -14,7 +14,7 @@ var connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder().With
 Console.WriteLine($"Client Connected: {mqttClient.IsConnected} with CONNACK: {connAck.ResultCode}");
 
 mqttClient.ApplicationMessageReceivedAsync += async m => await Console.Out.WriteAsync(
-    $"Received message on topic: '{m.ApplicationMessage.Topic}' with content: '{m.ApplicationMessage.ConvertPayloadToString()}'");
+    $"Received message on topic: '{m.ApplicationMessage.Topic}' with content: '{m.ApplicationMessage.ConvertPayloadToString()}'\n\n");
 
 var suback = await mqttClient.SubscribeAsync("sample/+");
 suback.Items.ToList().ForEach(s => Console.WriteLine($"subscribed to '{s.TopicFilter.Topic}'  with '{s.ResultCode}'"));
