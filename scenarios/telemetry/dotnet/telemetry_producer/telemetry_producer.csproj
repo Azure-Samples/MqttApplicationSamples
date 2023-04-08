@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="..\..\..\..\getting_started\dotnet\getting_started\MQTTnet.Client.Extensions\*">
+		<Compile Include=".\..\..\..\getting_started\dotnet\getting_started\MQTTnet.Client.Extensions\*">
 			<Link>MqttClientExtensions\%(RecursiveDir)%(Filename)%(Extension)</Link>
 		</Compile>
 	</ItemGroup>
