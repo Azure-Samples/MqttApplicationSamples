@@ -1,6 +1,4 @@
-sub_id=""
-rg=""
-name=""
+source .env
 
 resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
@@ -14,15 +12,11 @@ az resource create --id $resid --is-full-object --properties '{
       "state": "Enabled"
     }
   },
-  "location": "centraluseuap",
-  "tags": {
-    "demo": "rido-bb"
-  }
+  "location": "eastus2euap"
 }'
 
-az resource create --id "$resid/caCertificates/caCert" --properties '{
-  "encodedCertificate": ""
-}'
+capem=`cat ~/.step/certs/intermediate_ca.crt | tr -d "\n"`
+az resource create --id "$resid/caCertificates/MqttAppSamplesCA" --properties "{\"encodedCertificate\" : \"$capem\"}"
 
 az resource create --id "$resid/clients/vehicle01" --properties '{
     "state": "Enabled",
@@ -35,19 +29,19 @@ az resource create --id "$resid/clients/vehicle01" --properties '{
     "description": "This is a test publisher client"
 }'
 
-az resource create --id "$resid/topicSpaces/samples" --properties '{
-    "topicTemplates": ["samples/#"],
+az resource create --id "$resid/topicSpaces/sample" --properties '{
+    "topicTemplates": ["sample/#"],
     "subscriptionSupport": "LowFanout"
 }'
 
 az resource create --id "$resid/permissionBindings/samplesPub" --properties '{
     "clientGroupName":"$all",
-    "topicSpaceName":"samples",
+    "topicSpaceName":"sample",
     "permission":"Publisher"
 }'
 
 az resource create --id "$resid/permissionBindings/samplesSub" --properties '{
     "clientGroupName":"$all",
-    "topicSpaceName":"samples",
+    "topicSpaceName":"sample",
     "permission":"Subscriber"
 }'
