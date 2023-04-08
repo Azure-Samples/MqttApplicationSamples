@@ -2,19 +2,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "dotnet getting_started",
+            "name": "getting_started/dotnet",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build_getting_started",
-            "program": "${workspaceFolder}/getting_started/dotnet/getting_started/bin/Debug/net7.0/getting_started.dll",
+            "program": "${workspaceFolder}/scenarios/getting_started/dotnet/getting_started/bin/Debug/net7.0/getting_started.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/getting_started/dotnet/getting_started",
+            "cwd": "${workspaceFolder}/scenarios/getting_started/dotnet/getting_started",
             "console": "internalConsole",
             "stopAtEntry": false,
-            "launchSettingsProfile": "cloud"
+            "launchSettingsProfile": "mosquitto"
         },
         {
-            "name": "Telemetry_Producer",
+            "name": "telemetry_producer/dotnet",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build_telemetry",

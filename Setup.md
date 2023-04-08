@@ -40,11 +40,16 @@ Access the Azure portal by using [this link](https://portal.azure.com/?microsoft
 Using the test ca, create certificates for `localhost`. 
 
 ```bash
+cd _mosquitto
+cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
 step certificate create localhost localhost.crt localhost.key --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key --no-password --insecure --not-after 2400h
 ```
-Copy the certificate files: root_ca.crt, localhost.crt and localhost.key to a local folder where mosquitto should start.
 
-> Mosquitto requires to rename the `cafile` to use the .PEM extension
+These files are used by mosquitto:
+
+```
+mosquitto -c tls.conf
+```
 
 `tls.conf`
 
@@ -61,10 +66,4 @@ cafile chain.pem
 certfile localhost.crt
 keyfile localhost.key
 tls_version tlsv1.2
-```
-
-Run mosquitto with:
-
-```bash
-mosquitto -c tls.conf
 ```
