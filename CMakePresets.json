@@ -19,11 +19,11 @@
         {
             "name": "getting_started/c",
             "displayName": "C Getting Started",
-            "binaryDir": "${sourceDir}/${presetName}/build",
+            "binaryDir": "${sourceDir}/scenarios/${presetName}/build",
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "PRESET_PATH": "${sourceDir}/${presetName}"
+                "PRESET_PATH": "${sourceDir}/scenarios/${presetName}"
             }
         }
     ],

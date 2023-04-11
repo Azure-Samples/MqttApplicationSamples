@@ -43,7 +43,26 @@
                 "hidden": true,
                 "group": "C"
             }
-        }
+        },
+        {
+            "name": "C Getting Started",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/scenarios/getting_started/c/build/scenarios/getting_started/c/mosq_mqtt_getting_started",
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build C Getting Started",
+            "presentation": {
+                "group": "C"
+            }
+        },
     ],
     "compounds": [
         {

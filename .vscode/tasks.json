@@ -5,6 +5,11 @@
             "label": "Build C Telemetry",
             "type": "shell",
             "command": "cmake --preset=telemetry/c;cmake --build --preset=telemetry/c"
+        },
+        {
+            "label": "Build C Getting Started",
+            "type": "shell",
+            "command": "cmake --preset=getting_started/c;cmake --build --preset=getting_started/c"
         }
     ]
 }

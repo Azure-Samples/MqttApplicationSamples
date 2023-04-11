@@ -7,10 +7,12 @@ set(CMAKE_CACHEFILE_DIR ${CMAKE_CURRENT_LIST_DIR}/build)
 message(${CMAKE_CURRENT_LIST_DIR})
 # Telemetry Consumer
 add_executable (mosq_mqtt_telemetry_consumer
+  ${MOSQUITTO_CLIENT_EXTENSIONS}
   ${CMAKE_CURRENT_LIST_DIR}/telemetry_consumer/main.c
 )
 
 # Telemetry Producer
 add_executable (mosq_mqtt_telemetry_producer
+  ${MOSQUITTO_CLIENT_EXTENSIONS}
   ${CMAKE_CURRENT_LIST_DIR}/telemetry_producer/main.c
 )

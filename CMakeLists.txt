@@ -28,6 +28,9 @@ else()
   message(INFO "MOSQUITTO_PATH set to ${MOSQUITTO_PATH}")
 endif()
 
+file(GLOB MOSQUITTO_CLIENT_EXTENSIONS ${CMAKE_CURRENT_LIST_DIR}/scenarios/getting_started/c/Mosquitto.Client.Extensions/*.c)
+include_directories( ${CMAKE_CURRENT_LIST_DIR}/scenarios/getting_started/c/Mosquitto.Client.Extensions)
+
 # External deps
 link_libraries(
     mosquitto
