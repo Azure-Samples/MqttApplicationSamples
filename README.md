@@ -2,7 +2,7 @@
 
 Guidance to build Pub/Sub applications targeting MQTT Brokers in different programming languages.
 
-| [Setup](./Setup.md) | [Getting Started](./getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |
+| [Setup](./Setup.md) | [Getting Started](./scenarios/getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |
 
 ## Prerequisites
 
@@ -48,7 +48,7 @@ Getting started samples show how to perform basic MQTT tasks:
 - Publish messages to a topic
 - Subscribe to a topic to receive messages
 
-See [Getting Started](./getting_started/) for code samples
+See [Getting Started](./scenarios/getting_started/) for code samples
 
 # Scenario Samples
 

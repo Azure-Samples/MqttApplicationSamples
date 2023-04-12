@@ -15,7 +15,7 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var cs = new ConnectionSettings(Environment.GetEnvironmentVariable("Broker")!);
+        var cs = ConnectionSettings.CreateFromEnvVars();
         _logger.LogInformation("Connecting to {cs}", cs);
 
         var mqttClient = new MqttFactory().CreateRxMqttClient(MqttNetTraceLogger.CreateTraceLogger());
