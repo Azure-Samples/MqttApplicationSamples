@@ -49,7 +49,7 @@ void on_connect_with_subscribe(struct mosquitto *mosq, void *obj, int reason_cod
 
 void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 {
-  printf("on_disconnect: reason=%d\n", rc);
+  printf("on_disconnect: reason=%s\n", mosquitto_strerror(rc));
 }
 
 /* Callback called when the broker sends a SUBACK in response to a SUBSCRIBE. */

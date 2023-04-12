@@ -8,7 +8,7 @@
             "name": "C Telemetry Producer",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/scenarios/telemetry/c/build/scenarios/telemetry/c/mosq_mqtt_telemetry_producer",
+            "program": "${workspaceRoot}/scenarios/telemetry/c/build/scenarios/telemetry/c/telemetry_producer",
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
             "setupCommands": [
@@ -28,7 +28,7 @@
             "name": "C Telemetry Consumer",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/scenarios/telemetry/c/build/scenarios/telemetry/c/mosq_mqtt_telemetry_consumer",
+            "program": "${workspaceRoot}/scenarios/telemetry/c/build/scenarios/telemetry/c/telemetry_consumer",
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
             "setupCommands": [
@@ -48,7 +48,7 @@
             "name": "C Getting Started",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/scenarios/getting_started/c/build/scenarios/getting_started/c/mosq_mqtt_getting_started",
+            "program": "${workspaceRoot}/scenarios/getting_started/c/build/scenarios/getting_started/c/getting_started",
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
             "setupCommands": [
