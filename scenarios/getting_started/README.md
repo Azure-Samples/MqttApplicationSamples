@@ -4,6 +4,7 @@ This sample shows how to perform basic MQTT operations: Connect, Publish and Sub
 
 The connection requires client certificates issued by a known CA.
 
+
 ## Locate CA cert files
 
 Generate a CA for this samples as described in [setup](../setup), by default the root and intermediate certificates are stored in:
@@ -19,6 +20,20 @@ To generate a client certificate, use the `step certificate create` command from
 cd getting_started
 step certificate create vehicle01 vehicle01.pem vehicle01.key --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key --no-password --insecure --not-after 2400h
 ```
+
+## Define envvars
+
+Navigate to specific scenario folder, eg: `scenarios/getting_started`
+
+```bash
+source ../../.env
+resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+hostname=$(az resource show --ids $resid --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+echo "HostName=$hostname" > .env
+echo "UserName=vehicle01" >> .env
+echo "X509Key=vehicle01.pem|vehicle01.key" >> .env
+```
+
 
 ## Configure mosquitto to accept TLS certs
 

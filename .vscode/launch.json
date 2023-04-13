@@ -8,10 +8,10 @@
             "preLaunchTask": "build_getting_started",
             "program": "${workspaceFolder}/scenarios/getting_started/dotnet/getting_started/bin/Debug/net7.0/getting_started.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/scenarios/getting_started/dotnet/getting_started",
+            "cwd": "${workspaceFolder}/scenarios/getting_started",
             "console": "integratedTerminal",
             "stopAtEntry": false,
-            "launchSettingsProfile": "cloud"
+            "envFile": "${workspaceFolder}/scenarios/getting_started/.env"
         },
         {
             "name": "telemetry_producer/dotnet",
