@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "getting_started": {
+      "commandName": "Project",
+      "workingDirectory": ".../../../../",
+      "environmentVariables": {
+        "HostName": "<mqtt-broker-endpoint>",
+        "UserName": "<mqtt-conn-username>",
+        "X509PemPath": "<file.pem>",
+        "X509KeyPath" : "<file.key>"
+      }
+    }
+  }
+}
