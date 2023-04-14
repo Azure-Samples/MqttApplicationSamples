@@ -49,7 +49,7 @@ echo "KEY_FILE=vehicle01.key" >> .env
 ```
 
 
-## Configure EG
+## Configure EgentGrid Namespace
 
 ```bash
 source ../../az.env

@@ -97,7 +97,7 @@ echo "KEY_FILE=map-app.key" >> map-app.env
 az resource create --id "$resid/topicSpaces/vehicles" --properties '{
     "topicTemplates": ["vehicles/#"],
     "subscriptionSupport": "LowFanout"
-}'s
+}'
 
 az resource create --id "$resid/permissionBindings/vehiclesPub" --properties '{
     "clientGroupName":"$all",
