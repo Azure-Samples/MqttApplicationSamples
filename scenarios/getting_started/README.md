@@ -26,9 +26,9 @@ step certificate create \
     --not-after 2400h
 
 source ../../az.env
-resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
-az resource create --id "$resid/clients/vehicle01" --properties '{
+az resource create --id "$res_id/clients/vehicle01" --properties '{
     "state": "Enabled",
     "clientCertificateAuthentication": {
         "certificateSubject": {
@@ -40,7 +40,7 @@ az resource create --id "$resid/clients/vehicle01" --properties '{
 }'
 
 
-hostname=$(az resource show --ids $resid --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
 echo "HOST_NAME=$hostname" > .env
 echo "USERNAME=vehicle01" >> .env
@@ -53,20 +53,20 @@ echo "KEY_FILE=vehicle01.key" >> .env
 
 ```bash
 source ../../az.env
-resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
-az resource create --id "$resid/topicSpaces/samples" --properties '{
+az resource create --id "$res_id/topicSpaces/samples" --properties '{
     "topicTemplates": ["sample/#"],
     "subscriptionSupport": "LowFanout"
 }'
 
-az resource create --id "$resid/permissionBindings/samplesPub" --properties '{
+az resource create --id "$res_id/permissionBindings/samplesPub" --properties '{
     "clientGroupName":"$all",
     "topicSpaceName":"samples",
     "permission":"Publisher"
 }'
 
-az resource create --id "$resid/permissionBindings/samplesSub" --properties '{
+az resource create --id "$res_id/permissionBindings/samplesSub" --properties '{
     "clientGroupName":"$all",
     "topicSpaceName":"samples",
     "permission":"Subscriber"

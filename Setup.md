@@ -51,7 +51,7 @@ source az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az account set -s $sub_id
-az resource create --id $resid --is-full-object --properties '{
+az resource create --id $res_id --is-full-object --properties '{
   "properties": {
     "topicsConfiguration": {
       "inputSchema": "CloudEventSchemaV1_0"
@@ -68,7 +68,7 @@ Register the certificate to authenticate client certificates (usually the interm
 
 ```bash
 capem=`cat ~/.step/certs/intermediate_ca.crt | tr -d "\n"`
-az resource create --id "$resid/caCertificates/Intermediate01" --properties "{\"encodedCertificate\" : \"$capem\"}"
+az resource create --id "$res_id/caCertificates/Intermediate01" --properties "{\"encodedCertificate\" : \"$capem\"}"
 ```
 
 

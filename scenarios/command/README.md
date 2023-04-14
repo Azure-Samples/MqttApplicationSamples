@@ -13,9 +13,9 @@ step certificate create \
     --not-after 2400h
 
 source ../../az.env
-resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
-az resource create --id "$resid/clients/vehicle03" --properties '{
+az resource create --id "$res_id/clients/vehicle03" --properties '{
     "state": "Enabled",
     "clientCertificateAuthentication": {
         "certificateSubject": {
@@ -26,7 +26,7 @@ az resource create --id "$resid/clients/vehicle03" --properties '{
     "description": "This is a test publisher client"
 }'
 
-hostname=$(az resource show --ids $resid --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
 echo "HOST_NAME=$hostname" > vehicle03.env
 echo "USERNAME=vehicle03" >> vehicle03.env
@@ -44,10 +44,10 @@ step certificate create \
     --not-after 2400h
 
 source ../../az.env
-resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
-hostname=$(az resource show --ids $resid --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-az resource create --id "$resid/clients/mobile-app" --properties '{
+az resource create --id "$res_id/clients/mobile-app" --properties '{
     "state": "Enabled",
     "clientCertificateAuthentication": {
         "certificateSubject": {
@@ -66,18 +66,18 @@ echo "KEY_FILE=mobile-app.key" >> mobile-app.env
 ## Configure Topics in EventGrid Namespaces
 
 ```bash
-az resource create --id "$resid/topicSpaces/vehiclesCommands" --properties '{
+az resource create --id "$res_id/topicSpaces/vehiclesCommands" --properties '{
     "topicTemplates": ["vehicles/+/command/#"],
     "subscriptionSupport": "LowFanout"
 }'
 
-az resource create --id "$resid/permissionBindings/vehiclesPub" --properties '{
+az resource create --id "$res_id/permissionBindings/vehiclesPub" --properties '{
     "clientGroupName":"$all",
     "topicSpaceName":"vehiclesCommands",
     "permission":"Publisher"
 }'
 
-az resource create --id "$resid/permissionBindings/vehiclesSub" --properties '{
+az resource create --id "$res_id/permissionBindings/vehiclesSub" --properties '{
     "clientGroupName":"$all",
     "topicSpaceName":"vehiclesCommands",
     "permission":"Subscriber"
