@@ -32,7 +32,7 @@ public class Worker : BackgroundService
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Invoking Command: {time}", DateTimeOffset.Now);
-                unlockResponse response = await commandClient.InvokeAsync("vehicle02",
+                unlockResponse response = await commandClient.InvokeAsync("vehicle03",
                     new unlockRequest
                     {
                         When = DateTime.Now.ToUniversalTime().ToTimestamp(),
