@@ -4,10 +4,10 @@
       "commandName": "Project",
       "workingDirectory": ".../../../../",
       "environmentVariables": {
-        "HostName": "<mqtt-broker-endpoint>",
-        "UserName": "<mqtt-conn-username>",
-        "X509PemPath": "<file.pem>",
-        "X509KeyPath" : "<file.key>"
+        "HOST_NAME": "<mqtt-broker-endpoint>",
+        "USERNAME": "<mqtt-conn-username>",
+        "CERT_FILE": "<file.pem>",
+        "KEY_FILE" : "<file.key>"
       }
     }
   }

@@ -13,7 +13,7 @@ public static partial class MqttNetExtensions
         builder
             .WithTcpServer(cs.HostName, cs.TcpPort)
             .WithKeepAlivePeriod(TimeSpan.FromSeconds(cs.KeepAliveInSeconds))
-            .WithCredentials(cs.UserName, cs.Password)
+            .WithCredentials(cs.Username, cs.Password)
             .WithCleanSession(cs.CleanSession)
             .WithProtocolVersion(Formatter.MqttProtocolVersion.V500)
             .WithTlsSettings(cs);
