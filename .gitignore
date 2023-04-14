@@ -8,7 +8,7 @@ _certs/
 *.pfx
 *.pem
 *.crt
-.env
+*.env
 launchSettings.json
 
 # User-specific files

@@ -11,6 +11,7 @@
             "program": "${workspaceRoot}/scenarios/telemetry/c/build/scenarios/telemetry/c/telemetry_producer",
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
+            "envFile": "${workspaceRoot}/scenarios/telemetry/telemetry_producer.env",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -31,6 +32,7 @@
             "program": "${workspaceRoot}/scenarios/telemetry/c/build/scenarios/telemetry/c/telemetry_consumer",
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
+            "envFile": "${workspaceRoot}/scenarios/telemetry/telemetry_consumer.env",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -51,6 +53,7 @@
             "program": "${workspaceRoot}/scenarios/getting_started/c/build/scenarios/getting_started/c/getting_started",
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
+            "envFile": "${workspaceRoot}/scenarios/getting_started/getting_started.env",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

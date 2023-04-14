@@ -9,8 +9,22 @@
 #include "callbacks.h"
 #include "setup.h"
 
-// #define CLIENTID    "ExampleClientGettingStarted"
+static struct connection_settings cs;
 
+void setConnectionSettings()
+{
+    cs.broker_address = getenv("BROKER_ADDRESS");
+    cs.broker_port = atoi(getenv("BROKER_PORT"));
+    cs.client_id = getenv("CLIENT_ID");
+    cs.ca_file = getenv("CA_FILE");
+    cs.ca_path = getenv("CA_PATH");
+    cs.cert_file = getenv("CERT_FILE");
+    cs.key_file = getenv("KEY_FILE");
+    cs.qos = atoi(getenv("QOS"));
+    cs.keep_alive_in_seconds = atoi(getenv("KEEP_ALIVE_IN_SECONDS"));
+    cs.use_TLS = true;
+    cs.mqtt_version = MQTT_PROTOCOL_V311;
+}
 
 void setSubscribeCallbacks(struct mosquitto *mosq)
 {
@@ -26,6 +40,7 @@ void setPublishCallbacks(struct mosquitto *mosq)
 
 struct mosquitto *initMQTT(bool subscribe, bool publish, bool useTLS, struct mosq_context *context)
 {
+    setConnectionSettings();
     struct mosquitto *mosq = NULL;
 
     /* Required before calling other mosquitto functions */
@@ -36,7 +51,7 @@ struct mosquitto *initMQTT(bool subscribe, bool publish, bool useTLS, struct mos
 	* clean session = true -> the broker should remove old sessions when we connect
 	* obj = NULL -> we aren't passing any of our private data for callbacks
 	*/
-	mosq = mosquitto_new(NULL, true, context);
+	mosq = mosquitto_new(cs.client_id, true, context);
 	if(mosq == NULL){
 		printf("Error: Out of memory.\n");
 		return NULL;
@@ -59,7 +74,7 @@ struct mosquitto *initMQTT(bool subscribe, bool publish, bool useTLS, struct mos
 
     if (useTLS)
     {
-        int rc = mosquitto_tls_set(mosq, "/home/vaavva/repos/Mosquitto/chain.pem", "/etc/ssl/certs", "/home/vaavva/repos/Mosquitto/vehicle01.pem", "/home/vaavva/repos/Mosquitto/vehicle01.key", NULL);
+        int rc = mosquitto_tls_set(mosq, cs.ca_file, cs.ca_path, cs.cert_file, cs.key_file, NULL);
 	    if(rc != MOSQ_ERR_SUCCESS){
 			mosquitto_destroy(mosq);
 			printf("TLS Error: %s\n", mosquitto_strerror(rc));
