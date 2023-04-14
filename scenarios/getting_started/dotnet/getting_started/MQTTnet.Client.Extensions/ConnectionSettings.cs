@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 
 namespace MQTTnet.Client.Extensions;
 
@@ -47,20 +48,30 @@ public class ConnectionSettings
     public static ConnectionSettings FromConnectionString(string cs) => new(cs);
     public ConnectionSettings(string cs) => ParseConnectionString(cs);
 
-    public static ConnectionSettings CreateFromEnvVars()
+    public static ConnectionSettings CreateFromEnvVars(string? envFile = "")
     {
-        if (File.Exists(".env"))
+        if (string.IsNullOrEmpty(envFile))
         {
-            foreach (var line in File.ReadAllLines(".env"))
+            envFile = ".env";
+        }
+
+        if (File.Exists(envFile))
+        {
+            Trace.TraceInformation("Loading environment variables from {envFile}" + new FileInfo(envFile).FullName);
+            foreach (var line in File.ReadAllLines(envFile))
             {
                 var parts = line.Split('=',StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length != 2)
-                    continue;
+                if (parts.Length != 2) continue;
                 Environment.SetEnvironmentVariable(parts[0], parts[1]);
             }
         }
+        else
+        {
+            Trace.TraceWarning($"EnvFile Not found in path {new DirectoryInfo(".").FullName} {envFile}");
+        }
         
-        string Env(string name) => Environment.GetEnvironmentVariable(name) ?? string.Empty;
+        static string Env(string name) => Environment.GetEnvironmentVariable(name) ?? string.Empty;
+
         return new ConnectionSettings
         {
             HostName = Env(nameof(HostName)),

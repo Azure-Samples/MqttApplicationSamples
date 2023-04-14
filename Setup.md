@@ -35,6 +35,37 @@ Access the Azure portal by using [this link](https://portal.azure.com/?microsoft
 
 > Each scenario includes detailed instructions to configure TopicSpaces, Clients and Permissions, along with `az cli` scripts.
 
+Update `/.env` with subscription, resourcegroup, and the name for the EventGrid Namespace.
+
+Create the service
+
+```bash
+source .env
+
+resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+
+az account set -s $sub_id
+az resource create --id $resid --is-full-object --properties '{
+  "properties": {
+    "topicsConfiguration": {
+      "inputSchema": "CloudEventSchemaV1_0"
+    },
+    "topicSpacesConfiguration": {
+      "state": "Enabled"
+    }
+  },
+  "location": "eastus2euap"
+}'
+```
+
+Register the certificate to authenticate client certificates (usually the intermediate)
+
+```bash
+capem=`cat ~/.step/certs/intermediate_ca.crt | tr -d "\n"`
+az resource create --id "$resid/caCertificates/Intermediate01" --properties "{\"encodedCertificate\" : \"$capem\"}"
+```
+
+
 ## Configure Mosquitto with TLS and X509 Authentication
 
 Using the test ca, create certificates for `localhost`. 

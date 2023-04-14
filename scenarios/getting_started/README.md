@@ -23,17 +23,45 @@ step certificate create vehicle01 vehicle01.pem vehicle01.key --ca ~/.step/certs
 
 ## Define envvars
 
-Navigate to specific scenario folder, eg: `scenarios/getting_started`
+Navigate to specific scenario folder, eg: `cd scenarios/getting_started`
+
+Run `create_scenario_env.sh`
+
+```bash
+source ../../.env
+
+resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+hostname=$(az resource show --ids $resid --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+
+echo "HostName=$hostname" > .env
+echo "UserName=vehicle01" >> .env
+echo "X509PemPath=vehicle01.pem" >> .env
+echo "X509KeyPath=vehicle01.key" >> .env
+```
+
+## Configure EG
 
 ```bash
 source ../../.env
 resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
-hostname=$(az resource show --ids $resid --query "properties.topicSpacesConfiguration.hostname" -o tsv)
-echo "HostName=$hostname" > .env
-echo "UserName=vehicle01" >> .env
-echo "X509Key=vehicle01.pem|vehicle01.key" >> .env
-```
 
+az resource create --id "$resid/topicSpaces/samples" --properties '{
+    "topicTemplates": ["sample/#"],
+    "subscriptionSupport": "LowFanout"
+}'
+
+az resource create --id "$resid/permissionBindings/samplesPub" --properties '{
+    "clientGroupName":"$all",
+    "topicSpaceName":"samples",
+    "permission":"Publisher"
+}'
+
+az resource create --id "$resid/permissionBindings/samplesSub" --properties '{
+    "clientGroupName":"$all",
+    "topicSpaceName":"samples",
+    "permission":"Subscriber"
+}'
+```
 
 ## Configure mosquitto to accept TLS certs
 
@@ -43,4 +71,4 @@ To establish the TLS connection, the CA needs to be trusted, most MQTT clients a
 cd _mosquitto
 cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
 ```
-
+The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.

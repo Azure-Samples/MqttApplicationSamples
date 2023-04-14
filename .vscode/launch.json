@@ -11,7 +11,10 @@
             "cwd": "${workspaceFolder}/scenarios/getting_started",
             "console": "integratedTerminal",
             "stopAtEntry": false,
-            "envFile": "${workspaceFolder}/scenarios/getting_started/.env"
+            "env": {
+                "HostName" : "localhost"
+            }
+
         },
         {
             "name": "telemetry_producer/dotnet",
@@ -19,11 +22,10 @@
             "request": "launch",
             "preLaunchTask": "build_telemetry",
             "program": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_producer/bin/Debug/net7.0/telemetry_producer.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_producer",
+            "cwd": "${workspaceFolder}/scenarios/telemetry/",
+            "args": ["--envFile", "vehicle01.env"],
             "console": "integratedTerminal",
             "stopAtEntry": false,
-            "launchSettingsProfile": "cloud"
         },
         {
             "name": "telemetry_consumer/dotnet",
@@ -31,11 +33,10 @@
             "request": "launch",
             "preLaunchTask": "build_telemetry",
             "program": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_consumer/bin/Debug/net7.0/telemetry_consumer.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_consumer",
+            "cwd": "${workspaceFolder}/scenarios/telemetry/",
+            "args": ["--envFile", "map-app.env"],
             "console": "integratedTerminal",
-            "stopAtEntry": false,
-            "launchSettingsProfile": "cloud"
+            "stopAtEntry": false
         },
         {
             "name": "command_consumer/dotnet",

@@ -16,7 +16,7 @@ az resource create --id $resid --is-full-object --properties '{
 }'
 
 capem=`cat ~/.step/certs/intermediate_ca.crt | tr -d "\n"`
-az resource create --id "$resid/caCertificates/MqttAppSamplesCA" --properties "{\"encodedCertificate\" : \"$capem\"}"
+az resource create --id "$resid/caCertificates/RidoCAFY23Intermediate01" --properties "{\"encodedCertificate\" : \"$capem\"}"
 
 az resource create --id "$resid/clients/vehicle01" --properties '{
     "state": "Enabled",
