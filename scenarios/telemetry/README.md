@@ -20,7 +20,7 @@ step certificate create map-app map-app.pem map-app.key --ca ~/.step/certs/inter
 ```bash
 az resource create --id "$resid/clients/vehicle01" --properties '{
     "state": "Enabled",
-    "authentication": {
+    "clientCertificateAuthentication": {
         "certificateSubject": {
             "commonName": "vehicle01"
         }
@@ -31,7 +31,7 @@ az resource create --id "$resid/clients/vehicle01" --properties '{
 
 az resource create --id "$resid/clients/vehicle02" --properties '{
     "state": "Enabled",
-    "authentication": {
+    "clientCertificateAuthentication": {
         "certificateSubject": {
             "commonName": "vehicle02"
         }

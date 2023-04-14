@@ -46,6 +46,26 @@ public class ConnectionSettings
     public static ConnectionSettings FromConnectionString(string cs) => new(cs);
     public ConnectionSettings(string cs) => ParseConnectionString(cs);
 
+    public static ConnectionSettings CreateFromEnvVars()
+    {
+        string Env(string name) => System.Environment.GetEnvironmentVariable(name) ?? string.Empty;
+        return new ConnectionSettings
+        {
+            HostName = Env(nameof(HostName)),
+            DeviceId = Env(nameof(DeviceId)),
+            ClientId = Env(nameof(ClientId)),
+            X509Key = Env(nameof(X509Key)),
+            UserName = Env(nameof(UserName)),
+            Password = Env(nameof(Password)),
+            KeepAliveInSeconds = int.TryParse(Env(nameof(KeepAliveInSeconds)), out int keepAliveInSeconds) ? keepAliveInSeconds : Default_KeepAliveInSeconds,
+            CleanSession = Env(nameof(CleanSession)) == "true",
+            TcpPort = int.TryParse(Env(nameof(TcpPort)), out int tcpPort) ? tcpPort : Default_TcpPort,
+            UseTls = string.IsNullOrEmpty(Env(nameof(UseTls))) ? Default_UseTls == "true" : Env(nameof(UseTls)) == "true",
+            CaFile = Env(nameof(CaFile)),
+            DisableCrl = Env(nameof(DisableCrl)) == "true"
+        };
+    }
+
     private static string GetStringValue(IDictionary<string, string> dict, string propertyName, string defaultValue = "")
     {
         string result = defaultValue;

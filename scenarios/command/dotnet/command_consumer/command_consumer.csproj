@@ -7,7 +7,7 @@
 		<UserSecretsId>dotnet-command_consumer-17efa807-fce3-4773-86c3-28cc5202b7a6</UserSecretsId>
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Include="..\..\..\..\getting_started\dotnet\getting_started\MQTTnet.Client.Extensions\*">
+		<Compile Include=".\..\..\..\getting_started\dotnet\getting_started\MQTTnet.Client.Extensions\*">
 			<Link>MqttClientExtensions\%(RecursiveDir)%(Filename)%(Extension)</Link>
 		</Compile>
 	</ItemGroup>
