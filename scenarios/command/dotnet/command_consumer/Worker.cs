@@ -9,16 +9,17 @@ namespace command_consumer;
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-
-    public Worker(ILogger<Worker> logger)
+    private readonly IConfiguration _configuration;
+    public Worker(ILogger<Worker> logger, IConfiguration configuration)
     {
         _logger = logger;
+        _configuration = configuration;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
 
-        var cs = ConnectionSettings.CreateFromEnvVars();
+        var cs = ConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile"));
         _logger.LogInformation("Connecting to {cs}", cs);
 
         var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
@@ -38,7 +39,7 @@ public class Worker : BackgroundService
                         RequestedFrom = mqttClient.InternalClient.Options.ClientId
                     }, 2);
                 _logger.LogInformation("Command response: {res}", response.Succeed);
-                await Task.Delay(5000, stoppingToken);
+                await Task.Delay(2000, stoppingToken);
             }
         };
 

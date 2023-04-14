@@ -12,32 +12,40 @@ Generate a CA for this samples as described in [setup](../setup), by default the
 - `~/.certs/root_ca.crt`
 - `~/.certs/intermediate_ca.crt`
 
-## Generate Client Certificates
+## Configure the client
 
-To generate a client certificate, use the `step certificate create` command from this folder, eg. to create a `vehicle01` certificate issued from the intermediate CA:
+To configure the client you need to  generate a client certificate, register the client, and create the .env file with those settings:
 
 ```bash
 cd getting_started
-step certificate create vehicle01 vehicle01.pem vehicle01.key --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key --no-password --insecure --not-after 2400h
-```
+step certificate create \
+    vehicle01 vehicle01.pem vehicle01.key \
+    --ca ~/.step/certs/intermediate_ca.crt \
+    --ca-key ~/.step/secrets/intermediate_ca_key \
+    --no-password --insecure \
+    --not-after 2400h
 
-## Define envvars
+az resource create --id "$resid/clients/vehicle01" --properties '{
+    "state": "Enabled",
+    "clientCertificateAuthentication": {
+        "certificateSubject": {
+            "commonName": "vehicle01"
+        }
+    },
+    "attributes": {},
+    "description": "This is a test publisher client"
+}'
 
-Navigate to specific scenario folder, eg: `cd scenarios/getting_started`
-
-Run `create_scenario_env.sh`
-
-```bash
 source ../../.env
-
 resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 hostname=$(az resource show --ids $resid --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-echo "HostName=$hostname" > .env
-echo "UserName=vehicle01" >> .env
-echo "X509PemPath=vehicle01.pem" >> .env
-echo "X509KeyPath=vehicle01.key" >> .env
+echo "HOST_NAME=$hostname" > .env
+echo "USERNAME=vehicle01" >> .env
+echo "CERT_FILE=vehicle01.pem" >> .env
+echo "KEY_FILE=vehicle01.key" >> .env
 ```
+
 
 ## Configure EG
 
