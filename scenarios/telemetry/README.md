@@ -26,7 +26,7 @@ az resource create --id "$resid/clients/vehicle01" --properties '{
     "description": "This is a test publisher client"
 }'
 
-source ../../.env
+source ../../az.env
 resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 hostname=$(az resource show --ids $resid --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 

@@ -12,7 +12,7 @@ step certificate create \
     --no-password --insecure \
     --not-after 2400h
 
-source ../../.env
+source ../../az.env
 resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$resid/clients/vehicle03" --properties '{
@@ -43,7 +43,7 @@ step certificate create \
     --no-password --insecure \
     --not-after 2400h
 
-source ../../.env
+source ../../az.env
 resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 hostname=$(az resource show --ids $resid --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 

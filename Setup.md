@@ -35,12 +35,18 @@ Access the Azure portal by using [this link](https://portal.azure.com/?microsoft
 
 > Each scenario includes detailed instructions to configure TopicSpaces, Clients and Permissions, along with `az cli` scripts.
 
-Update `/.env` with subscription, resourcegroup, and the name for the EventGrid Namespace.
+Update `/az.env` with subscription, resourcegroup, and the name for the EventGrid Namespace.
+
+```text
+sub_id="<subscription-id>"
+rg="resource-group-name"
+name="event-grid-namespace"
+```
 
 Create the service
 
 ```bash
-source .env
+source az.env
 
 resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 

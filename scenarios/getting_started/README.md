@@ -25,6 +25,9 @@ step certificate create \
     --no-password --insecure \
     --not-after 2400h
 
+source ../../az.env
+resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+
 az resource create --id "$resid/clients/vehicle01" --properties '{
     "state": "Enabled",
     "clientCertificateAuthentication": {
@@ -36,8 +39,7 @@ az resource create --id "$resid/clients/vehicle01" --properties '{
     "description": "This is a test publisher client"
 }'
 
-source ../../.env
-resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+
 hostname=$(az resource show --ids $resid --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
 echo "HOST_NAME=$hostname" > .env
@@ -50,7 +52,7 @@ echo "KEY_FILE=vehicle01.key" >> .env
 ## Configure EG
 
 ```bash
-source ../../.env
+source ../../az.env
 resid="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$resid/topicSpaces/samples" --properties '{
