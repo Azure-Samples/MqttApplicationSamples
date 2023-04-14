@@ -4,10 +4,10 @@
       "commandName": "Project",
       "workingDirectory": "../../"
     },
-    "map-app": {
+    "vehicle03": {
       "commandName": "Project",
       "workingDirectory": "../../",
-      "commandLineArgs": "--envFile=map-app.env"
+      "commandLineArgs": "--envFile=vehicle03.env"
     }
   }
 }
