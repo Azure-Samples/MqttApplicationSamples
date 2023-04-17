@@ -9,31 +9,33 @@
 #include "callbacks.h"
 #include "setup.h"
 
-void read_env_file(char *filePath)
+void read_env_file( char * filePath )
 {
-    FILE *fptr = fopen(filePath, "r");
-    if (fptr != NULL)
+    FILE * fptr = fopen( filePath, "r" );
+
+    if( fptr != NULL )
     {
-        char envString[300];
-        char envName[30];
-        char envValue[256];
-        while (fscanf(fptr,"%s", envString) == 1)
+        char envString[ 300 ];
+        char envName[ 30 ];
+        char envValue[ 256 ];
+
+        while( fscanf( fptr, "%s", envString ) == 1 )
         {
-            char *envName = strtok(envString, "=");
-            char *envValue = strtok(NULL, "=\"");
-            printf("Setting %s = %s\n", envName, envValue);
-            setenv(envName, envValue, 1);
+            char * envName = strtok( envString, "=" );
+            char * envValue = strtok( NULL, "=\"" );
+            printf( "Setting %s = %s\n", envName, envValue );
+            setenv( envName, envValue, 1 );
         }
     }
     else
     {
-        printf("Cannot open env file, will try to use environment variables. \n");
+        printf( "Cannot open env file, will try to use environment variables. \n" );
     }
-    
-    fclose(fptr);
+
+    fclose( fptr );
 }
 
-void setConnectionSettings(struct connection_settings * cs)
+void setConnectionSettings( struct connection_settings * cs )
 {
     cs->broker_address = getenv( "HOSTNAME" );
     cs->broker_port = atoi( getenv( "TCP_PORT" ) );
@@ -44,8 +46,8 @@ void setConnectionSettings(struct connection_settings * cs)
     cs->key_file = getenv( "KEY_FILE" );
     cs->qos = atoi( getenv( "QOS" ) );
     cs->keep_alive_in_seconds = atoi( getenv( "KEEP_ALIVE_IN_SECONDS" ) );
-    char *use_TLS = getenv( "USE_TLS" );
-    cs->use_TLS = (use_TLS != NULL && strcmp(use_TLS, "TLS_") == 0) ? true : false;
+    char * use_TLS = getenv( "USE_TLS" );
+    cs->use_TLS = ( use_TLS != NULL && strcmp( use_TLS, "TLS_" ) == 0 ) ? true : false;
     cs->mqtt_version = atoi( getenv( "MQTT_VERSION" ) );
     cs->username = getenv( "USERNAME" );
     cs->password = getenv( "PASSWORD" );
@@ -69,17 +71,19 @@ struct mosquitto * initMQTT( bool publish,
                              struct connection_settings * cs )
 {
     bool subscribe = false;
-    if (cs->subTopic)
+
+    if( cs->subTopic )
     {
-        setenv("SUB_TOPIC", cs->sub_topic, 1);
+        setenv( "SUB_TOPIC", cs->sub_topic, 1 );
         subscribe = true;
     }
 
-    if (envFile != NULL)
+    if( envFile != NULL )
     {
-        read_env_file(envFile);
+        read_env_file( envFile );
     }
-    setConnectionSettings(cs);
+
+    setConnectionSettings( cs );
     struct mosquitto * mosq = NULL;
 
     /* Required before calling other mosquitto functions */
@@ -115,9 +119,10 @@ struct mosquitto * initMQTT( bool publish,
             mosquitto_connect_callback_set( mosq, on_connect );
         }
     }
+
     int rc;
 
-    if (cs->username)
+    if( cs->username )
     {
         rc = mosquitto_username_pw_set( mosq, cs->username, NULL );
 
@@ -128,11 +133,10 @@ struct mosquitto * initMQTT( bool publish,
             return NULL;
         }
     }
-    
 
     if( cs->use_TLS )
     {
-        // rc = mosquitto_tls_set( mosq, cs->ca_file, NULL, cs->cert_file, cs->key_file, NULL );
+        /* rc = mosquitto_tls_set( mosq, cs->ca_file, NULL, cs->cert_file, cs->key_file, NULL ); */
         rc = mosquitto_tls_set( mosq, NULL, cs->ca_path, cs->cert_file, cs->key_file, NULL );
 
         if( rc != MOSQ_ERR_SUCCESS )

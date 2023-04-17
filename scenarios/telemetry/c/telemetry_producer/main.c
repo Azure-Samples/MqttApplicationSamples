@@ -9,22 +9,23 @@
 #include <mosquitto.h>
 #include "setup.h"
 
-#define TOPIC          "MQTT Examples"
-#define PAYLOAD        "Hello World!"
+#define TOPIC      "MQTT Examples"
+#define PAYLOAD    "Hello World!"
 
 /*
  * This sample sends five telemetry messages to the Broker. X509 self-certification is used.
  */
-int main(  int argc, char *argv[] )
+int main( int argc,
+          char * argv[] )
 {
     struct mosquitto * mosq;
     int rc = 0;
     struct mosq_context * mqtt_context = calloc( 1, sizeof( struct mosq_context ) );
-    struct connection_settings * cs = calloc(1, sizeof( struct connection_settings));
+    struct connection_settings * cs = calloc( 1, sizeof( struct connection_settings ) );
 
     mqtt_context->messagesSent = 0;
 
-    mosq = initMQTT( false, true, argv[1], mqtt_context, cs );
+    mosq = initMQTT( false, true, argv[ 1 ], mqtt_context, cs );
 
     rc = mosquitto_connect( mosq, cs->broker_address, cs->broker_port, 60 );
 

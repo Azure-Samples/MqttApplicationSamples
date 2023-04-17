@@ -15,17 +15,19 @@
 /*
  * This sample sends and receives five telemetry messages to/from the Broker. X509 self-certification is used.
  */
-int main( int argc, char *argv[] )
+int main( int argc,
+          char * argv[] )
 {
     struct mosquitto * mosq;
     int rc = 0;
     struct mosq_context * mqtt_context = calloc( 1, sizeof( struct mosq_context ) );
-    struct connection_settings * cs = calloc(1, sizeof( struct connection_settings));
+    struct connection_settings * cs = calloc( 1, sizeof( struct connection_settings ) );
 
     cs->sub_topic = "sample/+";
     mqtt_context->messagesSent = 0;
     mqtt_context->messagesReceived = 0;
-    mosq = initMQTT( true, true, argv[1], mqtt_context, cs );
+
+    mosq = initMQTT( true, true, argv[ 1 ], mqtt_context, cs );
     rc = mosquitto_connect( mosq, cs->broker_address, cs->broker_port, cs->keep_alive_in_seconds );
 
     if( rc != MOSQ_ERR_SUCCESS )
