@@ -9,26 +9,24 @@
 #include <mosquitto.h>
 #include "setup.h"
 
-#define TOPIC      "MQTT Examples"
 #define PAYLOAD    "Hello World!"
 
 
 /*
  * This sample sends and receives five telemetry messages to/from the Broker. X509 self-certification is used.
  */
-int main( void )
+int main( int argc, char *argv[] )
 {
-    int port = atoi( getenv( "BROKER_PORT" ) );
-    int qos = atoi( getenv( "QOS" ) );
     struct mosquitto * mosq;
     int rc = 0;
-    struct mosq_context * context = calloc( 1, sizeof( struct mosq_context ) );
+    struct mosq_context * mqtt_context = calloc( 1, sizeof( struct mosq_context ) );
+    struct connection_settings * cs = calloc(1, sizeof( struct connection_settings));
 
-    context->messagesSent = 0;
-    context->messagesReceived = 0;
-
-    mosq = initMQTT( true, true, true, context );
-    rc = mosquitto_connect( mosq, getenv( "BROKER_ADDRESS" ), port, 60 );
+    cs->sub_topic = "sample/+";
+    mqtt_context->messagesSent = 0;
+    mqtt_context->messagesReceived = 0;
+    mosq = initMQTT( true, true, argv[1], mqtt_context, cs );
+    rc = mosquitto_connect( mosq, cs->broker_address, cs->broker_port, cs->keep_alive_in_seconds );
 
     if( rc != MOSQ_ERR_SUCCESS )
     {
@@ -46,10 +44,10 @@ int main( void )
         return 1;
     }
 
-    while( context->messagesSent < 5 )
+    while( mqtt_context->messagesSent < 5 )
     {
         sleep( 1 );
-        rc = mosquitto_publish( mosq, NULL, TOPIC, ( int ) strlen( PAYLOAD ), PAYLOAD, qos, false );
+        rc = mosquitto_publish( mosq, NULL, "sample/topic1", ( int ) strlen( PAYLOAD ), PAYLOAD, cs->qos, false );
 
         if( rc != MOSQ_ERR_SUCCESS )
         {
@@ -60,6 +58,7 @@ int main( void )
     mosquitto_loop_stop( mosq, false );
 
     mosquitto_lib_cleanup();
-    free( context );
+    free( mqtt_context );
+    free( cs );
     return 0;
 }

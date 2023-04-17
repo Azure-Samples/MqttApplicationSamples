@@ -7,36 +7,36 @@
     },
     "configurePresets": [
         {
-            "name": "telemetry/c",
+            "name": "telemetry",
             "displayName": "C Telemetry",
-            "binaryDir": "${sourceDir}/scenarios/${presetName}/build",
+            "binaryDir": "${sourceDir}/scenarios/${presetName}/c/build",
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "PRESET_PATH": "${sourceDir}/scenarios/${presetName}"
+                "PRESET_PATH": "${sourceDir}/scenarios/${presetName}/c"
             }
         },
         {
-            "name": "getting_started/c",
+            "name": "getting_started",
             "displayName": "C Getting Started",
-            "binaryDir": "${sourceDir}/scenarios/${presetName}/build",
+            "binaryDir": "${sourceDir}/scenarios/${presetName}/c/build",
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "PRESET_PATH": "${sourceDir}/scenarios/${presetName}"
+                "PRESET_PATH": "${sourceDir}/scenarios/${presetName}/c"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "telemetry/c",
+            "name": "telemetry",
             "displayName": "C Telemetry",
-            "configurePreset": "telemetry/c"
+            "configurePreset": "telemetry"
         },
         {
-            "name": "getting_started/c",
+            "name": "getting_started",
             "displayName": "C Getting Started",
-            "configurePreset": "getting_started/c"
+            "configurePreset": "getting_started"
         }
     ]
 }

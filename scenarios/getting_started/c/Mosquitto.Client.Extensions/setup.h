@@ -26,9 +26,12 @@ struct connection_settings
     int keep_alive_in_seconds;
     bool use_TLS;
     int mqtt_version;
+    char * username;
+    char * password;
+    char * sub_topic;
 };
 
-struct mosquitto * initMQTT( bool subscribe,
-                             bool publish,
-                             bool useTLS,
-                             struct mosq_context * context );
+struct mosquitto * initMQTT( bool publish,
+                             char * envFile,
+                             struct mosq_context * context,
+                             struct connection_settings * cs );

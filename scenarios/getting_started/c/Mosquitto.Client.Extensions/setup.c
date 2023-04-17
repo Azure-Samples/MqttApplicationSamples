@@ -9,21 +9,46 @@
 #include "callbacks.h"
 #include "setup.h"
 
-static struct connection_settings cs;
-
-void setConnectionSettings()
+void read_env_file(char *filePath)
 {
-    cs.broker_address = getenv( "BROKER_ADDRESS" );
-    cs.broker_port = atoi( getenv( "BROKER_PORT" ) );
-    cs.client_id = getenv( "CLIENT_ID" );
-    cs.ca_file = getenv( "CA_FILE" );
-    cs.ca_path = getenv( "CA_PATH" );
-    cs.cert_file = getenv( "CERT_FILE" );
-    cs.key_file = getenv( "KEY_FILE" );
-    cs.qos = atoi( getenv( "QOS" ) );
-    cs.keep_alive_in_seconds = atoi( getenv( "KEEP_ALIVE_IN_SECONDS" ) );
-    cs.use_TLS = true;
-    cs.mqtt_version = MQTT_PROTOCOL_V311;
+    FILE *fptr = fopen(filePath, "r");
+    if (fptr != NULL)
+    {
+        char envString[300];
+        char envName[30];
+        char envValue[256];
+        while (fscanf(fptr,"%s", envString) == 1)
+        {
+            char *envName = strtok(envString, "=");
+            char *envValue = strtok(NULL, "=\"");
+            printf("Setting %s = %s\n", envName, envValue);
+            setenv(envName, envValue, 1);
+        }
+    }
+    else
+    {
+        printf("Cannot open env file, will try to use environment variables. \n");
+    }
+    
+    fclose(fptr);
+}
+
+void setConnectionSettings(struct connection_settings * cs)
+{
+    cs->broker_address = getenv( "HOSTNAME" );
+    cs->broker_port = atoi( getenv( "TCP_PORT" ) );
+    cs->client_id = getenv( "CLIENT_ID" );
+    cs->ca_file = getenv( "CA_FILE" );
+    cs->ca_path = getenv( "CA_PATH" );
+    cs->cert_file = getenv( "CERT_FILE" );
+    cs->key_file = getenv( "KEY_FILE" );
+    cs->qos = atoi( getenv( "QOS" ) );
+    cs->keep_alive_in_seconds = atoi( getenv( "KEEP_ALIVE_IN_SECONDS" ) );
+    char *use_TLS = getenv( "USE_TLS" );
+    cs->use_TLS = (use_TLS != NULL && strcmp(use_TLS, "TLS_") == 0) ? true : false;
+    cs->mqtt_version = atoi( getenv( "MQTT_VERSION" ) );
+    cs->username = getenv( "USERNAME" );
+    cs->password = getenv( "PASSWORD" );
 }
 
 void setSubscribeCallbacks( struct mosquitto * mosq )
@@ -38,12 +63,23 @@ void setPublishCallbacks( struct mosquitto * mosq )
     mosquitto_publish_callback_set( mosq, on_publish );
 }
 
-struct mosquitto * initMQTT( bool subscribe,
-                             bool publish,
-                             bool useTLS,
-                             struct mosq_context * context )
+struct mosquitto * initMQTT( bool publish,
+                             char * envFile,
+                             struct mosq_context * context,
+                             struct connection_settings * cs )
 {
-    setConnectionSettings();
+    bool subscribe = false;
+    if (cs->subTopic)
+    {
+        setenv("SUB_TOPIC", cs->sub_topic, 1);
+        subscribe = true;
+    }
+
+    if (envFile != NULL)
+    {
+        read_env_file(envFile);
+    }
+    setConnectionSettings(cs);
     struct mosquitto * mosq = NULL;
 
     /* Required before calling other mosquitto functions */
@@ -54,7 +90,7 @@ struct mosquitto * initMQTT( bool subscribe,
      * clean session = true -> the broker should remove old sessions when we connect
      * obj = NULL -> we aren't passing any of our private data for callbacks
      */
-    mosq = mosquitto_new( cs.client_id, true, context );
+    mosq = mosquitto_new( cs->client_id, true, context );
 
     if( mosq == NULL )
     {
@@ -79,10 +115,25 @@ struct mosquitto * initMQTT( bool subscribe,
             mosquitto_connect_callback_set( mosq, on_connect );
         }
     }
+    int rc;
 
-    if( useTLS )
+    if (cs->username)
     {
-        int rc = mosquitto_tls_set( mosq, cs.ca_file, cs.ca_path, cs.cert_file, cs.key_file, NULL );
+        rc = mosquitto_username_pw_set( mosq, cs->username, NULL );
+
+        if( rc != MOSQ_ERR_SUCCESS )
+        {
+            mosquitto_destroy( mosq );
+            printf( "Error setting username/password: %s\n", mosquitto_strerror( rc ) );
+            return NULL;
+        }
+    }
+    
+
+    if( cs->use_TLS )
+    {
+        // rc = mosquitto_tls_set( mosq, cs->ca_file, NULL, cs->cert_file, cs->key_file, NULL );
+        rc = mosquitto_tls_set( mosq, NULL, cs->ca_path, cs->cert_file, cs->key_file, NULL );
 
         if( rc != MOSQ_ERR_SUCCESS )
         {

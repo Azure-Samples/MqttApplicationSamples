@@ -9,9 +9,6 @@
 #include "callbacks.h"
 #include "setup.h"
 
-#define TOPIC    "MQTT Examples"
-#define QOS      1
-
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect( struct mosquitto * mosq,
                  void * obj,
@@ -44,7 +41,7 @@ void on_connect_with_subscribe( struct mosquitto * mosq,
     /* Making subscriptions in the on_connect() callback means that if the
      * connection drops and is automatically resumed by the client, then the
      * subscriptions will be recreated when the client reconnects. */
-    rc = mosquitto_subscribe( mosq, NULL, TOPIC, atoi( getenv( "QOS" ) ) );
+    rc = mosquitto_subscribe( mosq, NULL, getenv( "SUB_TOPIC" ), atoi( getenv( "QOS" ) ) );
 
     if( rc != MOSQ_ERR_SUCCESS )
     {
