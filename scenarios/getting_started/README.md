@@ -17,7 +17,7 @@ Generate a CA for this samples as described in [setup](../setup), by default the
 To configure the client you need to  generate a client certificate, register the client, and create the .env file with those settings:
 
 ```bash
-cd getting_started
+cd scenarios/getting_started
 step certificate create \
     vehicle01 vehicle01.pem vehicle01.key \
     --ca ~/.step/certs/intermediate_ca.crt \
