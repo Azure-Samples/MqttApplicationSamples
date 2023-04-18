@@ -15,16 +15,18 @@ struct mosq_context
 
 struct connection_settings
 {
-    char * broker_address;
-    int broker_port;
+    char * hostname;
+    int tcp_port;
     char * client_id;
     char * ca_file;
     char * ca_path;
     char * cert_file;
     char * key_file;
+    char * key_file_password;
     int qos;
     int keep_alive_in_seconds;
     bool use_TLS;
+    bool clean_session;
     int mqtt_version;
     char * username;
     char * password;

@@ -11,6 +11,11 @@
 
 void read_env_file( char * filePath )
 {
+    // TODO: think about whether this is an issue if we specify the env variables in launch.json, but have a .env that then overwrites them
+    if (filePath == NULL)
+    {
+        filePath = ".env";
+    }
     FILE * fptr = fopen( filePath, "r" );
 
     if( fptr != NULL )
@@ -37,20 +42,24 @@ void read_env_file( char * filePath )
 
 void setConnectionSettings( struct connection_settings * cs )
 {
-    cs->broker_address = getenv( "HOSTNAME" );
-    cs->broker_port = atoi( getenv( "TCP_PORT" ) );
+    cs->hostname = getenv( "HOSTNAME" );
+    cs->tcp_port = atoi( getenv( "TCP_PORT" ) ? : "8883" );
     cs->client_id = getenv( "CLIENT_ID" );
     cs->ca_file = getenv( "CA_FILE" );
-    cs->ca_path = getenv( "CA_PATH" );
+    // TODO: this won't work because we could keep an env var from a previous session
+    cs->ca_path = getenv( "CA_PATH" ) ? : cs->ca_file ? NULL : "/etc/ssl/certs";
     cs->cert_file = getenv( "CERT_FILE" );
     cs->key_file = getenv( "KEY_FILE" );
-    cs->qos = atoi( getenv( "QOS" ) );
-    cs->keep_alive_in_seconds = atoi( getenv( "KEEP_ALIVE_IN_SECONDS" ) );
+    cs->key_file_password = getenv( "KEY_FILE_PASSWORD" );
+    cs->qos = atoi( getenv( "QOS" ) ? : "1" );
+    cs->keep_alive_in_seconds = atoi( getenv( "KEEP_ALIVE_IN_SECONDS" ) ? : "30" );
     char * use_TLS = getenv( "USE_TLS" );
+    // TODO: fix & default to true
     cs->use_TLS = ( use_TLS != NULL && strcmp( use_TLS, "TLS_" ) == 0 ) ? true : false;
-    cs->mqtt_version = atoi( getenv( "MQTT_VERSION" ) );
+    cs->mqtt_version = atoi( getenv( "MQTT_VERSION" ) ? : "4" );
     cs->username = getenv( "USERNAME" );
     cs->password = getenv( "PASSWORD" );
+    cs->clean_session = atol(getenv( "CLEAN_SESSION" ) ? : "true");
 }
 
 void setSubscribeCallbacks( struct mosquitto * mosq )
@@ -72,16 +81,13 @@ struct mosquitto * initMQTT( bool publish,
 {
     bool subscribe = false;
 
-    if( cs->subTopic )
+    if( cs->sub_topic )
     {
         setenv( "SUB_TOPIC", cs->sub_topic, 1 );
         subscribe = true;
     }
 
-    if( envFile != NULL )
-    {
-        read_env_file( envFile );
-    }
+    read_env_file( envFile );
 
     setConnectionSettings( cs );
     struct mosquitto * mosq = NULL;
@@ -94,7 +100,7 @@ struct mosquitto * initMQTT( bool publish,
      * clean session = true -> the broker should remove old sessions when we connect
      * obj = NULL -> we aren't passing any of our private data for callbacks
      */
-    mosq = mosquitto_new( cs->client_id, true, context );
+    mosq = mosquitto_new( cs->client_id, cs->clean_session, context );
 
     if( mosq == NULL )
     {
@@ -124,7 +130,7 @@ struct mosquitto * initMQTT( bool publish,
 
     if( cs->username )
     {
-        rc = mosquitto_username_pw_set( mosq, cs->username, NULL );
+        rc = mosquitto_username_pw_set( mosq, cs->username, cs->password );
 
         if( rc != MOSQ_ERR_SUCCESS )
         {
@@ -136,8 +142,7 @@ struct mosquitto * initMQTT( bool publish,
 
     if( cs->use_TLS )
     {
-        /* rc = mosquitto_tls_set( mosq, cs->ca_file, NULL, cs->cert_file, cs->key_file, NULL ); */
-        rc = mosquitto_tls_set( mosq, NULL, cs->ca_path, cs->cert_file, cs->key_file, NULL );
+        rc = mosquitto_tls_set( mosq, cs->ca_file, cs->ca_path, cs->cert_file, cs->key_file, NULL );
 
         if( rc != MOSQ_ERR_SUCCESS )
         {

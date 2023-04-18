@@ -11,7 +11,6 @@
 
 #define PAYLOAD    "Hello World!"
 
-
 /*
  * This sample sends and receives five telemetry messages to/from the Broker. X509 self-certification is used.
  */
@@ -27,8 +26,8 @@ int main( int argc,
     mqtt_context->messagesSent = 0;
     mqtt_context->messagesReceived = 0;
 
-    mosq = initMQTT( true, true, argv[ 1 ], mqtt_context, cs );
-    rc = mosquitto_connect( mosq, cs->broker_address, cs->broker_port, cs->keep_alive_in_seconds );
+    mosq = initMQTT( true, argv[ 1 ], mqtt_context, cs );
+    rc = mosquitto_connect( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds );
 
     if( rc != MOSQ_ERR_SUCCESS )
     {

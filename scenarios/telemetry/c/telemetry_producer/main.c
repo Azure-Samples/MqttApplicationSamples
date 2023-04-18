@@ -27,7 +27,7 @@ int main( int argc,
 
     mosq = initMQTT( false, true, argv[ 1 ], mqtt_context, cs );
 
-    rc = mosquitto_connect( mosq, cs->broker_address, cs->broker_port, 60 );
+    rc = mosquitto_connect( mosq, cs->hostname, cs->tcp_port, 60 );
 
     if( rc != MOSQ_ERR_SUCCESS )
     {
