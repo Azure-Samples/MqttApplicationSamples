@@ -1,5 +1,5 @@
 # Install mosquitto client
-sudo apt-get update && sudo apt-get install mosquitto-clients mosquitto -y
+sudo apt-get update && sudo apt-get install mosquitto-clients mosquitto ninja-build libmosquitto-dev -y
 
 #Install step cli
 wget https://dl.step.sm/gh-release/cli/docs-cli-install/v0.23.4/step-cli_0.23.4_amd64.deb

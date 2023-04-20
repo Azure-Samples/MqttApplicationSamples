@@ -17,9 +17,9 @@ public static partial class MqttNetExtensions
         {
             var certs = new List<X509Certificate2>();
             X509Certificate2 cert;
-            if (!string.IsNullOrEmpty(cs.X509Key))
+            if (!string.IsNullOrEmpty(cs.CertFile))
             {
-                cert = X509ClientCertificateLocator.Load(cs.X509Key);
+                cert = X509ClientCertificateLocator.Load(cs.CertFile!, cs.KeyFile!, cs.KeyFilePassword!);
                 if (cert.HasPrivateKey == false)
                 {
                     throw new SecurityException("Provided Cert Has not Private Key");

@@ -30,10 +30,48 @@ Access the Azure portal by using [this link](https://portal.azure.com/?microsoft
 2. Select `Event Grid Namespace`
 3. Select your resource group and deploy to a supported region (US Central EUAP)
 4. Navigate to the new created resource
-5. Configure the CA certificate by registering the intermediate ca cert file (~/.step/certs/intermediate_ca.crt)
-6. Configure Clients, TopicSpaces and Permissions
+5. Select configuration and enable MQTT
+6. Configure the CA certificate by registering the intermediate ca cert file (~/.step/certs/intermediate_ca.crt)
+7. Configure Clients, TopicSpaces and Permissions
 
 > Each scenario includes detailed instructions to configure TopicSpaces, Clients and Permissions, along with `az cli` scripts.
+
+Create or update `az.env` with subscription, resource group, and the name for the EventGrid Namespace.
+
+```text
+sub_id="<subscription-id>"
+rg="resource-group-name"
+name="event-grid-namespace"
+```
+
+Create the service
+
+```bash
+source az.env
+
+res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+
+az account set -s $sub_id
+az resource create --id $res_id --is-full-object --properties '{
+  "properties": {
+    "topicsConfiguration": {
+      "inputSchema": "CloudEventSchemaV1_0"
+    },
+    "topicSpacesConfiguration": {
+      "state": "Enabled"
+    }
+  },
+  "location": "eastus2euap"
+}'
+```
+
+Register the certificate to authenticate client certificates (usually the intermediate)
+
+```bash
+capem=`cat ~/.step/certs/intermediate_ca.crt | tr -d "\n"`
+az resource create --id "$res_id/caCertificates/Intermediate01" --properties "{\"encodedCertificate\" : \"$capem\"}"
+```
+
 
 ## Configure Mosquitto with TLS and X509 Authentication
 
