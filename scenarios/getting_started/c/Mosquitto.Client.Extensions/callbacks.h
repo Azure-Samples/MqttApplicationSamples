@@ -1,22 +1,6 @@
 /* Copyright (c) Microsoft Corporation. All rights reserved. */
 /* SPDX-License-Identifier: MIT */
 
-#define USE_SSL
-
-#ifdef USE_SSL
-    #define ADDRESS    "localhost"
-    #define PORT       8883
-#else
-    #define ADDRESS    "localhost"
-    #define PORT       1883
-#endif
-
-#define CLIENTID       "ExampleClientGettingStarted"
-#define TOPIC          "MQTT Examples"
-#define PAYLOAD        "Hello World!"
-#define QOS            1
-#define TIMEOUT        10000L
-
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect( struct mosquitto * mosq,
                  void * obj,
