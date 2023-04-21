@@ -9,8 +9,7 @@
 #include <mosquitto.h>
 #include "setup.h"
 
-#define TOPIC      "MQTT Examples"
-#define PAYLOAD    "Hello World!"
+#define PAYLOAD    "Hello World!" /* TODO: position */
 
 /*
  * This sample sends five telemetry messages to the Broker. X509 self-certification is used.
@@ -25,9 +24,9 @@ int main( int argc,
 
     mqtt_context->messagesSent = 0;
 
-    mosq = initMQTT( false, true, argv[ 1 ], mqtt_context, cs );
+    mosq = initMQTT( true, argv[ 1 ], mqtt_context, cs );
 
-    rc = mosquitto_connect( mosq, cs->hostname, cs->tcp_port, 60 );
+    rc = mosquitto_connect( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds );
 
     if( rc != MOSQ_ERR_SUCCESS )
     {
@@ -45,10 +44,13 @@ int main( int argc,
         return 1;
     }
 
+    char topic[ strlen( cs->client_id ) + 17 ];
+    sprintf( topic, "vehicles/%s/position", cs->client_id );
+
     while( mqtt_context->messagesSent < 5 )
     {
         sleep( 1 );
-        rc = mosquitto_publish( mosq, NULL, TOPIC, ( int ) strlen( PAYLOAD ), PAYLOAD, cs->qos, false );
+        rc = mosquitto_publish( mosq, NULL, topic, ( int ) strlen( PAYLOAD ), PAYLOAD, cs->qos, false );
 
         if( rc != MOSQ_ERR_SUCCESS )
         {

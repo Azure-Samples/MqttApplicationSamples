@@ -6,5 +6,8 @@
         "EUAP",
         "puback",
         "suback"
-    ]
+    ],
+    "cmake.debugConfig": {
+        "args": ["${workspaceFolder}/scenarios/${command:cmake.activeBuildPresetName}/${command:cmake.buildTargetName}.env"],
+    }
 }

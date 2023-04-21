@@ -11,11 +11,12 @@
 
 void read_env_file( char * filePath )
 {
-    // TODO: think about whether this is an issue if we specify the env variables in launch.json, but have a .env that then overwrites them
-    if (filePath == NULL)
+    /* TODO: think about whether this is an issue if we specify the env variables in launch.json, but have a .env that then overwrites them */
+    if( filePath == NULL )
     {
         filePath = ".env";
     }
+
     FILE * fptr = fopen( filePath, "r" );
 
     if( fptr != NULL )
@@ -31,13 +32,13 @@ void read_env_file( char * filePath )
             printf( "Setting %s = %s\n", envName, envValue );
             setenv( envName, envValue, 1 );
         }
+
+        fclose( fptr );
     }
     else
     {
         printf( "Cannot open env file, will try to use environment variables. \n" );
     }
-
-    fclose( fptr );
 }
 
 void setConnectionSettings( struct connection_settings * cs )
@@ -46,7 +47,7 @@ void setConnectionSettings( struct connection_settings * cs )
     cs->tcp_port = atoi( getenv( "TCP_PORT" ) ? : "8883" );
     cs->client_id = getenv( "CLIENT_ID" );
     cs->ca_file = getenv( "CA_FILE" );
-    // TODO: this won't work because we could keep an env var from a previous session
+    /* TODO: this might not work because we could keep an env var from a previous session */
     cs->ca_path = getenv( "CA_PATH" ) ? : cs->ca_file ? NULL : "/etc/ssl/certs";
     cs->cert_file = getenv( "CERT_FILE" );
     cs->key_file = getenv( "KEY_FILE" );
@@ -54,12 +55,11 @@ void setConnectionSettings( struct connection_settings * cs )
     cs->qos = atoi( getenv( "QOS" ) ? : "1" );
     cs->keep_alive_in_seconds = atoi( getenv( "KEEP_ALIVE_IN_SECONDS" ) ? : "30" );
     char * use_TLS = getenv( "USE_TLS" );
-    // TODO: fix & default to true
-    cs->use_TLS = ( use_TLS != NULL && strcmp( use_TLS, "TLS_" ) == 0 ) ? true : false;
+    cs->use_TLS = ( use_TLS != NULL && strcmp( use_TLS, "false" ) == 0 ) ? false : true; /* TODO: figure out "cat" case */
     cs->mqtt_version = atoi( getenv( "MQTT_VERSION" ) ? : "4" );
     cs->username = getenv( "USERNAME" );
     cs->password = getenv( "PASSWORD" );
-    cs->clean_session = atol(getenv( "CLEAN_SESSION" ) ? : "true");
+    cs->clean_session = atol( getenv( "CLEAN_SESSION" ) ? : "true" ); /* TODO: figure out "cat" case */
 }
 
 void setSubscribeCallbacks( struct mosquitto * mosq )

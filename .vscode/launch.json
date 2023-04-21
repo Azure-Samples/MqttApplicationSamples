@@ -65,10 +65,10 @@
             "name": "C Telemetry Producer",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/scenarios/telemetry/c/build/scenarios/telemetry/c/telemetry_producer",
+            "program": "${workspaceFolder}/scenarios/telemetry/c/build/scenarios/telemetry/c/telemetry_producer",
             "stopAtEntry": false,
-            "cwd": "${workspaceRoot}",
-            "envFile": "${workspaceRoot}/scenarios/telemetry/telemetry_producer.env",
+            "cwd": "${workspaceFolder}/scenarios/telemetry",
+            "args": ["${workspaceFolder}/scenarios/telemetry/telemetry_producer.env"],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -86,10 +86,10 @@
             "name": "C Telemetry Consumer",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/scenarios/telemetry/c/build/scenarios/telemetry/c/telemetry_consumer",
+            "program": "${workspaceFolder}/scenarios/telemetry/c/build/scenarios/telemetry/c/telemetry_consumer",
             "stopAtEntry": false,
-            "cwd": "${workspaceRoot}",
-            "envFile": "${workspaceRoot}/scenarios/telemetry/telemetry_consumer.env",
+            "cwd": "${workspaceFolder}/scenarios/telemetry",
+            "args": ["${workspaceFolder}/scenarios/telemetry/telemetry_consumer.env"],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -107,10 +107,10 @@
             "name": "C Getting Started",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/scenarios/getting_started/c/build/scenarios/getting_started/c/getting_started",
+            "program": "${workspaceFolder}/scenarios/getting_started/c/build/scenarios/getting_started/c/getting_started",
             "stopAtEntry": false,
-            "cwd": "${workspaceRoot}",
-            "envFile": "${workspaceRoot}/scenarios/getting_started/getting_started.env",
+            "cwd": "${workspaceFolder}/scenarios/getting_started",
+            "args": ["${workspaceFolder}/scenarios/getting_started/getting_started.env"],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -122,7 +122,7 @@
             "presentation": {
                 "group": "C"
             }
-        },
+        }
     ],
     "compounds": [
         {
