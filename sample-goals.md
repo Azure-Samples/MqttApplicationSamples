@@ -1,19 +1,27 @@
 # Goals for MQTT Application Samples
 
 - Show how to create MQTT applications with different programming languages, starting with C#, Python and C
-- Each language will use a popular MQTT Library, MQTTNet for C# and Paho for Python and C
+- Each language will use a popular MQTT Library, MQTTNet for C# and Paho for Python and Mosquitto_lib for C
 - Propose abstractions to encapsulate basic operations: Connect and Pub/Sub
 - Create extension for each library to reuse common functions (aka Helpers) for repetitive tasks
+- Have CI to validate samples, with unit tests for the library extensions, and integration tests to run the samples
+
+# Align samples for all languages
+
+- Common folder structure for all languages
+- Reuse connection settings and certificates (eg, Pub with C, Sub with Python)
+- Console apps will have an infinite loop to, and allow a `ci flag` to finish the sample when running in CI
 
 ## Getting Started Samples
 
-- Connect to an existing MQTT Broker from your development environment.
-- Use a console application, use the same connection to pub/sub to a sample topic.
+- Connect to an existing MQTT Broker (mosquitto, EventGrid Namespaces, ..) from your development environment.
+- Use a console application with the same connection to pub/sub to a sample topic.
 
 ### Configure Connection Settings 
 
-- Have a broker already available, such as mosquitto, or Event Grid 
-- Using VSCode `launch.json` to specify connection settings
+- Have a broker already available, such as mosquitto, or Azure EventGrid Namespace
+- Configure connection settings using `.env` files
+- Samples can run from the command line, and using VSCode `launch.json`
 - Sample settings: MQTTVersion, HostName, Port, KeepAlive, CleanSession, Credentials, ClientId and TLS with custom CA Trust.
      
 #### Authenticate with Client Certificates
@@ -39,10 +47,10 @@
   - Consumer. To subscribe to telemetry messages
   - Message Payload. Use GeoJSON to indicate `lat/lon`
 
-- Connect to the broker using MQTT 3.1
+- Connect to the broker using MQTT 3.1.1
 - Create JSON payloads with _fake_ data
-- Publish messages in a loop, with 5s delay
-- Subscribe to the same topic, expose received messages in a callback function
+- The producer publishes messages in a loop, with 5s delay
+- The consumer subscribes to the same topic, expose received messages in a callback function
 
 Producer
 
