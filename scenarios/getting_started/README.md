@@ -82,3 +82,18 @@ cd _mosquitto
 cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
 ```
 The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
+
+```bash
+echo "HOST_NAME=localhost" > .env
+echo "CERT_FILE=vehicle01.pem" >> .env
+echo "KEY_FILE=vehicle01.key" >> .env
+```
+
+To use mosquitto without certificates
+
+```bash
+echo "HOST_NAME=localhost" > .env
+echo "TCP_PORT=1883" >> .env
+echo "USE_TLS=false" >> .env
+echo "CLIENT_ID=vehicle01" >> .env
+```
