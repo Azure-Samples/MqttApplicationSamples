@@ -3,12 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-_certs/
 *.key
 *.pfx
 *.pem
 *.crt
-.env
+*.env
 launchSettings.json
 
 # User-specific files

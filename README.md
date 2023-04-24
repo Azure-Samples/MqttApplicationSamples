@@ -2,7 +2,7 @@
 
 Guidance to build Pub/Sub applications targeting MQTT Brokers in different programming languages.
 
-| [Setup](./Setup.md) | [Getting Started](./getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |
+| [Setup](./Setup.md) | [Getting Started](./scenarios/getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |
 
 ## Prerequisites
 
@@ -48,7 +48,7 @@ Getting started samples show how to perform basic MQTT tasks:
 - Publish messages to a topic
 - Subscribe to a topic to receive messages
 
-See [Getting Started](./getting_started/) for code samples
+See [Getting Started](./scenarios/getting_started/) for code samples
 
 # Scenario Samples
 
@@ -90,8 +90,8 @@ Consider a use case where a user can unlock their car from a mobile app. The req
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
-|vehicle1|producer|sub|vehicles/vehicle1/commands/unlock|
-|vehicle1|producer|pub|vehicles/vehicle1/commands/unlock/response|
+|vehicle03|producer|sub|vehicles/vehicle1/commands/unlock|
+|vehicle03|producer|pub|vehicles/vehicle1/commands/unlock/response|
 |mobile-app|consumer|pub|vehicles/vehicle1/commands/unlock|
 |mobile-app|consumer|sub|vehicles/vehicle1/commands/unlock/response|
 
