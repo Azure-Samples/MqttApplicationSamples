@@ -19,14 +19,11 @@ int main( int argc,
 {
     struct mosquitto * mosq;
     int rc = 0;
-    struct mosq_context * mqtt_context = calloc( 1, sizeof( struct mosq_context ) );
     struct connection_settings * cs = calloc( 1, sizeof( struct connection_settings ) );
 
     cs->sub_topic = "sample/+";
-    mqtt_context->messagesSent = 0;
-    mqtt_context->messagesReceived = 0;
 
-    mosq = initMQTT( true, argv[ 1 ], mqtt_context, cs );
+    mosq = initMQTT( true, argv[ 1 ], cs );
     rc = mosquitto_connect( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds );
 
     if( rc != MOSQ_ERR_SUCCESS )
@@ -45,21 +42,21 @@ int main( int argc,
         return 1;
     }
 
-    while( mqtt_context->messagesSent < 5 )
+    while( 1 )
     {
-        sleep( 1 );
         rc = mosquitto_publish( mosq, NULL, "sample/topic1", ( int ) strlen( PAYLOAD ), PAYLOAD, cs->qos, false );
 
         if( rc != MOSQ_ERR_SUCCESS )
         {
             printf( "Error publishing: %s\n", mosquitto_strerror( rc ) );
         }
+
+        sleep( 5 );
     }
 
     mosquitto_loop_stop( mosq, false );
 
     mosquitto_lib_cleanup();
-    free( mqtt_context );
     free( cs );
     return 0;
 }

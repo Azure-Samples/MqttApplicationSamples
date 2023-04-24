@@ -84,13 +84,6 @@ void on_message( struct mosquitto * mosq,
 {
     /* This blindly prints the payload, but the payload can be anything so take care. */
     printf( "on_message: Topic: %s; QOS: %d; Payload: %s\n", msg->topic, msg->qos, ( char * ) msg->payload );
-    struct mosq_context * context = obj;
-    context->messagesReceived++;
-
-    if( context->messagesReceived > 5 )
-    {
-        mosquitto_disconnect( mosq );
-    }
 }
 
 /* Callback called when the client knows to the best of its abilities that a
@@ -102,8 +95,5 @@ void on_publish( struct mosquitto * mosq,
                  void * obj,
                  int mid )
 {
-    struct mosq_context * context = obj;
-
-    context->messagesSent++;
     printf( "on_publish: Message with mid %d has been published.\n", mid );
 }

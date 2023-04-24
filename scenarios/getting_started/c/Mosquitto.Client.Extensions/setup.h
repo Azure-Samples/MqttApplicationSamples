@@ -7,12 +7,6 @@
 
 #include <mosquitto.h>
 
-struct mosq_context
-{
-    int messagesSent;
-    int messagesReceived;
-};
-
 struct connection_settings
 {
     char * hostname;
@@ -35,5 +29,4 @@ struct connection_settings
 
 struct mosquitto * initMQTT( bool publish,
                              char * envFile,
-                             struct mosq_context * context,
                              struct connection_settings * cs );

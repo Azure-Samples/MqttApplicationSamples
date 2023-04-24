@@ -9,7 +9,7 @@
 #include "callbacks.h"
 #include "setup.h"
 
-void read_env_file( char * filePath )
+void readEnvFile( char * filePath )
 {
     /* TODO: think about whether this is an issue if we specify the env variables in launch.json, but have a .env that then overwrites them */
     if( filePath == NULL )
@@ -76,7 +76,6 @@ void setPublishCallbacks( struct mosquitto * mosq )
 
 struct mosquitto * initMQTT( bool publish,
                              char * envFile,
-                             struct mosq_context * context,
                              struct connection_settings * cs )
 {
     bool subscribe = false;
@@ -87,7 +86,7 @@ struct mosquitto * initMQTT( bool publish,
         subscribe = true;
     }
 
-    read_env_file( envFile );
+    readEnvFile( envFile );
 
     setConnectionSettings( cs );
     struct mosquitto * mosq = NULL;
@@ -100,7 +99,7 @@ struct mosquitto * initMQTT( bool publish,
      * clean session = true -> the broker should remove old sessions when we connect
      * obj = NULL -> we aren't passing any of our private data for callbacks
      */
-    mosq = mosquitto_new( cs->client_id, cs->clean_session, context );
+    mosq = mosquitto_new( cs->client_id, cs->clean_session, NULL );
 
     if( mosq == NULL )
     {

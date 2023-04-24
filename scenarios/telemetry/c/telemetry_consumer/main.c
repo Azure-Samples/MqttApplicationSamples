@@ -16,13 +16,11 @@ int main( int argc,
 {
     struct mosquitto * mosq;
     int rc = 0;
-    struct mosq_context * mqtt_context = calloc( 1, sizeof( struct mosq_context ) );
     struct connection_settings * cs = calloc( 1, sizeof( struct connection_settings ) );
 
     cs->sub_topic = "vehicles/+/position";
-    mqtt_context->messagesReceived = 0;
 
-    mosq = initMQTT( false, argv[ 1 ], mqtt_context, cs );
+    mosq = initMQTT( false, argv[ 1 ], cs );
     rc = mosquitto_connect( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds );
 
     if( rc != MOSQ_ERR_SUCCESS )
@@ -35,7 +33,6 @@ int main( int argc,
     mosquitto_loop_forever( mosq, -1, 1 );
 
     mosquitto_lib_cleanup();
-    free( mqtt_context );
     free( cs );
     return 0;
 }
