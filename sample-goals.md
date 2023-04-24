@@ -9,8 +9,7 @@
 # Align samples for all languages
 
 - Common folder structure for all languages
-- Reuse connection settings and certificates (eg, Pub with C, Sub with Python)
-- Console apps will have an infinite loop to, and allow a `ci flag` to finish the sample when running in CI
+- Reuse connection settings for samples using different languages
 
 ## Getting Started Samples
 
@@ -23,7 +22,24 @@
 - Configure connection settings using `.env` files
 - Samples can run from the command line, and using VSCode `launch.json`
 - Sample settings: MQTTVersion, HostName, Port, KeepAlive, CleanSession, Credentials, ClientId and TLS with custom CA Trust.
-     
+
+#### Connection Settings
+
+To align connection settings across languages we will the next environment variables:
+
+- HOST_NAME
+- TCP_PORT
+- USE_TLS
+- CLEAN_SESSION
+- KEEP_ALIVE_IN_SECONDS
+- CLIENT_ID
+- USERNAME
+- PASSWORD
+- CERT_FILE
+- KEY_FILE
+- KEY_FILE_PASSWORD
+- CA_PATH
+
 #### Authenticate with Client Certificates
 
 - Load certificates from Connection Settings as PEM/KEY files
