@@ -21,7 +21,7 @@ int main( int argc,
     cs->sub_topic = "vehicles/+/position";
 
     mosq = initMQTT( false, argv[ 1 ], cs );
-    rc = mosquitto_connect( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds );
+    rc = mosquitto_connect_bind_v5( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds, NULL, NULL );
 
     if( rc != MOSQ_ERR_SUCCESS )
     {

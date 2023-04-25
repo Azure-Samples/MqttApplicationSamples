@@ -64,14 +64,22 @@ void setConnectionSettings( struct connection_settings * cs )
 
 void setSubscribeCallbacks( struct mosquitto * mosq )
 {
-    mosquitto_connect_callback_set( mosq, on_connect_with_subscribe );
-    mosquitto_subscribe_callback_set( mosq, on_subscribe );
-    mosquitto_message_callback_set( mosq, on_message );
+    mosquitto_connect_v5_callback_set( mosq, on_connect_with_subscribe );
+    mosquitto_subscribe_v5_callback_set( mosq, on_subscribe );
+    mosquitto_message_v5_callback_set( mosq, on_message );
 }
 
 void setPublishCallbacks( struct mosquitto * mosq )
 {
-    mosquitto_publish_callback_set( mosq, on_publish );
+    mosquitto_publish_v5_callback_set( mosq, on_publish );
+}
+
+void onMosquittoLog( struct mosquitto * mosq,
+                     void * obj,
+                     int level,
+                     const char * str )
+{
+    fprintf( stderr, "Mosquitto log: [%d] %s\n", level, str );
 }
 
 struct mosquitto * initMQTT( bool publish,
@@ -107,8 +115,11 @@ struct mosquitto * initMQTT( bool publish,
         return NULL;
     }
 
+    /* mosquitto_log_callback_set(mosq, onMosquittoLog); */
+    mosquitto_int_option( mosq, MOSQ_OPT_PROTOCOL_VERSION, cs->mqtt_version );
+
     /*callbacks */
-    mosquitto_disconnect_callback_set( mosq, on_disconnect );
+    mosquitto_disconnect_v5_callback_set( mosq, on_disconnect );
 
     if( subscribe )
     {
@@ -121,7 +132,7 @@ struct mosquitto * initMQTT( bool publish,
 
         if( !subscribe )
         {
-            mosquitto_connect_callback_set( mosq, on_connect );
+            mosquitto_connect_v5_callback_set( mosq, on_connect );
         }
     }
 

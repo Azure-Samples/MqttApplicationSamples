@@ -12,7 +12,9 @@
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect( struct mosquitto * mosq,
                  void * obj,
-                 int reason_code )
+                 int reason_code,
+                 int flags,
+                 const mosquitto_property * props )
 {
     /* Print out the connection result. mosquitto_connack_string() produces an
      * appropriate string for MQTT v3.x clients, the equivalent for MQTT v5.0
@@ -25,35 +27,38 @@ void on_connect( struct mosquitto * mosq,
         /* If the connection fails for any reason, we don't want to keep on
          * retrying in this example, so disconnect. Without this, the client
          * will attempt to reconnect. */
-        mosquitto_disconnect( mosq );
+        mosquitto_disconnect_v5( mosq, reason_code, props ); /* TODO: double check this is the reason_code that should be passed in */
     }
 }
 
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect_with_subscribe( struct mosquitto * mosq,
                                 void * obj,
-                                int reason_code )
+                                int reason_code,
+                                int flags,
+                                const mosquitto_property * props )
 {
-    on_connect( mosq, obj, reason_code );
+    on_connect( mosq, obj, reason_code, flags, props );
 
     int rc;
 
     /* Making subscriptions in the on_connect() callback means that if the
      * connection drops and is automatically resumed by the client, then the
      * subscriptions will be recreated when the client reconnects. */
-    rc = mosquitto_subscribe( mosq, NULL, getenv( "SUB_TOPIC" ), atoi( getenv( "QOS" ) ) );
+    rc = mosquitto_subscribe_v5( mosq, NULL, getenv( "SUB_TOPIC" ), atoi( getenv( "QOS" ) ), 0, NULL );
 
     if( rc != MOSQ_ERR_SUCCESS )
     {
         fprintf( stderr, "Error subscribing: %s\n", mosquitto_strerror( rc ) );
         /* We might as well disconnect if we were unable to subscribe */
-        mosquitto_disconnect( mosq );
+        mosquitto_disconnect_v5( mosq, reason_code, props );
     }
 }
 
 void on_disconnect( struct mosquitto * mosq,
                     void * obj,
-                    int rc )
+                    int rc,
+                    const mosquitto_property * props )
 {
     printf( "on_disconnect: reason=%s\n", mosquitto_strerror( rc ) );
 }
@@ -63,7 +68,8 @@ void on_subscribe( struct mosquitto * mosq,
                    void * obj,
                    int mid,
                    int qos_count,
-                   const int * granted_qos )
+                   const int * granted_qos,
+                   const mosquitto_property * props )
 {
     printf( "on_subscribe: Subscribed with mid %d; %d topics.\n", mid, qos_count );
 
@@ -80,7 +86,8 @@ void on_subscribe( struct mosquitto * mosq,
 /* Callback called when the client receives a message. */
 void on_message( struct mosquitto * mosq,
                  void * obj,
-                 const struct mosquitto_message * msg )
+                 const struct mosquitto_message * msg,
+                 const mosquitto_property * props )
 {
     /* This blindly prints the payload, but the payload can be anything so take care. */
     printf( "on_message: Topic: %s; QOS: %d; Payload: %s\n", msg->topic, msg->qos, ( char * ) msg->payload );
@@ -93,7 +100,9 @@ void on_message( struct mosquitto * mosq,
  * received a PUBCOMP from the broker. */
 void on_publish( struct mosquitto * mosq,
                  void * obj,
-                 int mid )
+                 int mid,
+                 int reason_code,
+                 const mosquitto_property * props )
 {
     printf( "on_publish: Message with mid %d has been published.\n", mid );
 }

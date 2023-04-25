@@ -4,29 +4,36 @@
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect( struct mosquitto * mosq,
                  void * obj,
-                 int reason_code );
+                 int reason_code,
+                 int flags,
+                 const mosquitto_property * props );
 
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect_with_subscribe( struct mosquitto * mosq,
                                 void * obj,
-                                int reason_code );
+                                int reason_code,
+                                int flags,
+                                const mosquitto_property * props );
 
 void on_disconnect( struct mosquitto * mosq,
                     void * obj,
-                    int rc );
+                    int rc,
+                    const mosquitto_property * props );
 
 /* Callback called when the broker sends a SUBACK in response to a SUBSCRIBE. */
 void on_subscribe( struct mosquitto * mosq,
                    void * obj,
                    int mid,
                    int qos_count,
-                   const int * granted_qos );
+                   const int * granted_qos,
+                   const mosquitto_property * props );
 
 
 /* Callback called when the client receives a message. */
 void on_message( struct mosquitto * mosq,
                  void * obj,
-                 const struct mosquitto_message * msg );
+                 const struct mosquitto_message * msg,
+                 const mosquitto_property * props );
 
 /* Callback called when the client knows to the best of its abilities that a
  * PUBLISH has been successfully sent. For QoS 0 this means the message has
@@ -35,4 +42,6 @@ void on_message( struct mosquitto * mosq,
  * received a PUBCOMP from the broker. */
 void on_publish( struct mosquitto * mosq,
                  void * obj,
-                 int mid );
+                 int mid,
+                 int reason_code,
+                 const mosquitto_property * props );

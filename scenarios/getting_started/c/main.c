@@ -24,7 +24,7 @@ int main( int argc,
     cs->sub_topic = "sample/+";
 
     mosq = initMQTT( true, argv[ 1 ], cs );
-    rc = mosquitto_connect( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds );
+    rc = mosquitto_connect_bind_v5( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds, NULL, NULL );
 
     if( rc != MOSQ_ERR_SUCCESS )
     {
@@ -44,7 +44,7 @@ int main( int argc,
 
     while( 1 )
     {
-        rc = mosquitto_publish( mosq, NULL, "sample/topic1", ( int ) strlen( PAYLOAD ), PAYLOAD, cs->qos, false );
+        rc = mosquitto_publish_v5( mosq, NULL, "sample/topic1", ( int ) strlen( PAYLOAD ), PAYLOAD, cs->qos, false, NULL );
 
         if( rc != MOSQ_ERR_SUCCESS )
         {
