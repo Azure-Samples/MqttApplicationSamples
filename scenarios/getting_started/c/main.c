@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 #include <mosquitto.h>
-#include "setup.h"
+#include "mqtt_setup.h"
 
 #define PAYLOAD    "Hello World!"
 
@@ -18,37 +18,37 @@ int main( int argc,
           char * argv[] )
 {
     struct mosquitto * mosq;
-    int rc = 0;
-    struct connection_settings * cs = calloc( 1, sizeof( struct connection_settings ) );
+    int result = 0;
+    mqtt_client_connection_settings * connection_settings = calloc( 1, sizeof( mqtt_client_connection_settings ) );
 
-    cs->sub_topic = "sample/+";
+    connection_settings->sub_topic = "sample/+";
 
-    mosq = initMQTT( true, argv[ 1 ], cs );
-    rc = mosquitto_connect_bind_v5( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds, NULL, NULL );
+    mosq = mqtt_client_init( true, argv[ 1 ], connection_settings );
+    result = mosquitto_connect_bind_v5( mosq, connection_settings->hostname, connection_settings->tcp_port, connection_settings->keep_alive_in_seconds, NULL, NULL );
 
-    if( rc != MOSQ_ERR_SUCCESS )
+    if( result != MOSQ_ERR_SUCCESS )
     {
         mosquitto_destroy( mosq );
-        printf( "Connection Error: %s\n", mosquitto_strerror( rc ) );
+        printf( "Connection Error: %s\n", mosquitto_strerror( result ) );
         return 1;
     }
 
-    rc = mosquitto_loop_start( mosq );
+    result = mosquitto_loop_start( mosq );
 
-    if( rc != MOSQ_ERR_SUCCESS )
+    if( result != MOSQ_ERR_SUCCESS )
     {
         mosquitto_destroy( mosq );
-        printf( "loop Error: %s\n", mosquitto_strerror( rc ) );
+        printf( "loop Error: %s\n", mosquitto_strerror( result ) );
         return 1;
     }
 
     while( 1 )
     {
-        rc = mosquitto_publish_v5( mosq, NULL, "sample/topic1", ( int ) strlen( PAYLOAD ), PAYLOAD, cs->qos, false, NULL );
+        result = mosquitto_publish_v5( mosq, NULL, "sample/topic1", ( int ) strlen( PAYLOAD ), PAYLOAD, connection_settings->qos, false, NULL );
 
-        if( rc != MOSQ_ERR_SUCCESS )
+        if( result != MOSQ_ERR_SUCCESS )
         {
-            printf( "Error publishing: %s\n", mosquitto_strerror( rc ) );
+            printf( "Error publishing: %s\n", mosquitto_strerror( result ) );
         }
 
         sleep( 5 );
@@ -58,6 +58,6 @@ int main( int argc,
 
     mosquitto_destroy( mosq );
     mosquitto_lib_cleanup();
-    free( cs );
+    free( connection_settings );
     return 0;
 }

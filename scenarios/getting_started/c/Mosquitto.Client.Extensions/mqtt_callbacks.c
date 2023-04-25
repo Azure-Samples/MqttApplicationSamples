@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include <mosquitto.h>
-#include "callbacks.h"
+#include "mqtt_callbacks.h"
 
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect( struct mosquitto * mosq,
@@ -40,16 +40,16 @@ void on_connect_with_subscribe( struct mosquitto * mosq,
 {
     on_connect( mosq, obj, reason_code, flags, props );
 
-    int rc;
+    int result;
 
     /* Making subscriptions in the on_connect() callback means that if the
      * connection drops and is automatically resumed by the client, then the
      * subscriptions will be recreated when the client reconnects. */
-    rc = mosquitto_subscribe_v5( mosq, NULL, getenv( "SUB_TOPIC" ), atoi( getenv( "QOS" ) ), 0, NULL );
+    result = mosquitto_subscribe_v5( mosq, NULL, getenv( "SUB_TOPIC" ), atoi( getenv( "QOS" ) ), 0, NULL );
 
-    if( rc != MOSQ_ERR_SUCCESS )
+    if( result != MOSQ_ERR_SUCCESS )
     {
-        printf( "Error subscribing: %s\n", mosquitto_strerror( rc ) );
+        printf( "Error subscribing: %s\n", mosquitto_strerror( result ) );
         /* We might as well disconnect if we were unable to subscribe */
         mosquitto_disconnect_v5( mosq, reason_code, props );
     }

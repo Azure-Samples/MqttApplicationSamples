@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include <mosquitto.h>
-#include "setup.h"
+#include "mqtt_setup.h"
 
 /*
  * This sample receives telemetry messages from the broker. X509 certification is used.
@@ -14,18 +14,18 @@ int main( int argc,
           char * argv[] )
 {
     struct mosquitto * mosq;
-    int rc = 0;
-    struct connection_settings * cs = calloc( 1, sizeof( struct connection_settings ) );
+    int result = 0;
+    mqtt_client_connection_settings * connection_settings = calloc( 1, sizeof( mqtt_client_connection_settings ) );
 
-    cs->sub_topic = "vehicles/+/position";
+    connection_settings->sub_topic = "vehicles/+/position";
 
-    mosq = initMQTT( false, argv[ 1 ], cs );
-    rc = mosquitto_connect_bind_v5( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds, NULL, NULL );
+    mosq = mqtt_client_init( false, argv[ 1 ], connection_settings );
+    result = mosquitto_connect_bind_v5( mosq, connection_settings->hostname, connection_settings->tcp_port, connection_settings->keep_alive_in_seconds, NULL, NULL );
 
-    if( rc != MOSQ_ERR_SUCCESS )
+    if( result != MOSQ_ERR_SUCCESS )
     {
         mosquitto_destroy( mosq );
-        printf( "Connection Error: %s\n", mosquitto_strerror( rc ) );
+        printf( "Connection Error: %s\n", mosquitto_strerror( result ) );
         return 1;
     }
 
@@ -33,6 +33,6 @@ int main( int argc,
 
     mosquitto_destroy( mosq );
     mosquitto_lib_cleanup();
-    free( cs );
+    free( connection_settings );
     return 0;
 }

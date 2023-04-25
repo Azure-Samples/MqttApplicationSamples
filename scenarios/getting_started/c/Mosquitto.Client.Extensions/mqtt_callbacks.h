@@ -1,6 +1,11 @@
 /* Copyright (c) Microsoft Corporation. All rights reserved. */
 /* SPDX-License-Identifier: MIT */
 
+#ifndef MQTT_CALLBACKS_H
+#define MQTT_CALLBACKS_H
+
+#include <mosquitto.h>
+
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect( struct mosquitto * mosq,
                  void * obj,
@@ -46,3 +51,5 @@ void on_publish( struct mosquitto * mosq,
                  int mid,
                  int reason_code,
                  const mosquitto_property * props );
+
+#endif /* MQTT_CALLBACKS_H */
