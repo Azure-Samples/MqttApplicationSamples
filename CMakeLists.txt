@@ -9,6 +9,7 @@ set(CMAKE_C_STANDARD 99)
 
 include(FetchContent)
 
+# Mosquitto library setup
 option( DOCUMENTATION OFF )
 option( WITH_CJSON OFF )
 FetchContent_Declare(
@@ -28,12 +29,13 @@ else()
   message(INFO "MOSQUITTO_PATH set to ${MOSQUITTO_PATH}")
 endif()
 
-file(GLOB MOSQUITTO_CLIENT_EXTENSIONS ${CMAKE_CURRENT_LIST_DIR}/scenarios/getting_started/c/Mosquitto.Client.Extensions/*.c)
-include_directories( ${CMAKE_CURRENT_LIST_DIR}/scenarios/getting_started/c/Mosquitto.Client.Extensions)
-
 # External deps
 link_libraries(
     mosquitto
 )
+
+# Helper functions for all samples
+file(GLOB MOSQUITTO_CLIENT_EXTENSIONS ${CMAKE_CURRENT_LIST_DIR}/scenarios/getting_started/c/Mosquitto.Client.Extensions/*.c)
+include_directories( ${CMAKE_CURRENT_LIST_DIR}/scenarios/getting_started/c/Mosquitto.Client.Extensions)
 
 add_subdirectory(${PRESET_PATH})

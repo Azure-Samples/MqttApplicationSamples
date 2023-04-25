@@ -2,14 +2,13 @@
 /* SPDX-License-Identifier: MIT */
 
 #include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
 
 #include <mosquitto.h>
 #include "setup.h"
 
 /*
- * This sample receives five telemetry messages from the broker. X509 self-certification is used.
+ * This sample receives telemetry messages from the broker. X509 certification is used.
  */
 int main( int argc,
           char * argv[] )
@@ -32,6 +31,7 @@ int main( int argc,
 
     mosquitto_loop_forever( mosq, -1, 1 );
 
+    mosquitto_destroy( mosq );
     mosquitto_lib_cleanup();
     free( cs );
     return 0;

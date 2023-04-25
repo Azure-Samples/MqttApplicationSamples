@@ -12,7 +12,7 @@
 #define PAYLOAD    "Hello World!" /* TODO: position */
 
 /*
- * This sample sends five telemetry messages to the Broker. X509 self-certification is used.
+ * This sample sends telemetry messages to the Broker. X509 certification is used.
  */
 int main( int argc,
           char * argv[] )
@@ -23,7 +23,7 @@ int main( int argc,
 
     mosq = initMQTT( true, argv[ 1 ], cs );
 
-    rc = mosquitto_connect_bind_v5( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds, NULL, NULL  );
+    rc = mosquitto_connect_bind_v5( mosq, cs->hostname, cs->tcp_port, cs->keep_alive_in_seconds, NULL, NULL );
 
     if( rc != MOSQ_ERR_SUCCESS )
     {
@@ -58,6 +58,7 @@ int main( int argc,
 
     mosquitto_loop_stop( mosq, true );
 
+    mosquitto_destroy( mosq );
     mosquitto_lib_cleanup();
     free( cs );
     return 0;

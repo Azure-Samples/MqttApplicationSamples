@@ -1,12 +1,6 @@
 /* Copyright (c) Microsoft Corporation. All rights reserved. */
 /* SPDX-License-Identifier: MIT */
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-
-#include <mosquitto.h>
-
 struct connection_settings
 {
     char * hostname;

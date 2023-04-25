@@ -2,12 +2,10 @@
 /* SPDX-License-Identifier: MIT */
 
 #include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
 
 #include <mosquitto.h>
 #include "callbacks.h"
-#include "setup.h"
 
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect( struct mosquitto * mosq,
@@ -16,6 +14,8 @@ void on_connect( struct mosquitto * mosq,
                  int flags,
                  const mosquitto_property * props )
 {
+    /* TODO: pass mqtt version in obj and use mosquitto_reason_string if mqtt5 */
+
     /* Print out the connection result. mosquitto_connack_string() produces an
      * appropriate string for MQTT v3.x clients, the equivalent for MQTT v5.0
      * clients is mosquitto_reason_string().
@@ -31,7 +31,7 @@ void on_connect( struct mosquitto * mosq,
     }
 }
 
-/* Callback called when the client receives a CONNACK message from the broker. */
+/* Callback called when the client receives a CONNACK message from the broker and we want to subscribe on connect. */
 void on_connect_with_subscribe( struct mosquitto * mosq,
                                 void * obj,
                                 int reason_code,
@@ -49,12 +49,13 @@ void on_connect_with_subscribe( struct mosquitto * mosq,
 
     if( rc != MOSQ_ERR_SUCCESS )
     {
-        fprintf( stderr, "Error subscribing: %s\n", mosquitto_strerror( rc ) );
+        printf( "Error subscribing: %s\n", mosquitto_strerror( rc ) );
         /* We might as well disconnect if we were unable to subscribe */
         mosquitto_disconnect_v5( mosq, reason_code, props );
     }
 }
 
+/* Callback called when the broker has received the DISCONNECT command and has disconnected the client. */
 void on_disconnect( struct mosquitto * mosq,
                     void * obj,
                     int rc,
@@ -78,7 +79,7 @@ void on_subscribe( struct mosquitto * mosq,
      * them all. */
     for( int i = 0; i < qos_count; i++ )
     {
-        printf( "QoS %d\n", granted_qos[ i ] );
+        printf( "\tQoS %d\n", granted_qos[ i ] );
     }
 }
 

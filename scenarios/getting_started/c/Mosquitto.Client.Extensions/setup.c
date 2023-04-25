@@ -12,6 +12,7 @@
 void readEnvFile( char * filePath )
 {
     /* TODO: think about whether this is an issue if we specify the env variables in launch.json, but have a .env that then overwrites them */
+    /* If there was no env filepath passed in, look for a .env file in the current directory. */
     if( filePath == NULL )
     {
         filePath = ".env";
@@ -37,7 +38,7 @@ void readEnvFile( char * filePath )
     }
     else
     {
-        printf( "Cannot open env file, will try to use environment variables. \n" );
+        printf( "Cannot open env file. Sample will try to use environment variables. \n" );
     }
 }
 
@@ -59,7 +60,8 @@ void setConnectionSettings( struct connection_settings * cs )
     cs->mqtt_version = atoi( getenv( "MQTT_VERSION" ) ? : "4" );
     cs->username = getenv( "USERNAME" );
     cs->password = getenv( "PASSWORD" );
-    cs->clean_session = atol( getenv( "CLEAN_SESSION" ) ? : "true" ); /* TODO: figure out "cat" case */
+    char * clean_session = getenv( "CLEAN_SESSION" );
+    cs->clean_session = ( clean_session != NULL && strcmp( clean_session, "false" ) == 0 ) ? false : true; /* TODO: figure out "cat" case */
 }
 
 void setSubscribeCallbacks( struct mosquitto * mosq )
@@ -86,6 +88,7 @@ struct mosquitto * initMQTT( bool publish,
                              char * envFile,
                              struct connection_settings * cs )
 {
+    struct mosquitto * mosq = NULL;
     bool subscribe = false;
 
     if( cs->sub_topic )
@@ -94,10 +97,9 @@ struct mosquitto * initMQTT( bool publish,
         subscribe = true;
     }
 
+    /* Get environment variables for connection settings */
     readEnvFile( envFile );
-
     setConnectionSettings( cs );
-    struct mosquitto * mosq = NULL;
 
     /* Required before calling other mosquitto functions */
     mosquitto_lib_init();
@@ -116,6 +118,7 @@ struct mosquitto * initMQTT( bool publish,
     }
 
     /* mosquitto_log_callback_set(mosq, onMosquittoLog); */
+
     mosquitto_int_option( mosq, MOSQ_OPT_PROTOCOL_VERSION, cs->mqtt_version );
 
     /*callbacks */
@@ -130,6 +133,7 @@ struct mosquitto * initMQTT( bool publish,
     {
         setPublishCallbacks( mosq );
 
+        /* If we're publishing and subscribing, we set the connect callback in the subscribe callbacks */
         if( !subscribe )
         {
             mosquitto_connect_v5_callback_set( mosq, on_connect );
@@ -152,6 +156,7 @@ struct mosquitto * initMQTT( bool publish,
 
     if( cs->use_TLS )
     {
+        /* Need ca_file for mosquitto broker, but ca_path for event grid - fine for the unneeded one to be null */
         rc = mosquitto_tls_set( mosq, cs->ca_file, cs->ca_path, cs->cert_file, cs->key_file, NULL );
 
         if( rc != MOSQ_ERR_SUCCESS )
