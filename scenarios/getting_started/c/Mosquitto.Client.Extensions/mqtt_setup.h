@@ -4,6 +4,8 @@
 #ifndef MQTT_SETUP_H
 #define MQTT_SETUP_H
 
+#include <stdbool.h>
+
 typedef struct mqtt_client_connection_settings
 {
   int keep_alive_in_seconds;
