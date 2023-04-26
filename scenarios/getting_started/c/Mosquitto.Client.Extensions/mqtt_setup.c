@@ -55,7 +55,14 @@ void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connec
   connection_settings->cert_file = getenv("CERT_FILE");
   connection_settings->key_file = getenv("KEY_FILE");
   connection_settings->key_file_password = getenv("KEY_FILE_PASSWORD");
-  connection_settings->qos = atoi(getenv("QOS") ?: "1");
+  char * qos = getenv("QOS");
+  if (qos == NULL)
+  {
+    setenv("QOS", "1", 1);
+    connection_settings->qos = 1;
+  } else {
+    connection_settings->qos = atoi(qos);
+  }
   connection_settings->keep_alive_in_seconds = atoi(getenv("KEEP_ALIVE_IN_SECONDS") ?: "30");
   char* use_TLS = getenv("USE_TLS");
   connection_settings->use_TLS = (use_TLS != NULL && strcmp(use_TLS, "false") == 0)
