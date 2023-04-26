@@ -183,14 +183,3 @@ struct mosquitto* mqtt_client_init(
 
   return mosq;
 }
-
-void mqtt_client_destroy(struct mosquitto* mosq)
-{
-  mosquitto_destroy(mosq);
-  mosquitto_lib_cleanup(); // TODO: should include?
-}
-
-void mqtt_client_connection_settings_init(mqtt_client_connection_settings* connection_settings)
-{
-  memset(connection_settings, 0, sizeof(mqtt_client_connection_settings));
-}
