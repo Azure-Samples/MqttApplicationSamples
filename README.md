@@ -90,8 +90,8 @@ Consider a use case where a user can unlock their car from a mobile app. The req
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
-|vehicle1|producer|sub|vehicles/vehicle1/commands/unlock|
-|vehicle1|producer|pub|vehicles/vehicle1/commands/unlock/response|
+|vehicle03|producer|sub|vehicles/vehicle1/commands/unlock|
+|vehicle03|producer|pub|vehicles/vehicle1/commands/unlock/response|
 |mobile-app|consumer|pub|vehicles/vehicle1/commands/unlock|
 |mobile-app|consumer|sub|vehicles/vehicle1/commands/unlock/response|
 
