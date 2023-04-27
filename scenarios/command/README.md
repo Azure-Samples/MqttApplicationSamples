@@ -1,6 +1,6 @@
 #  Command (Request/Response)
 
-| [Create the Client Certificates](#create-client-certificates) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure mosquitto](#configure-mosquitto) |
+| [Create the Client Certificates](#create-client-certificates) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
 
 This scenario simulates the request-response messaging pattern. Request-response uses two topics, one for the request and one for the response.
 
@@ -118,14 +118,14 @@ az resource create --id "$res_id/permissionBindings/vehiclesSub" --properties '{
 ```bash
 source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
-hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-echo "HOST_NAME=$hostname" > vehicle03.env
+echo "HOST_NAME=$host_name" > vehicle03.env
 echo "USERNAME=vehicle03" >> vehicle03.env
 echo "CERT_FILE=vehicle03.pem" >> vehicle03.env
 echo "KEY_FILE=vehicle03.key" >> vehicle03.env
 
-echo "HOST_NAME=$hostname" > mobile-app.env
+echo "HOST_NAME=$host_name" > mobile-app.env
 echo "USERNAME=mobile-app" >> mobile-app.env
 echo "CERT_FILE=mobile-app.pem" >> mobile-app.env
 echo "KEY_FILE=mobile-app.key" >> mobile-app.env
@@ -161,3 +161,37 @@ echo "TCP_PORT=1883" >> vehicle03.env
 echo "USE_TLS=false" >> vehicle03.env
 echo "CLIENT_ID=vehicle03" >> vehicle03.env
 ```
+
+## Run the Sample
+
+All samples are designed to be executed from the root scenario folder.
+
+### dotnet
+
+To build the dotnet sample run:
+
+```bash
+dotnet build dotnet/command.sln 
+```
+
+To run the dotnet sample execute each line below in a different shell/terminal.
+
+```bash
+ dotnet/command_producer/bin/Debug/net7.0/command_producer --envFile=vehicle03.env
+ dotnet/command_consumer/bin/Debug/net7.0/command_consumer --envFile=mobile-app.env
+```
+
+### C
+
+To build the C sample run:
+
+```bash
+c/build.sh
+```
+The build script will copy the produced binary to `c/build/command`
+
+To run the C sample execute each line below in a different shell/terminal.
+
+```
+c/build/command_producer vehicle03.env
+c/build/command_consumer mobile-app.env

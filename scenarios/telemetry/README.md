@@ -1,6 +1,6 @@
 # Telemetry (Fan-in)
 
-| [Create the Client Certificates](#create-client-certificates) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure mosquitto](#configure-mosquitto) |
+| [Create the Client Certificates](#create-client-certificates) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
 
 This scenario shows how multiple clients send data (the producers) to a different set of topics that can be consumed by a single application (the consumer).
 
@@ -123,20 +123,20 @@ az resource create --id "$res_id/permissionBindings/vehiclesSub" --properties '{
 ```bash
 source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
-hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-echo "HOST_NAME=$hostname" > vehicle01.env
+echo "HOST_NAME=$host_name" > vehicle01.env
 echo "USERNAME=vehicle01" >> vehicle01.env
 echo "CERT_FILE=vehicle01.pem" >> vehicle01.env
 echo "KEY_FILE=vehicle01.key" >> vehicle01.env
 
 
-echo "HOST_NAME=$hostname" > vehicle02.env
+echo "HOST_NAME=$host_name" > vehicle02.env
 echo "USERNAME=vehicle02" >> vehicle02.env
 echo "CERT_FILE=vehicle02.pem" >> vehicle02.env
 echo "KEY_FILE=vehicle02.key" >> vehicle02.env
 
-echo "HOST_NAME=$hostname" > map-app.env
+echo "HOST_NAME=$host_name" > map-app.env
 echo "USERNAME=map-app" >> map-app.env
 echo "CERT_FILE=map-app.pem" >> map-app.env
 echo "KEY_FILE=map-app.key" >> map-app.env
@@ -177,3 +177,40 @@ echo "TCP_PORT=1883" >> vehicle01.env
 echo "USE_TLS=false" >> vehicle01.env
 echo "CLIENT_ID=vehicle01" >> vehicle01.env
 ```
+
+## Run the Sample
+
+All samples are designed to be executed from the root scenario folder.
+
+### dotnet
+
+To build the dotnet sample run:
+
+```bash
+dotnet build dotnet/telemetry.sln 
+```
+
+To run the dotnet sample execute each line below in a different shell/terminal.
+
+```bash
+ dotnet/telemetry_producer/bin/Debug/net7.0/telemetry_producer --envFile=vehicle01.env
+ dotnet/telemetry_producer/bin/Debug/net7.0/telemetry_producer --envFile=vehicle02.env
+ dotnet/telemetry_consumer/bin/Debug/net7.0/telemetry_consumer --envFile=map-app.env
+```
+
+### C
+
+To build the C sample run:
+
+```bash
+c/build.sh
+```
+The build script will copy the produced binary to `c/build/telemetry`
+
+To run the C sample execute each line below in a different shell/terminal.
+
+```
+c/build/telemetry_producer vehicle01.env
+c/build/telemetry_producer vehicle02.env
+c/build/telemetry_consumer map-app.env
+

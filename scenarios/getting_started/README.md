@@ -2,16 +2,16 @@
 
 This sample shows how to perform basic MQTT operations: Connect, Publish and Subscribe.
 
-| [Create the Client Certificate](#create-the-client-certificate) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure mosquitto](#configure-mosquitto) |
+| [Create the Client Certificate](#create-the-client-certificate) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
 
 ## Create the client certificate
 
-Using the CA files, as described in [setup](../setup), create a certificate for `vehicle01`.
+Using the CA files, as described in [setup](../setup), create a certificate for `sample_client`.
 
 ```bash
 cd scenarios/getting_started
 step certificate create \
-    vehicle01 vehicle01.pem vehicle01.key \
+    sample_client sample_client.pem sample_client.key \
     --ca ~/.step/certs/intermediate_ca.crt \
     --ca-key ~/.step/secrets/intermediate_ca_key \
     --no-password --insecure \
@@ -24,17 +24,17 @@ Event Grid Namespaces requires to register the client, and the topic spaces to s
 
 ### Create the Client
 
-We will use the certificateSubject `vehicle01`, from the portal or with the script below:
+We will use the certificateSubject `sample_client`, from the portal or with the script below:
 
 ```bash
 source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
-az resource create --id "$res_id/clients/vehicle01" --properties '{
+az resource create --id "$res_id/clients/sample_client" --properties '{
     "state": "Enabled",
     "clientCertificateAuthentication": {
         "certificateSubject": {
-            "commonName": "vehicle01"
+            "commonName": "sample_client"
         }
     },
     "attributes": {},
@@ -72,12 +72,13 @@ az resource create --id "$res_id/permissionBindings/samplesSub" --properties '{
 cd scenarios/getting_started
 source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
-hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-echo "HOST_NAME=$hostname" > .env
-echo "USERNAME=vehicle01" >> .env
-echo "CERT_FILE=vehicle01.pem" >> .env
-echo "KEY_FILE=vehicle01.key" >> .env
+echo "HOST_NAME=$host_name" > .env
+echo "USERNAME=sample_client" >> .env
+echo "CLIENT_ID=sample_client" >> .env
+echo "CERT_FILE=sample_client.pem" >> .env
+echo "KEY_FILE=sample_client.key" >> .env
 ```
 
 ## Configure Mosquitto 
@@ -92,8 +93,9 @@ The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X
 
 ```bash
 echo "HOST_NAME=localhost" > .env
-echo "CERT_FILE=vehicle01.pem" >> .env
-echo "KEY_FILE=vehicle01.key" >> .env
+echo "CLIENT_ID=sample_client" >> .env
+echo "CERT_FILE=sample_client.pem" >> .env
+echo "KEY_FILE=sample_client.key" >> .env
 echo "CA_FILE=chain.pem" >> .env
 ```
 
@@ -103,5 +105,41 @@ To use mosquitto without certificates
 echo "HOST_NAME=localhost" > .env
 echo "TCP_PORT=1883" >> .env
 echo "USE_TLS=false" >> .env
-echo "CLIENT_ID=vehicle01" >> .env
+echo "CLIENT_ID=sample_client" >> .env
 ```
+
+## Run the Sample
+
+All samples are designed to be executed from the root scenario folder.
+
+### dotnet
+
+To build the dotnet sample run:
+
+```bash
+dotnet build dotnet/getting_started.sln 
+```
+
+To run the dotnet sample:
+
+```bash
+ dotnet/getting_started/bin/Debug/net7.0/getting_started
+```
+(this will use the `.env` file created before)
+
+### C
+
+To build the C sample run:
+
+```bash
+c/build.sh
+```
+The build script will copy the produced binary to `c/build/getting_started`
+
+To run the C sample:
+
+```
+c/build/getting_started
+```
+
+

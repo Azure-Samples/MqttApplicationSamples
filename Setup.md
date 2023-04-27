@@ -116,3 +116,9 @@ certfile localhost.crt
 keyfile localhost.key
 tls_version tlsv1.2
 ```
+
+To start mosquitto with this configuration file run:
+
+```bash
+mosquitto -c tls.conf
+```
