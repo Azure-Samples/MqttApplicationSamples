@@ -1,20 +1,12 @@
-# Getting Started Samples
+# Getting Started
 
 This sample shows how to perform basic MQTT operations: Connect, Publish and Subscribe.
 
-The connection requires client certificates issued by a known CA.
+| [Create the Client Certificate](#create-the-client-certificate) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure mosquitto](#configure-mosquitto) |
 
+## Create the client certificate
 
-## Locate CA cert files
-
-Generate a CA for this samples as described in [setup](../setup), by default the root and intermediate certificates are stored in:
-
-- `~/.certs/root_ca.crt`
-- `~/.certs/intermediate_ca.crt`
-
-## Configure the client
-
-To configure the client you need to  generate a client certificate, register the client, and create the .env file with those settings:
+Using the CA files, as described in [setup](../setup), create a certificate for `vehicle01`.
 
 ```bash
 cd scenarios/getting_started
@@ -24,7 +16,17 @@ step certificate create \
     --ca-key ~/.step/secrets/intermediate_ca_key \
     --no-password --insecure \
     --not-after 2400h
+```
 
+## Configure Event Grid Namespaces
+
+Event Grid Namespaces requires to register the client, and the topic spaces to set the client permissions. 
+
+### Create the Client
+
+We will use the certificateSubject `vehicle01`, from the portal or with the script below:
+
+```bash
 source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
@@ -38,18 +40,9 @@ az resource create --id "$res_id/clients/vehicle01" --properties '{
     "attributes": {},
     "description": "This is a test publisher client"
 }'
-
-
-hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
-
-echo "HOST_NAME=$hostname" > .env
-echo "USERNAME=vehicle01" >> .env
-echo "CERT_FILE=vehicle01.pem" >> .env
-echo "KEY_FILE=vehicle01.key" >> .env
 ```
 
-
-## Configure EgentGrid Namespace
+### Configure Permissions with Topic Spaces
 
 ```bash
 source ../../az.env
@@ -73,7 +66,21 @@ az resource create --id "$res_id/permissionBindings/samplesSub" --properties '{
 }'
 ```
 
-## Configure mosquitto to accept TLS certs
+### Create the .env file with connection details
+
+```bash
+cd scenarios/getting_started
+source ../../az.env
+res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+
+echo "HOST_NAME=$hostname" > .env
+echo "USERNAME=vehicle01" >> .env
+echo "CERT_FILE=vehicle01.pem" >> .env
+echo "KEY_FILE=vehicle01.key" >> .env
+```
+
+## Configure Mosquitto 
 
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
@@ -87,6 +94,7 @@ The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X
 echo "HOST_NAME=localhost" > .env
 echo "CERT_FILE=vehicle01.pem" >> .env
 echo "KEY_FILE=vehicle01.key" >> .env
+echo "CA_FILE=chain.pem" >> .env
 ```
 
 To use mosquitto without certificates

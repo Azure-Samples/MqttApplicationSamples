@@ -13,42 +13,27 @@ To run this samples you need an MQTT Broker configured with mTLS to authenticate
 
 Samples are provided in different programming languages: C#, Python and C.
 
-### Broker and Certificates setup
+> Note: The samples are optimized to run in Linux, or WSL in Windows. (To run in native Windows you must adapt the scripts to use Windows paths)
 
-- MQTT Broker
-  - Event Grid Namespace
-  - Mosquitto can run in Windows, WSL, Docker, or K8s
-
-- A X509 certificate chain with one Root certificate - to be used as a CA- and different Leaf certificates. Intermediate CAs are optional. 
-
-Certificates can use ECC and/or RSA keys
-  - Create CA Certificate
-  - Create TLS Certificate
-  - Create mTLS (aka client) Certificates
-
-- Configure Broker Authentication to use X509
-  - Configure Event Grid Namespaces certificates
-  - Configure Mosquitto with X509
-
-- Programming language environment
-  - dotnet 6
-  - Python 3
-  - C (CMake 3.14 + Ninja in WSL, Linux)
+- The samples are located in the folder [scenarios](./scenarios/) with subfolders for each language.
+- To configure the MQTT connection the samples use `.env` files, with variables to specify the hostname, port, certificates, etc.. 
+- The `.env` files must be located in the scenario folder, eg `scenarios/getting_started` and can be reused across samples/languages, including the client certificates.
+- Each sample must be executed from the scenario folder
 
 See [Setup](./Setup.md) for detailed instructions.
 
-## Getting Started Samples
+# Getting Started Sample
 
-Getting started samples show how to perform basic MQTT tasks:
+The getting started sample shows how to perform basic MQTT tasks:
 
 - Connect with MQTT 3.1.1
   - Validate TLS certificate enforcing TLS 1.2
   - Authenticate with client certificates
-  - Configure connection settings such as KeepAlive and CleanSession or ConnectionTimeout
+  - Configure connection settings such as KeepAlive and CleanSession
 - Publish messages to a topic
 - Subscribe to a topic to receive messages
 
-See [Getting Started](./scenarios/getting_started/) for code samples
+See [Getting Started](./scenarios/getting_started/) for the code in C, dotnet and Python
 
 # Scenario Samples
 

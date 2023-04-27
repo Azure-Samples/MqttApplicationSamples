@@ -1,8 +1,43 @@
-# Command
+#  Command (Request/Response)
 
-## Configure the clients
+| [Create the Client Certificates](#create-client-certificates) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure mosquitto](#configure-mosquitto) |
 
-vehicle03
+This scenario simulates the request-response messaging pattern. Request-response uses two topics, one for the request and one for the response.
+
+Consider a use case where a user can unlock their car from a mobile app. The request to unlock are published on `vehicles/<vehicleId>/commands/unlock` and the response of unlock operation are published on `vehicles/<vehicleId>/commands/unlock/response`.
+
+|Client|Role|Operation|Topic/Topic Filter|
+|------|----|---------|------------------|
+|vehicle03|producer|sub|vehicles/vehicle1/commands/unlock|
+|vehicle03|producer|pub|vehicles/vehicle1/commands/unlock/response|
+|mobile-app|consumer|pub|vehicles/vehicle1/commands/unlock|
+|mobile-app|consumer|sub|vehicles/vehicle1/commands/unlock/response|
+
+Messages will be encoded using Protobuf with the following payload.
+
+```proto
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message unlockRequest {
+    google.protobuf.Timestamp when = 1;
+    string requestedFrom = 2;
+}
+
+message unlockResponse {
+    bool succeed =1 ;
+    string errorDetail = 2;
+}
+
+service Commands {
+	rpc unlock(unlockRequest) returns (unlockResponse)
+}
+```
+
+## Create Client Certificates
+
+Run the following step commands to create the client certificates for `vehicle03` and `mobile-app`.
 
 ```bash
 step certificate create \
@@ -12,6 +47,24 @@ step certificate create \
     --no-password --insecure \
     --not-after 2400h
 
+step certificate create \
+    mobile-app mobile-app.pem mobile-app.key \
+    --ca ~/.step/certs/intermediate_ca.crt \
+    --ca-key ~/.step/secrets/intermediate_ca_key \
+    --no-password --insecure \
+    --not-after 2400h
+
+```
+
+## Configure Event Grid Namespaces
+
+Event Grid Namespaces requires to register the clients, and the topic spaces to set the client permissions. 
+
+### Create the Clients
+
+The clients will be created based on the certificate subject, you can register the 2 clients in the portal or by running the script below:
+
+```bash
 source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
@@ -26,27 +79,6 @@ az resource create --id "$res_id/clients/vehicle03" --properties '{
     "description": "This is a test publisher client"
 }'
 
-hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
-
-echo "HOST_NAME=$hostname" > vehicle03.env
-echo "USERNAME=vehicle03" >> vehicle03.env
-echo "CERT_FILE=vehicle03.pem" >> vehicle03.env
-echo "KEY_FILE=vehicle03.key" >> vehicle03.env
-```
-
-mobile-app
-```bash
-step certificate create \
-    mobile-app mobile-app.pem mobile-app.key \
-    --ca ~/.step/certs/intermediate_ca.crt \
-    --ca-key ~/.step/secrets/intermediate_ca_key \
-    --no-password --insecure \
-    --not-after 2400h
-
-source ../../az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
-hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
-
 az resource create --id "$res_id/clients/mobile-app" --properties '{
     "state": "Enabled",
     "clientCertificateAuthentication": {
@@ -58,12 +90,9 @@ az resource create --id "$res_id/clients/mobile-app" --properties '{
     "description": "This is a test publisher client"
 }'
 
-echo "HOST_NAME=$hostname" > mobile-app.env
-echo "USERNAME=mobile-app" >> mobile-app.env
-echo "CERT_FILE=mobile-app.pem" >> mobile-app.env
-echo "KEY_FILE=mobile-app.key" >> mobile-app.env
 ```
-## Configure Topics in EventGrid Namespaces
+
+### Configure Permissions with Topic Spaces
 
 ```bash
 az resource create --id "$res_id/topicSpaces/vehiclesCommands" --properties '{
@@ -82,4 +111,53 @@ az resource create --id "$res_id/permissionBindings/vehiclesSub" --properties '{
     "topicSpaceName":"vehiclesCommands",
     "permission":"Subscriber"
 }'
+```
+
+### Create the .env files with connection details
+
+```bash
+source ../../az.env
+res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+
+echo "HOST_NAME=$hostname" > vehicle03.env
+echo "USERNAME=vehicle03" >> vehicle03.env
+echo "CERT_FILE=vehicle03.pem" >> vehicle03.env
+echo "KEY_FILE=vehicle03.key" >> vehicle03.env
+
+echo "HOST_NAME=$hostname" > mobile-app.env
+echo "USERNAME=mobile-app" >> mobile-app.env
+echo "CERT_FILE=mobile-app.pem" >> mobile-app.env
+echo "KEY_FILE=mobile-app.key" >> mobile-app.env
+```
+
+## Configure Mosquitto 
+
+To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
+
+```bash
+cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
+```
+The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
+
+```bash
+echo "HOST_NAME=localhost" > vehicle03.env
+echo "CERT_FILE=vehicle03.pem" >> vehicle03.env
+echo "KEY_FILE=vehicle03.key" >> vehicle03.env
+echo "CA_FILE=chain.pem" >> vehicle03.env
+
+echo "HOST_NAME=localhost" > mobile-app.env
+echo "CERT_FILE=mobile-app.pem" >> mobile-app.env
+echo "KEY_FILE=mobile-app.key" >> mobile-app.env
+echo "CA_FILE=chain.pem" >> mobile-app.env
+
+```
+
+To use mosquitto without certificates: change the port to 1883, disable TLS and set the CA_FILE
+
+```bash
+echo "HOST_NAME=localhost" > vehicle03.env
+echo "TCP_PORT=1883" >> vehicle03.env
+echo "USE_TLS=false" >> vehicle03.env
+echo "CLIENT_ID=vehicle03" >> vehicle03.env
 ```
