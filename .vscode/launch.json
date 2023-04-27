@@ -109,7 +109,6 @@
             "program": "${workspaceFolder}/scenarios/getting_started/c/build/scenarios/getting_started/c/getting_started",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/scenarios/getting_started",
-            "args": ["${workspaceFolder}/scenarios/getting_started/getting_started.env"],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

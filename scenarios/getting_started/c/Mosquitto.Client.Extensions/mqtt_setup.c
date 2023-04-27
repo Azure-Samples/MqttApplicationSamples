@@ -45,7 +45,7 @@ void mqtt_client_read_env_file(char* file_path)
 
 void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connection_settings)
 {
-  connection_settings->hostname = getenv("HOSTNAME");
+  connection_settings->hostname = getenv("HOST_NAME");
   connection_settings->tcp_port = atoi(getenv("TCP_PORT") ?: "8883");
   connection_settings->client_id = getenv("CLIENT_ID");
   connection_settings->ca_file = getenv("CA_FILE");
@@ -68,7 +68,10 @@ void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connec
   connection_settings->use_TLS = (use_TLS != NULL && strcmp(use_TLS, "false") == 0)
       ? false
       : true; /* TODO: figure out "cat" case */
-  connection_settings->mqtt_version = atoi(getenv("MQTT_VERSION") ?: "4");
+  char* mqtt_version = getenv("MQTT_VERSION");
+  connection_settings->mqtt_version = (mqtt_version != NULL && strcmp(mqtt_version, "5") == 0)
+      ? MQTT_PROTOCOL_V5
+      : MQTT_PROTOCOL_V311; /* TODO: figure out "cat" case */
   connection_settings->username = getenv("USERNAME");
   connection_settings->password = getenv("PASSWORD");
   char* clean_session = getenv("CLEAN_SESSION");
