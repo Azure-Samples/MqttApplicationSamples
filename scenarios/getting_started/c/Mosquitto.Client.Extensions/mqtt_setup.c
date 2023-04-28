@@ -9,6 +9,8 @@
 #include "mqtt_setup.h"
 #include <mosquitto.h>
 
+#define LOG_ALL_MOSQUITTO false
+
 void mqtt_client_read_env_file(char* file_path)
 {
   /* TODO: think about whether this is an issue if we specify the env variables in launch.json, but
@@ -18,6 +20,8 @@ void mqtt_client_read_env_file(char* file_path)
   {
     file_path = ".env";
   }
+
+  printf("Loading environment variables from %s\n", file_path);
 
   FILE* file_ptr = fopen(file_path, "r");
 
@@ -31,7 +35,6 @@ void mqtt_client_read_env_file(char* file_path)
     {
       char* env_name = strtok(env_string, "=");
       char* env_value = strtok(NULL, "=\"");
-      printf("Setting %s = %s\n", env_name, env_value);
       setenv(env_name, env_value, 1);
     }
 
@@ -46,31 +49,59 @@ void mqtt_client_read_env_file(char* file_path)
 void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connection_settings)
 {
   connection_settings->hostname = getenv("HOST_NAME");
+  printf("HOST_NAME = %s\n", connection_settings->hostname);
+
   connection_settings->tcp_port = atoi(getenv("TCP_PORT") ?: "8883");
+  printf("TCP_PORT = %d\n", connection_settings->tcp_port);
+
   connection_settings->client_id = getenv("CLIENT_ID");
+  printf("CLIENT_ID = %s\n", connection_settings->client_id);
+
   connection_settings->ca_file = getenv("CA_FILE");
-  /* TODO: this might not work because we could keep an env var from a previous session */
+  printf("CA_FILE = %s\n", connection_settings->ca_file);
+
   connection_settings->ca_path
       = getenv("CA_PATH") ?: connection_settings->ca_file ? NULL : "/etc/ssl/certs";
+  printf("CA_PATH = %s\n", connection_settings->ca_path);
+
   connection_settings->cert_file = getenv("CERT_FILE");
+  printf("CERT_FILE = %s\n", connection_settings->cert_file);
+
   connection_settings->key_file = getenv("KEY_FILE");
+  printf("KEY_FILE = %s\n", connection_settings->key_file);
+
   connection_settings->key_file_password = getenv("KEY_FILE_PASSWORD");
+  printf("KEY_FILE_PASSWORD = %s\n", connection_settings->key_file_password);
+
   connection_settings->keep_alive_in_seconds = atoi(getenv("KEEP_ALIVE_IN_SECONDS") ?: "30");
+  printf("KEEP_ALIVE_IN_SECONDS = %d\n", connection_settings->keep_alive_in_seconds);
+
   char* use_TLS = getenv("USE_TLS");
   connection_settings->use_TLS = (use_TLS != NULL && strcmp(use_TLS, "false") == 0)
       ? false
       : true; /* TODO: figure out "cat" case */
+  printf("USE_TLS = %s\n", connection_settings->use_TLS ? "true" : "false");
+
   char* mqtt_version = getenv("MQTT_VERSION");
   connection_settings->mqtt_version = (mqtt_version != NULL && strcmp(mqtt_version, "5") == 0)
       ? MQTT_PROTOCOL_V5
       : MQTT_PROTOCOL_V311; /* TODO: figure out "cat" case */
+  printf("MQTT_VERSION = %s\n", connection_settings->mqtt_version == MQTT_PROTOCOL_V5
+                                     ? "MQTT_PROTOCOL_V5"
+                                     : connection_settings->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311" : "UNKNOWN");
+
   connection_settings->username = getenv("USERNAME");
+  printf("USERNAME = %s\n", connection_settings->username);
+
   connection_settings->password = getenv("PASSWORD");
+  printf("PASSWORD = %s\n", connection_settings->password);
+
   char* clean_session = getenv("CLEAN_SESSION");
   connection_settings->clean_session
       = (clean_session != NULL && strcmp(clean_session, "false") == 0)
       ? false
       : true; /* TODO: figure out "cat" case */
+  printf("CLEAN_SESSION = %s\n", connection_settings->clean_session ? "true" : "false");
 }
 
 static void _set_subscribe_callbacks(struct mosquitto* mosq)
@@ -86,7 +117,39 @@ static void _set_publish_callbacks(struct mosquitto* mosq)
 
 void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* str)
 {
-  fprintf(stderr, "Mosquitto log: [%d] %s\n", level, str);
+#if LOG_ALL_MOSQUITTO
+  {
+    char *log_level_str;
+    switch (level)
+    {
+      case MOSQ_LOG_DEBUG:
+        log_level_str = "DEBUG";
+        break;
+      case MOSQ_LOG_INFO:
+        log_level_str = "INFO";
+        break;
+      case MOSQ_LOG_NOTICE:
+        log_level_str = "NOTICE";
+        break;
+      case MOSQ_LOG_WARNING:
+        log_level_str = "WARNING";
+        break;
+      case MOSQ_LOG_ERR:
+        log_level_str = "ERROR";
+        break;
+      default:
+        log_level_str = "";
+        break;
+    }
+    printf("Mosquitto log: [%s] %s\n", log_level_str, str);
+  }
+#else
+    if (strstr(str, "PINGREQ") != NULL || strstr(str, "PINGRESP") != NULL)
+    {
+      printf("%s\n", str);
+    }
+#endif
+  
 }
 
 struct mosquitto* mqtt_client_init(
@@ -123,7 +186,7 @@ struct mosquitto* mqtt_client_init(
     return NULL;
   }
 
-  // mosquitto_log_callback_set(mosq, on_mosquitto_log);
+  mosquitto_log_callback_set(mosq, on_mosquitto_log);
 
   mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, connection_settings->mqtt_version);
 
