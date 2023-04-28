@@ -9,5 +9,10 @@
     ],
     "cmake.debugConfig": {
         "args": ["${workspaceFolder}/scenarios/${command:cmake.activeBuildPresetName}/${command:cmake.buildTargetName}.env"],
+    },
+    "cmake.statusbar.advanced": {
+        "ctest": {"visibility": "hidden"},
+        "testPreset": {"visibility": "hidden"},
+        "launchTarget": {"visibility": "hidden"},
     }
 }

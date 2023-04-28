@@ -31,12 +31,19 @@
         {
             "name": "telemetry",
             "displayName": "C Telemetry",
-            "configurePreset": "telemetry"
+            "configurePreset": "telemetry",
+            "targets": [
+                "telemetry_consumer",
+                "telemetry_producer"
+            ]
         },
         {
             "name": "getting_started",
             "displayName": "C Getting Started",
-            "configurePreset": "getting_started"
+            "configurePreset": "getting_started",
+            "targets": [
+                "getting_started"
+            ]
         }
     ]
 }

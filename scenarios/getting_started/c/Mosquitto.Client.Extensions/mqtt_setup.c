@@ -86,9 +86,12 @@ void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connec
   connection_settings->mqtt_version = (mqtt_version != NULL && strcmp(mqtt_version, "5") == 0)
       ? MQTT_PROTOCOL_V5
       : MQTT_PROTOCOL_V311; /* TODO: figure out "cat" case */
-  printf("MQTT_VERSION = %s\n", connection_settings->mqtt_version == MQTT_PROTOCOL_V5
-                                     ? "MQTT_PROTOCOL_V5"
-                                     : connection_settings->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311" : "UNKNOWN");
+  printf(
+      "MQTT_VERSION = %s\n",
+      connection_settings->mqtt_version == MQTT_PROTOCOL_V5
+          ? "MQTT_PROTOCOL_V5"
+          : connection_settings->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311"
+                                                                    : "UNKNOWN");
 
   connection_settings->username = getenv("USERNAME");
   printf("USERNAME = %s\n", connection_settings->username);
@@ -119,7 +122,7 @@ void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* 
 {
 #if LOG_ALL_MOSQUITTO
   {
-    char *log_level_str;
+    char* log_level_str;
     switch (level)
     {
       case MOSQ_LOG_DEBUG:
@@ -144,12 +147,11 @@ void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* 
     printf("Mosquitto log: [%s] %s\n", log_level_str, str);
   }
 #else
-    if (strstr(str, "PINGREQ") != NULL || strstr(str, "PINGRESP") != NULL)
-    {
-      printf("%s\n", str);
-    }
+  if (strstr(str, "PINGREQ") != NULL || strstr(str, "PINGRESP") != NULL)
+  {
+    printf("%s\n", str);
+  }
 #endif
-  
 }
 
 struct mosquitto* mqtt_client_init(
