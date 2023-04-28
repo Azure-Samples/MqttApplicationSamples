@@ -10,6 +10,7 @@
 #include <mosquitto.h>
 
 #define PAYLOAD "Hello World!" /* TODO: position */
+#define QOS 1
 
 /*
  * This sample sends telemetry messages to the Broker. X509 certification is used.
@@ -21,7 +22,7 @@ int main(int argc, char* argv[])
   mqtt_client_connection_settings* connection_settings
       = calloc(1, sizeof(mqtt_client_connection_settings));
 
-  mosq = mqtt_client_init(true, argv[1], connection_settings);
+  mosq = mqtt_client_init(true, argv[1], NULL, connection_settings);
 
   result = mosquitto_connect_bind_v5(
       mosq,
@@ -50,10 +51,10 @@ int main(int argc, char* argv[])
   char topic[strlen(connection_settings->client_id) + 17];
   sprintf(topic, "vehicles/%s/position", connection_settings->client_id);
 
-  while (1)
+  while (true)
   {
-    result = mosquitto_publish_v5(
-        mosq, NULL, topic, (int)strlen(PAYLOAD), PAYLOAD, connection_settings->qos, false, NULL);
+    result
+        = mosquitto_publish_v5(mosq, NULL, topic, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, NULL);
 
     if (result != MOSQ_ERR_SUCCESS)
     {

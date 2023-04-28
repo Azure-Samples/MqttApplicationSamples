@@ -6,10 +6,40 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
 #include <mosquitto.h>
 
+#define PUB_TOPIC "sample/1"
 #define PAYLOAD "Hello World!"
+#define SUB_TOPIC "sample/+"
+#define QOS 1
+
+/* Callback called when the client receives a CONNACK message from the broker and we want to
+ * subscribe on connect. */
+void on_connect_with_subscribe(
+    struct mosquitto* mosq,
+    void* obj,
+    int reason_code,
+    int flags,
+    const mosquitto_property* props)
+{
+  on_connect(mosq, obj, reason_code, flags, props);
+
+  int result;
+
+  /* Making subscriptions in the on_connect() callback means that if the
+   * connection drops and is automatically resumed by the client, then the
+   * subscriptions will be recreated when the client reconnects. */
+  result = mosquitto_subscribe_v5(mosq, NULL, SUB_TOPIC, QOS, 0, NULL);
+
+  if (result != MOSQ_ERR_SUCCESS)
+  {
+    printf("Error subscribing: %s\n", mosquitto_strerror(result));
+    /* We might as well disconnect if we were unable to subscribe */
+    mosquitto_disconnect_v5(mosq, reason_code, props);
+  }
+}
 
 /*
  * This sample sends and receives messages to/from the Broker. X509 certification is used.
@@ -21,9 +51,7 @@ int main(int argc, char* argv[])
   mqtt_client_connection_settings* connection_settings
       = calloc(1, sizeof(mqtt_client_connection_settings));
 
-  connection_settings->sub_topic = "sample/+";
-
-  mosq = mqtt_client_init(true, argv[1], connection_settings);
+  mosq = mqtt_client_init(true, argv[1], on_connect_with_subscribe, connection_settings);
   result = mosquitto_connect_bind_v5(
       mosq,
       connection_settings->hostname,
@@ -48,17 +76,10 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  while (1)
+  while (true)
   {
     result = mosquitto_publish_v5(
-        mosq,
-        NULL,
-        "sample/topic1",
-        (int)strlen(PAYLOAD),
-        PAYLOAD,
-        connection_settings->qos,
-        false,
-        NULL);
+        mosq, NULL, PUB_TOPIC, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, NULL);
 
     if (result != MOSQ_ERR_SUCCESS)
     {

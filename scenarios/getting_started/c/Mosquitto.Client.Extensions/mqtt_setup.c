@@ -55,14 +55,6 @@ void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connec
   connection_settings->cert_file = getenv("CERT_FILE");
   connection_settings->key_file = getenv("KEY_FILE");
   connection_settings->key_file_password = getenv("KEY_FILE_PASSWORD");
-  char * qos = getenv("QOS");
-  if (qos == NULL)
-  {
-    setenv("QOS", "1", 1);
-    connection_settings->qos = 1;
-  } else {
-    connection_settings->qos = atoi(qos);
-  }
   connection_settings->keep_alive_in_seconds = atoi(getenv("KEEP_ALIVE_IN_SECONDS") ?: "30");
   char* use_TLS = getenv("USE_TLS");
   connection_settings->use_TLS = (use_TLS != NULL && strcmp(use_TLS, "false") == 0)
@@ -83,7 +75,6 @@ void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connec
 
 static void _set_subscribe_callbacks(struct mosquitto* mosq)
 {
-  mosquitto_connect_v5_callback_set(mosq, on_connect_with_subscribe);
   mosquitto_subscribe_v5_callback_set(mosq, on_subscribe);
   mosquitto_message_v5_callback_set(mosq, on_message);
 }
@@ -101,16 +92,16 @@ void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* 
 struct mosquitto* mqtt_client_init(
     bool publish,
     char* env_file,
+    void (*on_connect_with_subscribe)(
+        struct mosquitto*,
+        void*,
+        int,
+        int,
+        const mosquitto_property* props),
     mqtt_client_connection_settings* connection_settings)
 {
   struct mosquitto* mosq = NULL;
-  bool subscribe = false;
-
-  if (connection_settings->sub_topic)
-  {
-    setenv("SUB_TOPIC", connection_settings->sub_topic, 1);
-    subscribe = true;
-  }
+  bool subscribe = on_connect_with_subscribe != NULL;
 
   /* Get environment variables for connection settings */
   mqtt_client_read_env_file(env_file);
@@ -132,11 +123,12 @@ struct mosquitto* mqtt_client_init(
     return NULL;
   }
 
-  /* mosquitto_log_callback_set(mosq, on_mosquitto_log); */
+  // mosquitto_log_callback_set(mosq, on_mosquitto_log);
 
   mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, connection_settings->mqtt_version);
 
   /*callbacks */
+  mosquitto_connect_v5_callback_set(mosq, on_connect_with_subscribe ?: on_connect);
   mosquitto_disconnect_v5_callback_set(mosq, on_disconnect);
 
   if (subscribe)
@@ -147,13 +139,6 @@ struct mosquitto* mqtt_client_init(
   if (publish)
   {
     _set_publish_callbacks(mosq);
-
-    /* If we're publishing and subscribing, we set the connect callback in the subscribe callbacks
-     */
-    if (!subscribe)
-    {
-      mosquitto_connect_v5_callback_set(mosq, on_connect);
-    }
   }
 
   int result;
