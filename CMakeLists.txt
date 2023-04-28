@@ -38,4 +38,6 @@ link_libraries(
 file(GLOB MOSQUITTO_CLIENT_EXTENSIONS ${CMAKE_CURRENT_LIST_DIR}/scenarios/getting_started/c/Mosquitto.Client.Extensions/*.c)
 include_directories( ${CMAKE_CURRENT_LIST_DIR}/scenarios/getting_started/c/Mosquitto.Client.Extensions)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 add_subdirectory(${PRESET_PATH})
