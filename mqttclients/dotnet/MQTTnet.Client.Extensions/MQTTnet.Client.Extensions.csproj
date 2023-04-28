@@ -7,6 +7,5 @@
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="MQTTnet" Version="4.1.4.563" />
-		<PackageReference Include="Google.Protobuf" Version="3.22.1" />
 	</ItemGroup>
 </Project>
