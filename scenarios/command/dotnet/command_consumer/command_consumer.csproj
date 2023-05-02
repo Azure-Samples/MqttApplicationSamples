@@ -4,18 +4,13 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<UserSecretsId>dotnet-command_consumer-17efa807-fce3-4773-86c3-28cc5202b7a6</UserSecretsId>
 	</PropertyGroup>
-	<ItemGroup>
-		<Compile Include=".\..\..\..\getting_started\dotnet\getting_started\MQTTnet.Client.Extensions\*">
-			<Link>MqttClientExtensions\%(RecursiveDir)%(Filename)%(Extension)</Link>
-		</Compile>
-	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 		<PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.1.4.563" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\..\mqttclients\dotnet\MQTTnet.Client.Extensions\MQTTnet.Client.Extensions.csproj" />
 	  <ProjectReference Include="..\proto_messages\proto_messages.csproj" />
 	</ItemGroup>
 </Project>

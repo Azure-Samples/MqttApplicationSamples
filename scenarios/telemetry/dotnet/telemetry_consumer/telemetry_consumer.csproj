@@ -7,15 +7,28 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include=".\..\..\..\getting_started\dotnet\getting_started\MQTTnet.Client.Extensions\*">
-			<Link>MqttClientExtensions\%(RecursiveDir)%(Filename)%(Extension)</Link>
-		</Compile>
+	  <Content Remove="Properties\launchSettingsTEMPLATE.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_WebToolingArtifacts Remove="Properties\launchSettingsTEMPLATE.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Properties\launchSettingsTEMPLATE.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 		<PackageReference Include="MQTTnet.Extensions.External.RxMQTT.Client" Version="4.0.53" />
 		<PackageReference Include="GeoJSON.Text" Version="1.0.1" />
-		<PackageReference Include="Google.Protobuf" Version="3.22.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\..\mqttclients\dotnet\MQTTnet.Client.Extensions\MQTTnet.Client.Extensions.csproj" />
 	</ItemGroup>
 </Project>
