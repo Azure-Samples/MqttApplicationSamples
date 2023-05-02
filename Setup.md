@@ -5,17 +5,24 @@ These samples can work with any MQTT Broker configured to accept authenticated c
 - Azure Event Grid Namespaces
 - Mosquitto
 
-> To create the server and client certificates use the `step cli` [https://smallstep.com/docs/step-cli/installation/](https://smallstep.com/docs/step-cli/installation/)
+> To create the certificates use the `step cli` [https://smallstep.com/docs/step-cli/installation/](https://smallstep.com/docs/step-cli/installation/)
 
-## Create CA
+### Create CA
 
-All samples require to register the root CA certificates used to generate the client certs.
+All samples require a CA to generate the client certificates to connect.
+
+To create the root and intermediate CA certificates run:
 
 ```bash
-step ca init --deployment-type standalone --name MqttAppSamplesCA --dns localhost --address 127.0.0.1:443 --provisioner MqttAppSamplesCAProvisioner
+step ca init \
+    --deployment-type standalone \
+    --name MqttAppSamplesCA \
+    --dns localhost \
+    --address 127.0.0.1:443 \
+    --provisioner MqttAppSamplesCAProvisioner
 ```
 
-Follow the cli instructions, when done take note of the path to the generated certificates and keys, by default those are stored in:
+Follow the cli instructions, when done make sure you remember the password used to protect the private keys, by default the generated certificates are stored in:
 
 - `~/.step/certs/root_ca.crt`
 - `~/.step/certs/intermediate_ca.crt`
@@ -39,16 +46,17 @@ Access the Azure portal by using [this link](https://portal.azure.com/?microsoft
 Create or update `az.env` with subscription, resource group, and the name for the EventGrid Namespace.
 
 ```text
-sub_id="<subscription-id>"
-rg="resource-group-name"
-name="event-grid-namespace"
+sub_id=<subscription-id>
+rg=resource-group-name
+name=event-grid-namespace
 ```
 
-Create the service
+## Create the Event Grid Namespace instance
+
+To run the `az` cli, make sure you are authenticated `az login` with an account that has permissions on the selected subscription.
 
 ```bash
 source az.env
-
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az account set -s $sub_id
@@ -69,27 +77,30 @@ Register the certificate to authenticate client certificates (usually the interm
 
 ```bash
 capem=`cat ~/.step/certs/intermediate_ca.crt | tr -d "\n"`
-az resource create --id "$res_id/caCertificates/Intermediate01" --properties "{\"encodedCertificate\" : \"$capem\"}"
+az resource create \
+  --id "$res_id/caCertificates/Intermediate01" \
+  --properties "{\"encodedCertificate\" : \"$capem\"}"
 ```
 
 
 ## Configure Mosquitto with TLS and X509 Authentication
 
-Using the test ca, create certificates for `localhost`. 
+The local instance of mosquitto requires a certificate to expose a TLS endpoint, the chain `chain.pem` used to create this cert needs to be trusted by clients.
+
+Using the test ca, create a certificate for `localhost`, and store the certificate files in the `_mosquitto` folder.
 
 ```bash
 cd _mosquitto
 cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
-step certificate create localhost localhost.crt localhost.key --ca ~/.step/certs/intermediate_ca.crt --ca-key ~/.step/secrets/intermediate_ca_key --no-password --insecure --not-after 2400h
+step certificate create localhost localhost.crt localhost.key \
+      --ca ~/.step/certs/intermediate_ca.crt \
+      --ca-key ~/.step/secrets/intermediate_ca_key \
+      --no-password \
+      --insecure \
+      --not-after 2400h
 ```
 
-These files are used by mosquitto:
-
-```
-mosquitto -c tls.conf
-```
-
-`tls.conf`
+These files are used by  the mosquitto configuration file `tls.conf`
 
 ```text
 per_listener_settings true
@@ -104,4 +115,10 @@ cafile chain.pem
 certfile localhost.crt
 keyfile localhost.key
 tls_version tlsv1.2
+```
+
+To start mosquitto with this configuration file run:
+
+```bash
+mosquitto -c tls.conf
 ```

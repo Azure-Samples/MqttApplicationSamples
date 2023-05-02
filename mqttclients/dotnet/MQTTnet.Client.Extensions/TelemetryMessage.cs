@@ -1,6 +1,6 @@
-﻿namespace telemetry_consumer;
+﻿namespace MQTTnet.Client.Extensions;
 
-internal class TelemetryMessage<T>
+public class TelemetryMessage<T>
 {
     public string? ClientIdFromTopic { get; set; }
     public T? Payload { get; set; }

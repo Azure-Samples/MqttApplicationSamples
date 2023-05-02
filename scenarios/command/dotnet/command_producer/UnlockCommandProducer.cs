@@ -1,5 +1,6 @@
 ﻿using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
+using proto_messages;
 
 namespace command_producer;
 

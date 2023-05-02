@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "getting_started_mosquitto": {
+    "localhost": {
       "commandName": "Project",
       "environmentVariables": {
         "HOST_NAME": "localhost",

@@ -27,7 +27,7 @@ public class ConnectionSettings
     {
         get => !string.IsNullOrEmpty(CertFile) ? AuthType.X509 : AuthType.Basic;
     }
-    public string? Username { get; set; }
+    public string? UserName { get; set; }
     public string? Password { get; set; }
     public int KeepAliveInSeconds { get; set; }
     public bool CleanSession { get; set; }
@@ -86,7 +86,7 @@ public class ConnectionSettings
             ClientId = Env(nameof(ClientId)),
             CertFile = Env(nameof(CertFile)),
             KeyFile = Env(nameof(KeyFile)),
-            Username = Env(nameof(Username)),
+            UserName = Env(nameof(UserName)),
             Password = Env(nameof(Password)),
             KeepAliveInSeconds = int.TryParse(Env(nameof(KeepAliveInSeconds)), out int keepAliveInSeconds) ? keepAliveInSeconds : Default_KeepAliveInSeconds,
             CleanSession = Env(nameof(CleanSession)) == "true",
@@ -127,7 +127,7 @@ public class ConnectionSettings
         ClientId = GetStringValue(map, nameof(ClientId));
         KeyFile = GetStringValue(map, nameof(KeyFile));
         CertFile = GetStringValue(map, nameof(CertFile));
-        Username = GetStringValue(map, nameof(Username));
+        UserName = GetStringValue(map, nameof(UserName));
         Password = GetStringValue(map, nameof(Password));
         KeepAliveInSeconds = GetPositiveIntValueOrDefault(map, nameof(KeepAliveInSeconds), Default_KeepAliveInSeconds);
         CleanSession = GetStringValue(map, nameof(CleanSession), Default_CleanSession) == "true";
@@ -151,7 +151,7 @@ public class ConnectionSettings
         var result = new StringBuilder();
         AppendIfNotEmpty(result, nameof(HostName), HostName!);
         AppendIfNotEmpty(result, nameof(TcpPort), TcpPort.ToString());
-        AppendIfNotEmpty(result, nameof(Username), Username!);
+        AppendIfNotEmpty(result, nameof(UserName), UserName!);
         AppendIfNotEmpty(result, nameof(CleanSession), CleanSession.ToString());
         AppendIfNotEmpty(result, nameof(KeepAliveInSeconds), KeepAliveInSeconds.ToString());
         AppendIfNotEmpty(result, nameof(CertFile), CertFile!);

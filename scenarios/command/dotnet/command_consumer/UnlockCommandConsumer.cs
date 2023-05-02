@@ -1,6 +1,8 @@
 ﻿using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
+using proto_messages;
+
 namespace command_consumer;
 
 public class UnlockCommandConsumer : CommandConsumer<unlockRequest, unlockResponse>

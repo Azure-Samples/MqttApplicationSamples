@@ -28,11 +28,12 @@ public class Worker : BackgroundService
         {
             _logger.LogWarning("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
 
-            var telemetryPosition = new Telemetry<Point>(mqttClient.InternalClient, "vehicles/{clientId}/position");
+            var telemetryPosition = new PositionTelemetryProducer(mqttClient.InternalClient);
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var pubAck = await telemetryPosition.SendMessage(new Point(new Position(51.899523, -2.124156)), stoppingToken);
+                var pubAck = await telemetryPosition.SendTelemetryAsync(
+                    new Point(new Position(51.899523, -2.124156)), stoppingToken);
                 _logger.LogInformation("Message published with PUBACK {code}", pubAck.ReasonCode);
                 await Task.Delay(5000, stoppingToken);
             }

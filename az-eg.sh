@@ -1,4 +1,4 @@
-source .env
+source az.env
 
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 

@@ -5,7 +5,9 @@ VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "telemetry_producer", "telemetry_producer\telemetry_producer.csproj", "{291748A3-8F9D-48F5-ABD8-B53707331E87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "telemetry_consumer", "telemetry_consumer\telemetry_consumer.csproj", "{2FBB3EA3-874B-462F-A039-A13E26A99268}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "telemetry_consumer", "telemetry_consumer\telemetry_consumer.csproj", "{2FBB3EA3-874B-462F-A039-A13E26A99268}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQTTnet.Client.Extensions", "..\..\..\mqttclients\dotnet\MQTTnet.Client.Extensions\MQTTnet.Client.Extensions.csproj", "{A0451903-BF39-421F-AFDC-5F79D5863398}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{2FBB3EA3-874B-462F-A039-A13E26A99268}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FBB3EA3-874B-462F-A039-A13E26A99268}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FBB3EA3-874B-462F-A039-A13E26A99268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0451903-BF39-421F-AFDC-5F79D5863398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0451903-BF39-421F-AFDC-5F79D5863398}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0451903-BF39-421F-AFDC-5F79D5863398}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0451903-BF39-421F-AFDC-5F79D5863398}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
