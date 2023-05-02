@@ -9,7 +9,7 @@
 #include "mqtt_setup.h"
 #include <mosquitto.h>
 
-#define PAYLOAD "Hello World!" /* TODO: position */
+#define PAYLOAD "{\"type\":\"Point\",\"coordinates\":[-2.124156,51.899523]}"
 #define QOS 1
 
 /*
