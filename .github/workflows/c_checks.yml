@@ -1,0 +1,53 @@
+# This is a basic workflow to help you get started with Actions
+
+name: C Checks
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events for the "main" branch
+  push:
+    branches: [ "main" ]
+  # Triggers the workflow on PR events
+  pull_request:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-20.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          sudo sh .devcontainer/postCreateCommand.sh
+          sudo apt install -y clang-format-9
+
+      # Runs a set of commands using the runners shell
+      - name: Style check
+        run: |
+          clang-format-9 --version
+          clang-format-9 -style=file --verbose -i $(find . -name "*.[ch]" -not -path "./*/build/*")
+
+          git status --untracked-files=no --porcelain
+
+          if [[ `git status --untracked-files=no --porcelain` ]]; then
+            echo Some files were not formatted correctly according to the .clang-format file.
+            echo Please run clang-format to fix the issue by using this bash command at the root of the repo:
+            echo "clang-format -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*")"
+            exit 1
+          fi
+
+          echo Success, all files are formatted correctly according to the .clang-format file.
+          exit 0
+
+      - name: Build getting_started Samples
+        run: cmake --preset=getting_started;cmake --build --preset=getting_started
+      - name: Build telemetry Samples
+        run: cmake --preset=telemetry;cmake --build --preset=telemetry
