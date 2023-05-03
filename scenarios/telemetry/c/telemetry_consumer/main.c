@@ -38,7 +38,7 @@ void on_connect_with_subscribe(
 }
 
 /*
- * This sample receives telemetry messages from the broker. X509 certification is used.
+ * This sample receives telemetry messages from the broker. X509 authentication is used.
  */
 int main(int argc, char* argv[])
 {

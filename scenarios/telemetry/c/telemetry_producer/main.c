@@ -13,7 +13,7 @@
 #define QOS 1
 
 /*
- * This sample sends telemetry messages to the Broker. X509 certification is used.
+ * This sample sends telemetry messages to the Broker. X509 authentication is used.
  */
 int main(int argc, char* argv[])
 {
