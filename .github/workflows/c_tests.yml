@@ -30,7 +30,8 @@ jobs:
       - name: Configure
         run: |
           sudo sh .devcontainer/postCreateCommand.sh
-          sudo apt install clang-format-9
+          sudo apt update
+          sudo apt install -y clang-format-9
 
       # Runs a set of commands using the runners shell
       - name: Style check
