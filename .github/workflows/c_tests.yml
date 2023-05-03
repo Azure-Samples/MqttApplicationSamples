@@ -33,7 +33,8 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Style check
         run: |
-          clang-format -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*")
+          clang-format --version
+          clang-format -style=file --output-replacements-xml --verbose -i $(find . -name "*.[ch]" -not -path "./*/build/*")
 
           git status --untracked-files=no --porcelain
 
