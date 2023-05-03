@@ -71,7 +71,7 @@ void on_message(
 {
   /* This blindly prints the payload, but the payload can be anything so take care. */
   printf(
-      "on_message: Topic: %s; QOS: %d; Payload: %s\n", msg->topic, msg->qos, (char*)msg->payload)
+      "on_message: Topic: %s; QOS: %d; Payload: %s\n", msg->topic, msg->qos, (char*)msg->payload);
 }
 
 /* Callback called when the client knows to the best of its abilities that a
