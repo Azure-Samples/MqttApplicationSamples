@@ -1,0 +1,145 @@
+# Getting Started
+
+This sample shows how to perform basic MQTT operations: Connect, Publish and Subscribe.
+
+| [Create the Client Certificate](#create-the-client-certificate) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
+
+## Create the client certificate
+
+Using the CA files, as described in [setup](../setup), create a certificate for `sample_client`.
+
+```bash
+cd scenarios/getting_started
+step certificate create \
+    sample_client sample_client.pem sample_client.key \
+    --ca ~/.step/certs/intermediate_ca.crt \
+    --ca-key ~/.step/secrets/intermediate_ca_key \
+    --no-password --insecure \
+    --not-after 2400h
+```
+
+## Configure Event Grid Namespaces
+
+Event Grid Namespaces requires to register the client, and the topic spaces to set the client permissions. 
+
+### Create the Client
+
+We will use the certificateSubject `sample_client`, from the portal or with the script below:
+
+```bash
+source ../../az.env
+res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+
+az resource create --id "$res_id/clients/sample_client" --properties '{
+    "state": "Enabled",
+    "clientCertificateAuthentication": {
+        "certificateSubject": {
+            "commonName": "sample_client"
+        }
+    },
+    "attributes": {},
+    "description": "This is a test publisher client"
+}'
+```
+
+### Configure Permissions with Topic Spaces
+
+```bash
+source ../../az.env
+res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+
+az resource create --id "$res_id/topicSpaces/samples" --properties '{
+    "topicTemplates": ["sample/#"],
+    "subscriptionSupport": "LowFanout"
+}'
+
+az resource create --id "$res_id/permissionBindings/samplesPub" --properties '{
+    "clientGroupName":"$all",
+    "topicSpaceName":"samples",
+    "permission":"Publisher"
+}'
+
+az resource create --id "$res_id/permissionBindings/samplesSub" --properties '{
+    "clientGroupName":"$all",
+    "topicSpaceName":"samples",
+    "permission":"Subscriber"
+}'
+```
+
+### Create the .env file with connection details
+
+```bash
+cd scenarios/getting_started
+source ../../az.env
+res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+
+echo "HOST_NAME=$host_name" > .env
+echo "USERNAME=sample_client" >> .env
+echo "CLIENT_ID=sample_client" >> .env
+echo "CERT_FILE=sample_client.pem" >> .env
+echo "KEY_FILE=sample_client.key" >> .env
+```
+
+## Configure Mosquitto 
+
+To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
+
+```bash
+cd _mosquitto
+cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
+```
+The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
+
+```bash
+echo "HOST_NAME=localhost" > .env
+echo "CLIENT_ID=sample_client" >> .env
+echo "CERT_FILE=sample_client.pem" >> .env
+echo "KEY_FILE=sample_client.key" >> .env
+echo "CA_FILE=chain.pem" >> .env
+```
+
+To use mosquitto without certificates
+
+```bash
+echo "HOST_NAME=localhost" > .env
+echo "TCP_PORT=1883" >> .env
+echo "USE_TLS=false" >> .env
+echo "CLIENT_ID=sample_client" >> .env
+```
+
+## Run the Sample
+
+All samples are designed to be executed from the root scenario folder.
+
+### dotnet
+
+To build the dotnet sample run:
+
+```bash
+dotnet build dotnet/getting_started.sln 
+```
+
+To run the dotnet sample:
+
+```bash
+ dotnet/getting_started/bin/Debug/net7.0/getting_started
+```
+(this will use the `.env` file created before)
+
+### C
+
+To build the C sample run:
+
+```bash
+c/build.sh
+```
+The build script will copy the produced binary to `c/build/getting_started`
+
+To run the C sample:
+
+```
+c/build/getting_started
+```
+
+

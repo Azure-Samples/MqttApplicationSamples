@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "getting_started_mosquitto": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "HOST_NAME": "localhost",
+        "TCP_PORT": "1883",
+        "USE_TLS": "false",
+        "CLIENT_ID": "sample_client",
+        "USER_NAME": "sample_user"
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+﻿{
+  "profiles": {
+    "localhost": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "HOST_NAME": "localhost",
+        "TCP_PORT": "1883",
+        "USE_TLS": "false",
+        "CLIENT_ID": "map-app",
+        "USER_NAME": "sample_user"
+      }
+    }
+  }
+}

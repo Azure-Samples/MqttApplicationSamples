@@ -1,57 +1,127 @@
-# Project Name
+# MQTT Application Samples
 
-(short, 1-3 sentenced, description of the project)
+Guidance to build Pub/Sub applications targeting MQTT Brokers in different programming languages.
 
-## Features
+| [Setup](./Setup.md) | [Getting Started](./scenarios/getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |
 
-This project framework provides the following features:
+## Prerequisites
 
-* Feature 1
-* Feature 2
-* ...
+To run this samples you need an MQTT Broker configured with mTLS to authenticate clients with X509 certificates, we provide instructions for:
 
-## Getting Started
+- Azure Event Grid Namespaces 
+- Mosquitto for local development
 
-### Prerequisites
+Samples are provided in different programming languages: C#, Python and C.
 
-(ideally very short, if any)
+> Note: The samples are optimized to run in Linux, or WSL in Windows. (To run in native Windows you must adapt the scripts to use Windows paths)
 
-- OS
-- Library version
-- ...
+- The samples are located in the folder [scenarios](./scenarios/) with subfolders for each language.
+- To configure the MQTT connection the samples use `.env` files, with variables to specify the hostname, port, certificates, etc.. 
+- The `.env` files must be located in the scenario folder, eg `scenarios/getting_started` and can be reused across samples/languages, including the client certificates.
+- Each sample must be executed from the scenario folder
 
-### Installation
+See [Setup](./Setup.md) for detailed instructions.
 
-(ideally very short)
+# Getting Started Sample
 
-- npm install [package name]
-- mvn install
-- ...
+The getting started sample shows how to perform basic MQTT tasks:
 
-### Quickstart
-(Add steps to get up and running quickly)
+- Connect with MQTT 3.1.1
+  - Validate TLS certificate enforcing TLS 1.2
+  - Authenticate with client certificates
+  - Configure connection settings such as KeepAlive and CleanSession
+- Publish messages to a topic
+- Subscribe to a topic to receive messages
 
-1. git clone [repository clone url]
-2. cd [repository name]
-3. ...
+See [Getting Started](./scenarios/getting_started/) for the code in C, dotnet and Python
 
+# Scenario Samples
 
-## Demo
+The following samples are implementations of the core PubSub patterns used with MQTT Brokers. Each scenario might require a different number of producers and consumers, these are loosely coupled actors that interact with the broker using some topic structure and known message payloads.
 
-A demo app is included to show how to use the project.
+Each scenario requires to configure the brokers:
 
-To run the demo, follow these steps:
+- Configure Authentication: mTLS certificates and clients
+- Configure Authorization: Define which client(s) can interact with which topic(s)
 
-(Add steps to start up the demo)
+## Telemetry (Fan-In)
 
-1.
-2.
-3.
+This scenario shows how multiple clients send data (the producers) to a different set of topics that can be consumed by a single application (the consumer).
 
-## Resources
+Consider a use case where a backend solution needs to identify the location of vehicles on a map. Vehicles should be prohibited from listening to other vehicles location on their behalf.
 
-(Any additional resources or related projects)
+|Client|Role|Operation|Topic/Topic Filter|
+|------|----|---------|------------------|
+|vehicle1|producer|pub|vehicles/vehicle1/position|
+|vehicle2|producer|pub|vehicles/vehicle2/position|
+|map-app|consumer|sub|vehicles/+/position|
 
-- Link to supporting information
-- Link to similar sample
-- ...
+Messages will use [GeoJSON](https://geojson.org) to represent the coordinates.
+
+```json
+{
+    "type": "Point",
+    "coordinates": [125.6, 10.1]
+}
+```
+
+See [Telemetry](./scenarios/telemetry/) for code samples.
+
+##  Command (Request/Response)
+
+This scenario simulates the request-response messaging pattern. Request-response uses two topics, one for the request and one for the response.
+
+Consider a use case where a user can unlock their car from a mobile app. The request to unlock are published on `vehicles/<vehicleId>/commands/unlock` and the response of unlock operation are published on `vehicles/<vehicleId>/commands/unlock/response`.
+
+|Client|Role|Operation|Topic/Topic Filter|
+|------|----|---------|------------------|
+|vehicle03|producer|sub|vehicles/vehicle1/commands/unlock|
+|vehicle03|producer|pub|vehicles/vehicle1/commands/unlock/response|
+|mobile-app|consumer|pub|vehicles/vehicle1/commands/unlock|
+|mobile-app|consumer|sub|vehicles/vehicle1/commands/unlock/response|
+
+Messages will be encoded using Protobuf with the following payload.
+
+```proto
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message unlockRequest {
+    google.protobuf.Timestamp when = 1;
+    string requestedFrom = 2;
+}
+
+message unlockResponse {
+    bool succeed =1 ;
+    string errorDetail = 2;
+}
+
+service Commands {
+	rpc unlock(unlockRequest) returns (unlockResponse)
+}
+```
+
+See [Command](./scenarios/command/) for code samples.
+
+## Command (Fan-Out)
+
+This scenario shows how multiple clients can receive notifications from the same topic, this pattern can be leveraged for use cases such as sending alerts. Consider the use case where a fleet management service needs to send a weather alerts to all the vehicles in the fleet.
+
+|Client|Role|Operation|Topic/Topic Filter|
+|------|----|---------|------------------|
+|vehicle1|consumer|sub|fleets/alerts/#|
+|vehicle2|consumer|sub|fleets/alerts/#|
+|fleet-mgr|producer|pub|fleets/alerts/weather1|
+
+Messages will be encoded with custom JSON schema
+
+```json
+{
+    "weatherAlert" : {
+        "starts" : "2023-03-14T22:00:000Z",
+        "ends" : "2023-03-15T22:00:000Z",
+        "description" : "High Winds expected"
+    }
+}
+```
