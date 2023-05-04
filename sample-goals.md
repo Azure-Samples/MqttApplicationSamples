@@ -28,7 +28,7 @@
 To align connection settings across languages we will the next environment variables:
 
 |EnvVar Name|Required|Type|DefaultValue|Notes|
-|-----------|--------|----|------------|---------------|-----|
+|-----------|--------|----|------------|-----|
 |`HOST_NAME`|yes|string|n/a|FQDN to the endpoint, eg: mybroker.mydomain.com|
 |`TCP_PORT`|no|int|8883|`TCP port to access the endpoint eg: 8883|
 |`USE_TLS`|no|bool|true|Disable TLS negotiation (not recommended for production)|
