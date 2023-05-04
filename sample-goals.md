@@ -27,27 +27,29 @@
 
 To align connection settings across languages we will the next environment variables:
 
-|EnvVar Name|Required|Type|DefaultValue|PascalCase Name|Notes|
+|EnvVar Name|Required|Type|DefaultValue|Notes|
 |-----------|--------|----|------------|---------------|-----|
-|`HOST_NAME`|yes|string|n/a|`HostName`|FQDN to the endpoint, eg: mybroker.mydomain.com|
-|`TCP_PORT`|no|int|8883|`TcpPort`|TCP port to access the endpoint eg: 8883|
-|`USE_TLS`|no|bool|true|`UseTls`|Disable TLS negotiation (not recommended for production)|
-|`CLEAN_SESSION`|no|bool|true|`CleanSession`|MQTT Clean Session, might require to set the ClientId|
-|`KEEP_ALIVE_IN_SECONDS`|no|int|30(*)|`KeepAliveInSeconds`|Seconds to send the ping to keep the connection open|
-|`CLIENT_ID`|no|string|empty(**)|`ClientId`|MQTT Client Id|
-|`USER_NAME`|no|string|empty|`UserName`|MQTT Username to authenticate the connection|
-|`PASSWORD`|no|string|empty|`Password`|MQTT Password to authenticate the connection|
-|`CA_FILE`|no|string|empty|`CaFile`|Path to a PEM file with the chain required to trust the TLS endpoint certificate|
-|`CA_PATH`|no|string|empty|`CaPath`|Path to a folder with trusted certs, eg: `/etc/ssl/certs`|
-|`CERT_FILE`|no|string|empty|`CertFile`|Path to a PEM file to establish X509 client authentication|
-|`KEY_FILE`|no|string|empty|`KeyFile`|Path to a KEY file to establish X509 client authentication|
-|`KEY_FILE_PASSWORD`|no|string|empty|`KeyFilePassword`|Password (aka pass-phrase) to protect the key file| 
+|`HOST_NAME`|yes|string|n/a|FQDN to the endpoint, eg: mybroker.mydomain.com|
+|`TCP_PORT`|no|int|8883|`TCP port to access the endpoint eg: 8883|
+|`USE_TLS`|no|bool|true|Disable TLS negotiation (not recommended for production)|
+|`CLEAN_SESSION`|no|bool|true|MQTT Clean Session, might require to set the ClientId|
+|`KEEP_ALIVE_IN_SECONDS`|no|int|30(*)|Seconds to send the ping to keep the connection open|
+|`CLIENT_ID`|no|string|empty(**)|MQTT Client Id|
+|`USER_NAME`|no|string|empty|MQTT Username to authenticate the connection|
+|`PASSWORD`|no|string|empty|MQTT Password to authenticate the connection|
+|`CA_FILE`|no|string|empty|Path to a PEM file with the chain required to trust the TLS endpoint certificate|
+|`CA_PATH`|no|string|empty|Path to a folder with trusted certs, eg: `/etc/ssl/certs`|
+|`CERT_FILE`|no|string|empty|Path to a PEM file to establish X509 client authentication|
+|`KEY_FILE`|no|string|empty|Path to a KEY file to establish X509 client authentication|
+|`KEY_FILE_PASSWORD`|no|string|empty|Password (aka pass-phrase) to protect the key file| 
 
 > (*) May vary by MQTT Client
 
 > (**) ClientID might be assigned for the server, and it's required for CleanSession=false.
 
 When a variable does not match the type, eg trying to set the port to a string value, we will generate an error.
+
+The _env vars_ are using `UPPER_CASE`, each language will assign these values to variables following the language style, eg: in `C#` we will use `PascalCase` and `C` will use `snake_case`, so `HOST_NAME` will be assigned to `HostName` and `host_name`.
 
 #### Authenticate with Client Certificates
 
