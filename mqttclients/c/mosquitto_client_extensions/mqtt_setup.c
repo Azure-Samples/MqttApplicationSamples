@@ -163,6 +163,7 @@ struct mosquitto* mqtt_client_init(
         int,
         int,
         const mosquitto_property* props),
+    mqtt_client_obj* obj,
     mqtt_client_connection_settings* connection_settings)
 {
   struct mosquitto* mosq = NULL;
@@ -180,7 +181,7 @@ struct mosquitto* mqtt_client_init(
    * clean session = true -> the broker should remove old sessions when we connect
    * obj = NULL -> we aren't passing any of our private data for callbacks
    */
-  mosq = mosquitto_new(connection_settings->client_id, connection_settings->clean_session, NULL);
+  mosq = mosquitto_new(connection_settings->client_id, connection_settings->clean_session, obj);
 
   if (mosq == NULL)
   {

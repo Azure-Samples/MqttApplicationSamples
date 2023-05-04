@@ -25,6 +25,11 @@ typedef struct mqtt_client_connection_settings
   bool use_TLS;
 } mqtt_client_connection_settings;
 
+typedef struct mqtt_client_obj
+{
+  void (*print_message)(const struct mosquitto_message* message);
+} mqtt_client_obj;
+
 struct mosquitto* mqtt_client_init(
     bool publish,
     char* env_file,
@@ -34,6 +39,7 @@ struct mosquitto* mqtt_client_init(
         int,
         int,
         const mosquitto_property* props),
+    mqtt_client_obj* mqtt_client_obj,
     mqtt_client_connection_settings* connection_settings);
 
 #endif /* MQTT_SETUP_H */

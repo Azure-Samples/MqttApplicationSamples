@@ -11,6 +11,16 @@
 #define SUB_TOPIC "vehicles/+/position"
 #define QOS 1
 
+// Custom callback for when a message is received.
+void print_message(const struct mosquitto_message* message)
+{
+  printf(
+      "on_message: Topic: %s; QOS: %d; JSON Payload: %s\n",
+      message->topic,
+      message->qos,
+      (char*)message->payload);
+}
+
 /* Callback called when the client receives a CONNACK message from the broker and we want to
  * subscribe on connect. */
 void on_connect_with_subscribe(
@@ -47,7 +57,10 @@ int main(int argc, char* argv[])
   mqtt_client_connection_settings* connection_settings
       = calloc(1, sizeof(mqtt_client_connection_settings));
 
-  mosq = mqtt_client_init(false, argv[1], on_connect_with_subscribe, connection_settings);
+  mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
+  obj->print_message = print_message;
+
+  mosq = mqtt_client_init(false, argv[1], on_connect_with_subscribe, obj, connection_settings);
   result = mosquitto_connect_bind_v5(
       mosq,
       connection_settings->hostname,

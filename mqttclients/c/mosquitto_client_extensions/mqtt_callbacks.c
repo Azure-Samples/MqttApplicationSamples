@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "mqtt_callbacks.h"
+#include "mqtt_setup.h"
 #include <mosquitto.h>
 
 /* Callback called when the client receives a CONNACK message from the broker. */
@@ -69,9 +70,18 @@ void on_message(
     const struct mosquitto_message* msg,
     const mosquitto_property* props)
 {
-  /* This blindly prints the payload, but the payload can be anything so take care. */
-  printf(
-      "on_message: Topic: %s; QOS: %d; Payload: %s\n", msg->topic, msg->qos, (char*)msg->payload);
+  mqtt_client_obj* client_obj = (mqtt_client_obj*)obj;
+
+  if (client_obj != NULL && client_obj->print_message != NULL)
+  {
+    client_obj->print_message(msg);
+  }
+  else
+  {
+    /* This blindly prints the payload, but the payload can be anything so take care. */
+    printf(
+        "on_message: Topic: %s; QOS: %d; Payload: %s\n", msg->topic, msg->qos, (char*)msg->payload);
+  }
 }
 
 /* Callback called when the client knows to the best of its abilities that a
