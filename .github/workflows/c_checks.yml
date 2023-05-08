@@ -26,8 +26,9 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          sudo sh .devcontainer/postCreateCommand.sh
+          sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
           sudo apt install -y clang-format-9
+          cmake --version
 
       # Runs a set of commands using the runners shell
       - name: Style check
