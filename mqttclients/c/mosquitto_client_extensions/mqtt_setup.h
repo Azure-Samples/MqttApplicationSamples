@@ -28,6 +28,7 @@ typedef struct mqtt_client_connection_settings
 typedef struct mqtt_client_obj
 {
   void (*print_message)(const struct mosquitto_message* message);
+  int mqtt_version;
 } mqtt_client_obj;
 
 struct mosquitto* mqtt_client_init(

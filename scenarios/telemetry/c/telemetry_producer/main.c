@@ -22,7 +22,11 @@ int main(int argc, char* argv[])
   mqtt_client_connection_settings* connection_settings
       = calloc(1, sizeof(mqtt_client_connection_settings));
 
-  mosq = mqtt_client_init(true, argv[1], NULL, NULL, connection_settings);
+  mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
+  obj->print_message = NULL;
+  obj->mqtt_version = MQTT_PROTOCOL_V311;
+
+  mosq = mqtt_client_init(true, argv[1], NULL, obj, connection_settings);
 
   result = mosquitto_connect_bind_v5(
       mosq,

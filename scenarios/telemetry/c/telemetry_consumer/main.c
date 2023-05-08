@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
 
   mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
   obj->print_message = print_message;
+  obj->mqtt_version = MQTT_PROTOCOL_V311;
 
   mosq = mqtt_client_init(false, argv[1], on_connect_with_subscribe, obj, connection_settings);
   result = mosquitto_connect_bind_v5(
