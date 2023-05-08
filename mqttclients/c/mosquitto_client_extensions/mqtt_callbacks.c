@@ -19,9 +19,9 @@ void on_connect(
   mqtt_client_obj* client_obj = (mqtt_client_obj*)obj;
 
   /* Print out the connection result. mosquitto_connack_string() produces an
-    * appropriate string for MQTT v3.x clients, the equivalent for MQTT v5.0
-    * clients is mosquitto_reason_string().
-    */
+   * appropriate string for MQTT v3.x clients, the equivalent for MQTT v5.0
+   * clients is mosquitto_reason_string().
+   */
   if (client_obj->mqtt_version == MQTT_PROTOCOL_V5)
   {
     printf("on_connect: %s\n", mosquitto_reason_string(reason_code));

@@ -26,7 +26,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
+          sudo apt-get update && sudo apt-get install ninja-build libmosquitto-dev -y
           sudo apt install -y clang-format-9
           cmake --version
 
