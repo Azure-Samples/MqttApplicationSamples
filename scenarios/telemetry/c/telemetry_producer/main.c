@@ -11,6 +11,7 @@
 
 #define PAYLOAD "{\"type\":\"Point\",\"coordinates\":[-2.124156,51.899523]}"
 #define QOS 1
+#define MQTT_VERSION MQTT_PROTOCOL_V311
 
 /*
  * This sample sends telemetry messages to the Broker. X509 authentication is used.
@@ -24,7 +25,7 @@ int main(int argc, char* argv[])
 
   mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
   obj->print_message = NULL;
-  obj->mqtt_version = MQTT_PROTOCOL_V311;
+  obj->mqtt_version = MQTT_VERSION;
 
   mosq = mqtt_client_init(true, argv[1], NULL, obj, connection_settings);
 

@@ -19,7 +19,6 @@ typedef struct mqtt_client_connection_settings
   char* password;
   char* username;
   int keep_alive_in_seconds;
-  int mqtt_version;
   int tcp_port;
   bool clean_session;
   bool use_TLS;

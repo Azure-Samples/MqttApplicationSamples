@@ -82,17 +82,6 @@ void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connec
       : true; /* TODO: figure out "cat" case */
   printf("USE_TLS = %s\n", connection_settings->use_TLS ? "true" : "false");
 
-  char* mqtt_version = getenv("MQTT_VERSION");
-  connection_settings->mqtt_version = (mqtt_version != NULL && strcmp(mqtt_version, "5") == 0)
-      ? MQTT_PROTOCOL_V5
-      : MQTT_PROTOCOL_V311; /* TODO: figure out "cat" case */
-  printf(
-      "MQTT_VERSION = %s\n",
-      connection_settings->mqtt_version == MQTT_PROTOCOL_V5
-          ? "MQTT_PROTOCOL_V5"
-          : connection_settings->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311"
-                                                                    : "UNKNOWN");
-
   connection_settings->username = getenv("USERNAME");
   printf("USERNAME = %s\n", connection_settings->username);
 
@@ -191,7 +180,7 @@ struct mosquitto* mqtt_client_init(
 
   mosquitto_log_callback_set(mosq, on_mosquitto_log);
 
-  mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, connection_settings->mqtt_version);
+  mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, obj->mqtt_version);
 
   /*callbacks */
   mosquitto_connect_v5_callback_set(mosq, on_connect_with_subscribe ?: on_connect);

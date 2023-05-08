@@ -16,13 +16,20 @@ void on_connect(
     int flags,
     const mosquitto_property* props)
 {
-  /* TODO: pass mqtt version in obj and use mosquitto_reason_string if mqtt5 */
+  mqtt_client_obj* client_obj = (mqtt_client_obj*)obj;
 
   /* Print out the connection result. mosquitto_connack_string() produces an
-   * appropriate string for MQTT v3.x clients, the equivalent for MQTT v5.0
-   * clients is mosquitto_reason_string().
-   */
-  printf("on_connect: %s\n", mosquitto_connack_string(reason_code));
+    * appropriate string for MQTT v3.x clients, the equivalent for MQTT v5.0
+    * clients is mosquitto_reason_string().
+    */
+  if (client_obj->mqtt_version == MQTT_PROTOCOL_V5)
+  {
+    printf("on_connect: %s\n", mosquitto_reason_string(reason_code));
+  }
+  else
+  {
+    printf("on_connect: %s\n", mosquitto_connack_string(reason_code));
+  }
 
   if (reason_code != 0)
   {

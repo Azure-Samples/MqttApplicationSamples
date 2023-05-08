@@ -14,6 +14,7 @@
 #define PAYLOAD "Hello World!"
 #define SUB_TOPIC "sample/+"
 #define QOS 1
+#define MQTT_VERSION MQTT_PROTOCOL_V311
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to
  * subscribe on connect. */
@@ -53,7 +54,7 @@ int main(int argc, char* argv[])
 
   mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
   obj->print_message = NULL;
-  obj->mqtt_version = MQTT_PROTOCOL_V311;
+  obj->mqtt_version = MQTT_VERSION;
 
   mosq = mqtt_client_init(true, argv[1], on_connect_with_subscribe, obj, connection_settings);
   result = mosquitto_connect_bind_v5(
