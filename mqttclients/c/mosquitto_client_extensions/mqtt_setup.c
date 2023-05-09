@@ -5,16 +5,26 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
-#include <mosquitto.h>
 
 #define LOG_ALL_MOSQUITTO false
 
+#define RETURN_IF_FAILED(rc) \
+  do \
+  { \
+    enum mosq_err_t const mosq_result = (rc); \
+    if (mosq_result != MOSQ_ERR_SUCCESS) \
+    { \
+      mosquitto_destroy(mosq); \
+      printf("Mosquitto Error: %s At [%s:%s:%d]\n", mosquitto_strerror(mosq_result), __FILE__, __func__, __LINE__); \
+      return NULL; \
+    } \
+  } while (0)
+
 void mqtt_client_read_env_file(char* file_path)
 {
-  /* TODO: think about whether this is an issue if we specify the env variables in launch.json, but
-   * have a .env that then overwrites them */
   /* If there was no env file_path passed in, look for a .env file in the current directory. */
   if (file_path == NULL)
   {
@@ -77,9 +87,7 @@ void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connec
   printf("KEEP_ALIVE_IN_SECONDS = %d\n", connection_settings->keep_alive_in_seconds);
 
   char* use_TLS = getenv("USE_TLS");
-  connection_settings->use_TLS = (use_TLS != NULL && strcmp(use_TLS, "false") == 0)
-      ? false
-      : true; /* TODO: figure out "cat" case */
+  connection_settings->use_TLS = (use_TLS != NULL && strcmp(use_TLS, "false") == 0) ? false : true;
   printf("USE_TLS = %s\n", connection_settings->use_TLS ? "true" : "false");
 
   connection_settings->username = getenv("USERNAME");
@@ -90,9 +98,7 @@ void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connec
 
   char* clean_session = getenv("CLEAN_SESSION");
   connection_settings->clean_session
-      = (clean_session != NULL && strcmp(clean_session, "false") == 0)
-      ? false
-      : true; /* TODO: figure out "cat" case */
+      = (clean_session != NULL && strcmp(clean_session, "false") == 0) ? false : true;
   printf("CLEAN_SESSION = %s\n", connection_settings->clean_session ? "true" : "false");
 }
 
@@ -163,7 +169,7 @@ struct mosquitto* mqtt_client_init(
   mqtt_client_set_connection_settings(connection_settings);
 
   /* Required before calling other mosquitto functions */
-  mosquitto_lib_init();
+  RETURN_IF_FAILED(mosquitto_lib_init());
 
   /* Create a new client instance.
    * id = NULL -> ask the broker to generate a client id for us
@@ -180,7 +186,7 @@ struct mosquitto* mqtt_client_init(
 
   mosquitto_log_callback_set(mosq, on_mosquitto_log);
 
-  mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, obj->mqtt_version);
+  RETURN_IF_FAILED(mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, obj->mqtt_version));
 
   /*callbacks */
   mosquitto_connect_v5_callback_set(mosq, on_connect_with_subscribe ?: on_connect);
@@ -200,35 +206,21 @@ struct mosquitto* mqtt_client_init(
 
   if (connection_settings->username)
   {
-    result = mosquitto_username_pw_set(
-        mosq, connection_settings->username, connection_settings->password);
-
-    if (result != MOSQ_ERR_SUCCESS)
-    {
-      mosquitto_destroy(mosq);
-      printf("Error setting username/password: %s\n", mosquitto_strerror(result));
-      return NULL;
-    }
+    RETURN_IF_FAILED(mosquitto_username_pw_set(
+        mosq, connection_settings->username, connection_settings->password));
   }
 
   if (connection_settings->use_TLS)
   {
     /* Need ca_file for mosquitto broker, but ca_path for event grid - fine for the unneeded one to
      * be null */
-    result = mosquitto_tls_set(
+    RETURN_IF_FAILED(mosquitto_tls_set(
         mosq,
         connection_settings->ca_file,
         connection_settings->ca_path,
         connection_settings->cert_file,
         connection_settings->key_file,
-        NULL);
-
-    if (result != MOSQ_ERR_SUCCESS)
-    {
-      mosquitto_destroy(mosq);
-      printf("TLS Error: %s\n", mosquitto_strerror(result));
-      return NULL;
-    }
+        NULL));
   }
 
   return mosq;

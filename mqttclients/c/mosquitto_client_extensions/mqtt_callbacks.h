@@ -4,7 +4,7 @@
 #ifndef MQTT_CALLBACKS_H
 #define MQTT_CALLBACKS_H
 
-#include <mosquitto.h>
+#include "mosquitto.h"
 
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect(

@@ -6,9 +6,9 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
-#include <mosquitto.h>
 
 #define PUB_TOPIC "sample/1"
 #define PAYLOAD "Hello World!"

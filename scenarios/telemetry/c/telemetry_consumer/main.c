@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
-#include <mosquitto.h>
 
 #define SUB_TOPIC "vehicles/+/position"
 #define QOS 1

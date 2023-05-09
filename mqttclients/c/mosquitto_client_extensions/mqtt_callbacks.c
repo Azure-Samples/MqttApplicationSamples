@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
-#include <mosquitto.h>
 
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect(
@@ -36,10 +36,7 @@ void on_connect(
     /* If the connection fails for any reason, we don't want to keep on
      * retrying in this example, so disconnect. Without this, the client
      * will attempt to reconnect. */
-    mosquitto_disconnect_v5(
-        mosq,
-        reason_code,
-        props); /* TODO: double check this is the reason_code that should be passed in */
+    mosquitto_disconnect_v5(mosq, reason_code, props);
   }
 }
 

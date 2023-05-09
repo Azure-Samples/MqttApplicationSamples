@@ -4,7 +4,7 @@
 #ifndef MQTT_SETUP_H
 #define MQTT_SETUP_H
 
-#include <mosquitto.h>
+#include "mosquitto.h"
 #include <stdbool.h>
 
 typedef struct mqtt_client_connection_settings

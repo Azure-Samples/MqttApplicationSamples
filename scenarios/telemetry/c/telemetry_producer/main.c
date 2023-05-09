@@ -6,8 +6,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "mosquitto.h"
 #include "mqtt_setup.h"
-#include <mosquitto.h>
 
 #define PAYLOAD "{\"type\":\"Point\",\"coordinates\":[-2.124156,51.899523]}"
 #define QOS 1
