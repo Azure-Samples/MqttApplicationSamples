@@ -11,13 +11,13 @@ public enum AuthType
 
 public class ConnectionSettings
 {
-    private const int Default_KeepAliveInSeconds = 60;
+    private const int Default_KeepAliveInSeconds = 30;
     private const string Default_CleanSession = "true";
     private const int Default_TcpPort = 8883;
     private const string Default_UseTls = "true";
     private const string Default_DisableCrl = "false";
 
-    public string? HostName { get; set; }
+    public string HostName { get; }
     public string? ClientId { get; set; }
     public string? CertFile { get; set; }
     public string? KeyFile { get; set; }
@@ -37,8 +37,9 @@ public class ConnectionSettings
     public bool DisableCrl { get; set; }
 
 
-    public ConnectionSettings()
+    public ConnectionSettings(string hostname)
     {
+        HostName = hostname;
         TcpPort = Default_TcpPort;
         KeepAliveInSeconds = Default_KeepAliveInSeconds;
         UseTls = Default_UseTls == "true";
@@ -46,8 +47,7 @@ public class ConnectionSettings
         CleanSession = Default_CleanSession == "true";
     }
 
-    public static ConnectionSettings FromConnectionString(string cs) => new(cs);
-    public ConnectionSettings(string cs) => ParseConnectionString(cs);
+    public static ConnectionSettings FromConnectionString(string cs) => ParseConnectionString(cs);
 
     public static ConnectionSettings CreateFromEnvVars(string? envFile = "")
     {
@@ -80,9 +80,8 @@ public class ConnectionSettings
 
         ArgumentException.ThrowIfNullOrEmpty(hostname, nameof(hostname));
 
-        return new ConnectionSettings
+        return new ConnectionSettings(hostname)
         {
-            HostName = hostname,
             ClientId = Env(nameof(ClientId)),
             CertFile = Env(nameof(CertFile)),
             KeyFile = Env(nameof(KeyFile)),
@@ -93,7 +92,9 @@ public class ConnectionSettings
             TcpPort = int.TryParse(Env(nameof(TcpPort)), out int tcpPort) ? tcpPort : Default_TcpPort,
             UseTls = string.IsNullOrEmpty(Env(nameof(UseTls))) || Env(nameof(UseTls)) == Default_UseTls,
             CaFile = Env(nameof(CaFile)),
-            DisableCrl = Env(nameof(DisableCrl)) == "true"
+            DisableCrl = Env(nameof(DisableCrl)) == "true",
+            KeyFilePassword = Env(nameof(KeyFilePassword)),
+
         };
     }
 
@@ -120,22 +121,28 @@ public class ConnectionSettings
         return result;
     }
 
-    private void ParseConnectionString(string cs)
+    private static ConnectionSettings ParseConnectionString(string connectionString)
     {
-        IDictionary<string, string> map = cs.ToDictionary(';', '=');
-        HostName = GetStringValue(map, nameof(HostName));
-        ClientId = GetStringValue(map, nameof(ClientId));
-        KeyFile = GetStringValue(map, nameof(KeyFile));
-        CertFile = GetStringValue(map, nameof(CertFile));
-        UserName = GetStringValue(map, nameof(UserName));
-        Password = GetStringValue(map, nameof(Password));
-        KeepAliveInSeconds = GetPositiveIntValueOrDefault(map, nameof(KeepAliveInSeconds), Default_KeepAliveInSeconds);
-        CleanSession = GetStringValue(map, nameof(CleanSession), Default_CleanSession) == "true";
-        TcpPort = GetPositiveIntValueOrDefault(map, nameof(TcpPort), Default_TcpPort);
-        UseTls = GetStringValue(map, nameof(UseTls), Default_UseTls) == "true";
-        CaFile = GetStringValue(map, nameof(CaFile));
-        DisableCrl = GetStringValue(map, nameof(DisableCrl), Default_DisableCrl) == "true";
-        ArgumentNullException.ThrowIfNullOrEmpty(HostName);
+        
+        IDictionary<string, string> map = connectionString.ToDictionary(';', '=');
+        string hostName = GetStringValue(map, nameof(HostName));
+        ArgumentNullException.ThrowIfNull(hostName, nameof(hostName));
+
+        ConnectionSettings cs = new(hostName)
+        {
+            ClientId = GetStringValue(map, nameof(ClientId)),
+            KeyFile = GetStringValue(map, nameof(KeyFile)),
+            CertFile = GetStringValue(map, nameof(CertFile)),
+            UserName = GetStringValue(map, nameof(UserName)),
+            Password = GetStringValue(map, nameof(Password)),
+            KeepAliveInSeconds = GetPositiveIntValueOrDefault(map, nameof(KeepAliveInSeconds), Default_KeepAliveInSeconds),
+            CleanSession = GetStringValue(map, nameof(CleanSession), Default_CleanSession) == "true",
+            TcpPort = GetPositiveIntValueOrDefault(map, nameof(TcpPort), Default_TcpPort),
+            UseTls = GetStringValue(map, nameof(UseTls), Default_UseTls) == "true",
+            CaFile = GetStringValue(map, nameof(CaFile)),
+            DisableCrl = GetStringValue(map, nameof(DisableCrl), Default_DisableCrl) == "true"
+        };
+        return cs;
     }
 
     private static void AppendIfNotEmpty(StringBuilder sb, string name, string val)
