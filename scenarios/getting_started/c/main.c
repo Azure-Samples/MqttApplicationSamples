@@ -60,7 +60,7 @@ void cleanup(
   if (mosq != NULL)
   {
     mosquitto_disconnect_v5(mosq, MOSQ_ERR_SUCCESS, NULL);
-    mosquitto_loop_stop(mosq, false);
+    mosquitto_loop_stop(mosq, true);
     mosquitto_destroy(mosq);
   }
   mosquitto_lib_cleanup();
