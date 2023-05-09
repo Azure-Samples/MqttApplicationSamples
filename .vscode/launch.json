@@ -67,7 +67,7 @@
             "program": "${workspaceFolder}/scenarios/telemetry/c/build/telemetry_producer",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/scenarios/telemetry",
-            "args": ["${workspaceFolder}/scenarios/telemetry/telemetry_producer.env"],
+            "args": ["${workspaceFolder}/scenarios/telemetry/vehicle01.env"],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -88,7 +88,7 @@
             "program": "${workspaceFolder}/scenarios/telemetry/c/build/telemetry_consumer",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/scenarios/telemetry",
-            "args": ["${workspaceFolder}/scenarios/telemetry/telemetry_consumer.env"],
+            "args": ["${workspaceFolder}/scenarios/telemetry/map-app.env"],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
