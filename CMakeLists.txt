@@ -3,6 +3,13 @@
 
 cmake_minimum_required (VERSION 3.10)
 
+option(LOG_ALL_MOSQUITTO "Print all mosquitto logs" OFF)
+
+# make LOG_ALL_MOSQUITTO option enabled to be visible to code
+if(LOG_ALL_MOSQUITTO)
+  add_compile_definitions(LOG_ALL_MOSQUITTO)
+endif()
+
 project (mqtt_samples LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)

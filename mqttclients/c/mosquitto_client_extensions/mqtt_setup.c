@@ -9,8 +9,6 @@
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
 
-#define LOG_ALL_MOSQUITTO false
-
 #define RETURN_IF_FAILED(rc)                     \
   do                                             \
   {                                              \
@@ -120,7 +118,12 @@ static void _set_publish_callbacks(struct mosquitto* mosq)
 
 void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* str)
 {
-#if LOG_ALL_MOSQUITTO
+#ifndef LOG_ALL_MOSQUITTO
+  if (strstr(str, "PINGREQ") != NULL || strstr(str, "PINGRESP") != NULL)
+  {
+    printf("%s\n", str);
+  }
+#else
   {
     char* log_level_str;
     switch (level)
@@ -145,11 +148,6 @@ void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* 
         break;
     }
     printf("Mosquitto log: [%s] %s\n", log_level_str, str);
-  }
-#else
-  if (strstr(str, "PINGREQ") != NULL || strstr(str, "PINGRESP") != NULL)
-  {
-    printf("%s\n", str);
   }
 #endif
 }

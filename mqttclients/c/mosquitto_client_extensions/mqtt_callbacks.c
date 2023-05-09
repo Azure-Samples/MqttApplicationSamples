@@ -36,7 +36,11 @@ void on_connect(
     /* If the connection fails for any reason, we don't want to keep on
      * retrying in this example, so disconnect. Without this, the client
      * will attempt to reconnect. */
-    mosquitto_disconnect_v5(mosq, reason_code, props);
+    int rc;
+    if ((rc = mosquitto_disconnect_v5(mosq, reason_code, props)) != MOSQ_ERR_SUCCESS)
+    {
+      printf("Error disconnecting: %s\n", mosquitto_strerror(rc));
+    }
   }
 }
 
