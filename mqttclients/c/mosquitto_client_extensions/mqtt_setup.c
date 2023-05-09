@@ -11,16 +11,21 @@
 
 #define LOG_ALL_MOSQUITTO false
 
-#define RETURN_IF_FAILED(rc) \
-  do \
-  { \
-    enum mosq_err_t const mosq_result = (rc); \
-    if (mosq_result != MOSQ_ERR_SUCCESS) \
-    { \
-      mosquitto_destroy(mosq); \
-      printf("Mosquitto Error: %s At [%s:%s:%d]\n", mosquitto_strerror(mosq_result), __FILE__, __func__, __LINE__); \
-      return NULL; \
-    } \
+#define RETURN_IF_FAILED(rc)                     \
+  do                                             \
+  {                                              \
+    enum mosq_err_t const mosq_result = (rc);    \
+    if (mosq_result != MOSQ_ERR_SUCCESS)         \
+    {                                            \
+      mosquitto_destroy(mosq);                   \
+      printf(                                    \
+          "Mosquitto Error: %s At [%s:%s:%d]\n", \
+          mosquitto_strerror(mosq_result),       \
+          __FILE__,                              \
+          __func__,                              \
+          __LINE__);                             \
+      return NULL;                               \
+    }                                            \
   } while (0)
 
 void mqtt_client_read_env_file(char* file_path)

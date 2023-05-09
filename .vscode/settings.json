@@ -9,9 +9,5 @@
     ],
     "cmake.debugConfig": {
         "args": ["${workspaceFolder}/scenarios/${command:cmake.activeBuildPresetName}/${command:cmake.buildTargetName}.env"],
-    },
-    "files.associations": {
-        "*.env": "properties",
-        "mosquitto.h": "c"
     }
 }
