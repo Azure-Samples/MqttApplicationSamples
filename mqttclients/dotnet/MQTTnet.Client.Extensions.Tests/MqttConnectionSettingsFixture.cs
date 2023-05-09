@@ -2,12 +2,12 @@
 
 namespace MQTTnet.Extensions.MultiCloud.UnitTests;
 
-public class ConnectionSettingsFixture
+public class MqttConnectionSettingsFixture
 {
     [Fact]
     public void DefaultValues()
     {
-        var dcs = new ConnectionSettings("localhost");
+        var dcs = new MqttConnectionSettings("localhost");
         Assert.Equal("localhost", dcs.HostName);
         Assert.Equal(30, dcs.KeepAliveInSeconds);
         Assert.Equal(AuthType.Basic, dcs.Auth);
@@ -21,7 +21,7 @@ public class ConnectionSettingsFixture
     public void ParseConnectionString()
     {
         string cs = "HostName=<hostname>;ClientId=<clientId>";
-        ConnectionSettings dcs = ConnectionSettings.FromConnectionString(cs);
+        MqttConnectionSettings dcs = MqttConnectionSettings.FromConnectionString(cs);
         Assert.Equal("<hostname>", dcs.HostName);
         Assert.Equal("<clientId>", dcs.ClientId);
     }
@@ -30,7 +30,7 @@ public class ConnectionSettingsFixture
     public void InvalidValuesDontUseDefaults()
     {
         string cs = "HostName=<hostname>;KeepAliveInSeconds=invalid_string";
-        ConnectionSettings dcs = ConnectionSettings.FromConnectionString(cs);
+        MqttConnectionSettings dcs = MqttConnectionSettings.FromConnectionString(cs);
         Assert.Equal("<hostname>", dcs.HostName);
         Assert.Equal(30, dcs.KeepAliveInSeconds);
     }
@@ -40,7 +40,7 @@ public class ConnectionSettingsFixture
     public void ParseConnectionStringWithDefaultValues()
     {
         string cs = "HostName=<hubname>.azure-devices.net";
-        ConnectionSettings dcs = ConnectionSettings.FromConnectionString(cs);
+        MqttConnectionSettings dcs = MqttConnectionSettings.FromConnectionString(cs);
         Assert.Equal("<hubname>.azure-devices.net", dcs.HostName);
         Assert.Equal(30, dcs.KeepAliveInSeconds);
         Assert.Equal(8883, dcs.TcpPort);
@@ -65,7 +65,7 @@ public class ConnectionSettingsFixture
                      Password=<pwd>
                      """.ReplaceLineEndings(String.Empty);
 
-        ConnectionSettings dcs = ConnectionSettings.FromConnectionString(cs);
+        MqttConnectionSettings dcs = MqttConnectionSettings.FromConnectionString(cs);
         Assert.Equal("<hubname>.azure-devices.net", dcs.HostName);
         Assert.Equal("<ClientId>", dcs.ClientId);
         Assert.Equal("<certFile>", dcs.CertFile);
@@ -74,14 +74,14 @@ public class ConnectionSettingsFixture
         Assert.False(dcs.UseTls);
         Assert.Equal("<path>", dcs.CaFile);
         Assert.True(dcs.DisableCrl);
-        Assert.Equal("<usr>", dcs.UserName);
+        Assert.Equal("<usr>", dcs.Username);
         Assert.Equal("<pwd>", dcs.Password);
     }
 
     [Fact]
     public void ToStringReturnConnectionString()
     {
-        ConnectionSettings dcs = new("h");
+        MqttConnectionSettings dcs = new("h");
         string expected = "HostName=h;TcpPort=8883;CleanSession=True;KeepAliveInSeconds=30;UseTls=True;Auth=Basic";
         Assert.Equal(expected, dcs.ToString());
     }
@@ -89,33 +89,33 @@ public class ConnectionSettingsFixture
     [Fact]
     public void CreateFromEnvFile_WithAllSettings()
     {
-        var cs = ConnectionSettings.CreateFromEnvVars("test.env");
+        var cs = MqttConnectionSettings.CreateFromEnvVars("all_settings.txt");
         Assert.Equal("localhost", cs.HostName);
         Assert.Equal(2883, cs.TcpPort);
         Assert.False(cs.UseTls);
         Assert.False(cs.CleanSession);
         Assert.Equal(32, cs.KeepAliveInSeconds);
         Assert.Equal("sample_client", cs.ClientId);
-        Assert.Equal("sample_user", cs.UserName);
+        Assert.Equal("sample_user", cs.Username);
         Assert.Equal("foo", cs.Password);
         Assert.Equal("ca.pem", cs.CaFile);
         Assert.Equal("cert.pem", cs.CertFile);
         Assert.Equal("cert.key", cs.KeyFile);
         Assert.Equal("bar", cs.KeyFilePassword);
-        RemoveTestEnvVars("test.env");
+        RemoveTestEnvVars("all_settings.txt");
     }
 
     [Fact]
     public void CreateFromEnvFile_Defaults()
     {
-        var cs = ConnectionSettings.CreateFromEnvVars("min.env");
+        var cs = MqttConnectionSettings.CreateFromEnvVars("min_settings.txt");
         Assert.Equal("localhost", cs.HostName);
         Assert.Equal(8883, cs.TcpPort);
         Assert.True(cs.UseTls);
         Assert.False(cs.CleanSession);
         Assert.Equal(30, cs.KeepAliveInSeconds);
         Assert.Empty(cs.ClientId!);
-        Assert.Empty(cs.UserName!);
+        Assert.Empty(cs.Username!);
         Assert.Empty(cs.Password!);
         Assert.Empty(cs.CaFile!);
         Assert.Empty(cs.CertFile!);

@@ -9,7 +9,7 @@ public enum AuthType
     Basic
 }
 
-public class ConnectionSettings
+public class MqttConnectionSettings
 {
     private const int Default_KeepAliveInSeconds = 30;
     private const string Default_CleanSession = "true";
@@ -27,7 +27,7 @@ public class ConnectionSettings
     {
         get => !string.IsNullOrEmpty(CertFile) ? AuthType.X509 : AuthType.Basic;
     }
-    public string? UserName { get; set; }
+    public string? Username { get; set; }
     public string? Password { get; set; }
     public int KeepAliveInSeconds { get; set; }
     public bool CleanSession { get; set; }
@@ -37,7 +37,7 @@ public class ConnectionSettings
     public bool DisableCrl { get; set; }
 
 
-    public ConnectionSettings(string hostname)
+    public MqttConnectionSettings(string hostname)
     {
         HostName = hostname;
         TcpPort = Default_TcpPort;
@@ -47,9 +47,9 @@ public class ConnectionSettings
         CleanSession = Default_CleanSession == "true";
     }
 
-    public static ConnectionSettings FromConnectionString(string cs) => ParseConnectionString(cs);
+    public static MqttConnectionSettings FromConnectionString(string cs) => ParseConnectionString(cs);
 
-    public static ConnectionSettings CreateFromEnvVars(string? envFile = "")
+    public static MqttConnectionSettings CreateFromEnvVars(string? envFile = "")
     {
         if (string.IsNullOrEmpty(envFile))
         {
@@ -74,18 +74,18 @@ public class ConnectionSettings
             string.Concat(pascal.Select(x => Char.IsUpper(x) ? "_" + x : x.ToString())).ToUpper().TrimStart('_');
 
         static string Env(string name) =>
-            Environment.GetEnvironmentVariable(ToUpperCaseFromPascalCase(name)) ?? string.Empty;
+            Environment.GetEnvironmentVariable("MQTT_" + ToUpperCaseFromPascalCase(name)) ?? string.Empty;
 
         string hostname = Env(nameof(HostName));
 
         ArgumentException.ThrowIfNullOrEmpty(hostname, nameof(hostname));
 
-        return new ConnectionSettings(hostname)
+        return new MqttConnectionSettings(hostname)
         {
             ClientId = Env(nameof(ClientId)),
             CertFile = Env(nameof(CertFile)),
             KeyFile = Env(nameof(KeyFile)),
-            UserName = Env(nameof(UserName)),
+            Username = Env(nameof(Username)),
             Password = Env(nameof(Password)),
             KeepAliveInSeconds = int.TryParse(Env(nameof(KeepAliveInSeconds)), out int keepAliveInSeconds) ? keepAliveInSeconds : Default_KeepAliveInSeconds,
             CleanSession = Env(nameof(CleanSession)) == "true",
@@ -121,19 +121,19 @@ public class ConnectionSettings
         return result;
     }
 
-    private static ConnectionSettings ParseConnectionString(string connectionString)
+    private static MqttConnectionSettings ParseConnectionString(string connectionString)
     {
         
         IDictionary<string, string> map = connectionString.ToDictionary(';', '=');
         string hostName = GetStringValue(map, nameof(HostName));
         ArgumentNullException.ThrowIfNull(hostName, nameof(hostName));
 
-        ConnectionSettings cs = new(hostName)
+        MqttConnectionSettings cs = new(hostName)
         {
             ClientId = GetStringValue(map, nameof(ClientId)),
             KeyFile = GetStringValue(map, nameof(KeyFile)),
             CertFile = GetStringValue(map, nameof(CertFile)),
-            UserName = GetStringValue(map, nameof(UserName)),
+            Username = GetStringValue(map, nameof(Username)),
             Password = GetStringValue(map, nameof(Password)),
             KeepAliveInSeconds = GetPositiveIntValueOrDefault(map, nameof(KeepAliveInSeconds), Default_KeepAliveInSeconds),
             CleanSession = GetStringValue(map, nameof(CleanSession), Default_CleanSession) == "true",
@@ -158,7 +158,7 @@ public class ConnectionSettings
         var result = new StringBuilder();
         AppendIfNotEmpty(result, nameof(HostName), HostName!);
         AppendIfNotEmpty(result, nameof(TcpPort), TcpPort.ToString());
-        AppendIfNotEmpty(result, nameof(UserName), UserName!);
+        AppendIfNotEmpty(result, nameof(Username), Username!);
         AppendIfNotEmpty(result, nameof(CleanSession), CleanSession.ToString());
         AppendIfNotEmpty(result, nameof(KeepAliveInSeconds), KeepAliveInSeconds.ToString());
         AppendIfNotEmpty(result, nameof(CertFile), CertFile!);

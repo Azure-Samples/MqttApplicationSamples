@@ -4,7 +4,7 @@ namespace MQTTnet.Client.Extensions;
 
 public static partial class MqttNetExtensions
 {
-    public static MqttClientOptionsBuilder WithConnectionSettings(this MqttClientOptionsBuilder builder, ConnectionSettings cs)
+    public static MqttClientOptionsBuilder WithConnectionSettings(this MqttClientOptionsBuilder builder, MqttConnectionSettings cs)
     {
         if (string.IsNullOrEmpty(cs.HostName))
         {
@@ -13,7 +13,7 @@ public static partial class MqttNetExtensions
         builder
             .WithTcpServer(cs.HostName, cs.TcpPort)
             .WithKeepAlivePeriod(TimeSpan.FromSeconds(cs.KeepAliveInSeconds))
-            .WithCredentials(cs.UserName, cs.Password)
+            .WithCredentials(cs.Username, cs.Password)
             .WithCleanSession(cs.CleanSession)
             .WithProtocolVersion(Formatter.MqttProtocolVersion.V500)
             .WithTlsSettings(cs);
