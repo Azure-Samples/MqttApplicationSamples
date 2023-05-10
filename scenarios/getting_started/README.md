@@ -74,11 +74,11 @@ source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-echo "HOST_NAME=$host_name" > .env
-echo "USERNAME=sample_client" >> .env
-echo "CLIENT_ID=sample_client" >> .env
-echo "CERT_FILE=sample_client.pem" >> .env
-echo "KEY_FILE=sample_client.key" >> .env
+echo "MQTT_HOST_NAME=$host_name" > .env
+echo "MQTT_USERNAME=sample_client" >> .env
+echo "MQTT_CLIENT_ID=sample_client" >> .env
+echo "MQTT_CERT_FILE=sample_client.pem" >> .env
+echo "MQTT_KEY_FILE=sample_client.key" >> .env
 ```
 
 ## Configure Mosquitto 
@@ -92,20 +92,20 @@ cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
 The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
 
 ```bash
-echo "HOST_NAME=localhost" > .env
-echo "CLIENT_ID=sample_client" >> .env
-echo "CERT_FILE=sample_client.pem" >> .env
-echo "KEY_FILE=sample_client.key" >> .env
-echo "CA_FILE=chain.pem" >> .env
+echo "MQTT_HOST_NAME=localhost" > .env
+echo "MQTT_CLIENT_ID=sample_client" >> .env
+echo "MQTT_CERT_FILE=sample_client.pem" >> .env
+echo "MQTT_KEY_FILE=sample_client.key" >> .env
+echo "MQTT_CA_FILE=chain.pem" >> .env
 ```
 
 To use mosquitto without certificates
 
 ```bash
-echo "HOST_NAME=localhost" > .env
-echo "TCP_PORT=1883" >> .env
-echo "USE_TLS=false" >> .env
-echo "CLIENT_ID=sample_client" >> .env
+echo "MQTT_HOST_NAME=localhost" > .env
+echo "MQTT_TCP_PORT=1883" >> .env
+echo "MQTT_USE_TLS=false" >> .env
+echo "MQTT_CLIENT_ID=sample_client" >> .env
 ```
 
 ## Run the Sample

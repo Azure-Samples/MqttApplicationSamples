@@ -7,7 +7,7 @@ namespace MQTTnet.Client.Extensions;
 
 public static partial class MqttNetExtensions
 {
-    public static MqttClientOptionsBuilder WithTlsSettings(this MqttClientOptionsBuilder builder, ConnectionSettings cs)
+    public static MqttClientOptionsBuilder WithTlsSettings(this MqttClientOptionsBuilder builder, MqttConnectionSettings cs)
     {
         var tls = new MqttClientOptionsBuilderTlsParameters
         {

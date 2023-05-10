@@ -120,15 +120,15 @@ source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-echo "HOST_NAME=$host_name" > vehicle03.env
-echo "USERNAME=vehicle03" >> vehicle03.env
-echo "CERT_FILE=vehicle03.pem" >> vehicle03.env
-echo "KEY_FILE=vehicle03.key" >> vehicle03.env
+echo "MQTT_HOST_NAME=$host_name" > vehicle03.env
+echo "MQTT_USERNAME=vehicle03" >> vehicle03.env
+echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
+echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
 
-echo "HOST_NAME=$host_name" > mobile-app.env
-echo "USERNAME=mobile-app" >> mobile-app.env
-echo "CERT_FILE=mobile-app.pem" >> mobile-app.env
-echo "KEY_FILE=mobile-app.key" >> mobile-app.env
+echo "MQTT_HOST_NAME=$host_name" > mobile-app.env
+echo "MQTT_USERNAME=mobile-app" >> mobile-app.env
+echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
+echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
 ```
 
 ## Configure Mosquitto 
@@ -141,25 +141,25 @@ cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
 The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
 
 ```bash
-echo "HOST_NAME=localhost" > vehicle03.env
-echo "CERT_FILE=vehicle03.pem" >> vehicle03.env
-echo "KEY_FILE=vehicle03.key" >> vehicle03.env
-echo "CA_FILE=chain.pem" >> vehicle03.env
+echo "MQTT_HOST_NAME=localhost" > vehicle03.env
+echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
+echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
+echo "MQTT_CA_FILE=chain.pem" >> vehicle03.env
 
-echo "HOST_NAME=localhost" > mobile-app.env
-echo "CERT_FILE=mobile-app.pem" >> mobile-app.env
-echo "KEY_FILE=mobile-app.key" >> mobile-app.env
-echo "CA_FILE=chain.pem" >> mobile-app.env
+echo "MQTT_HOST_NAME=localhost" > mobile-app.env
+echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
+echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
+echo "MQTT_CA_FILE=chain.pem" >> mobile-app.env
 
 ```
 
 To use mosquitto without certificates: change the port to 1883, disable TLS and set the CA_FILE
 
 ```bash
-echo "HOST_NAME=localhost" > vehicle03.env
-echo "TCP_PORT=1883" >> vehicle03.env
-echo "USE_TLS=false" >> vehicle03.env
-echo "CLIENT_ID=vehicle03" >> vehicle03.env
+echo "MQTT_HOST_NAME=localhost" > vehicle03.env
+echo "MQTT_TCP_PORT=1883" >> vehicle03.env
+echo "MQTT_USE_TLS=false" >> vehicle03.env
+echo "MQTT_CLIENT_ID=vehicle03" >> vehicle03.env
 ```
 
 ## Run the Sample
