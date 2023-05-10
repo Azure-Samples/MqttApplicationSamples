@@ -46,4 +46,7 @@ void on_publish(
     int reason_code,
     const mosquitto_property* props);
 
+/* Callback to enter the key file password. */
+int key_file_password_callback(char* buf, int size, int rwflag, void* userdata);
+
 #endif /* MQTT_CALLBACKS_H */

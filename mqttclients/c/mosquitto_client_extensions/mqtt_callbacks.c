@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
@@ -105,4 +106,22 @@ void on_publish(
     const mosquitto_property* props)
 {
   printf("on_publish: Message with mid %d has been published.\n", mid);
+}
+
+int key_file_password_callback(char* buf, int size, int rwflag, void* userdata)
+{
+  mqtt_client_obj* client_obj = (mqtt_client_obj*)mosquitto_userdata(userdata);
+  /* We pass the password in userdata to the callback. */
+  const char* password = client_obj->key_file_password;
+
+  /* We don't want to overflow the buffer if the password is too long. */
+  if (strlen(password) < (size_t)size)
+  {
+    strcpy(buf, password);
+    return strlen(buf);
+  }
+  else
+  {
+    return 0;
+  }
 }

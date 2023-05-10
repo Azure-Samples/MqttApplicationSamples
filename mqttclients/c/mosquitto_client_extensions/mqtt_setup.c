@@ -174,6 +174,11 @@ struct mosquitto* mqtt_client_init(
   /* Required before calling other mosquitto functions */
   RETURN_IF_FAILED(mosquitto_lib_init());
 
+  if (connection_settings->key_file_password != NULL)
+  {
+    obj->key_file_password = connection_settings->key_file_password;
+  }
+
   /* Create a new client instance.
    * id = NULL -> ask the broker to generate a client id for us
    * clean session = true -> the broker should remove old sessions when we connect
@@ -223,7 +228,7 @@ struct mosquitto* mqtt_client_init(
         connection_settings->ca_path,
         connection_settings->cert_file,
         connection_settings->key_file,
-        NULL));
+        connection_settings->key_file_password != NULL ? key_file_password_callback : NULL));
   }
 
   return mosq;
