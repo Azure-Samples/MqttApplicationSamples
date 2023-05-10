@@ -19,7 +19,7 @@
 int main(int argc, char* argv[])
 {
   struct mosquitto* mosq;
-  int result = 0;
+  int result = MOSQ_ERR_SUCCESS;
   mqtt_client_connection_settings* connection_settings
       = calloc(1, sizeof(mqtt_client_connection_settings));
 
@@ -27,52 +27,55 @@ int main(int argc, char* argv[])
   obj->print_message = NULL;
   obj->mqtt_version = MQTT_VERSION;
 
-  mosq = mqtt_client_init(true, argv[1], NULL, obj, connection_settings);
-
-  result = mosquitto_connect_bind_v5(
-      mosq,
-      connection_settings->hostname,
-      connection_settings->tcp_port,
-      connection_settings->keep_alive_in_seconds,
-      NULL,
-      NULL);
-
-  if (result != MOSQ_ERR_SUCCESS)
+  if ((mosq = mqtt_client_init(true, argv[1], NULL, obj, connection_settings)) == NULL)
   {
-    mosquitto_destroy(mosq);
+    result = MOSQ_ERR_UNKNOWN;
+  }
+  else if (
+      (result = mosquitto_connect_bind_v5(
+           mosq,
+           connection_settings->hostname,
+           connection_settings->tcp_port,
+           connection_settings->keep_alive_in_seconds,
+           NULL,
+           NULL))
+      != MOSQ_ERR_SUCCESS)
+  {
     printf("Connection Error: %s\n", mosquitto_strerror(result));
-    return 1;
+    result = MOSQ_ERR_UNKNOWN;
   }
-
-  result = mosquitto_loop_start(mosq);
-
-  if (result != MOSQ_ERR_SUCCESS)
+  else if ((result = mosquitto_loop_start(mosq)) != MOSQ_ERR_SUCCESS)
   {
-    mosquitto_destroy(mosq);
     printf("loop Error: %s\n", mosquitto_strerror(result));
-    return 1;
+    result = MOSQ_ERR_UNKNOWN;
   }
-
-  char topic[strlen(connection_settings->client_id) + 17];
-  sprintf(topic, "vehicles/%s/position", connection_settings->client_id);
-
-  while (true)
+  else
   {
-    result
-        = mosquitto_publish_v5(mosq, NULL, topic, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, NULL);
+    char topic[strlen(connection_settings->client_id) + 17];
+    sprintf(topic, "vehicles/%s/position", connection_settings->client_id);
 
-    if (result != MOSQ_ERR_SUCCESS)
+    while (keep_running)
     {
-      printf("Error publishing: %s\n", mosquitto_strerror(result));
-    }
+      result = mosquitto_publish_v5(
+          mosq, NULL, topic, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, NULL);
 
-    sleep(5);
+      if (result != MOSQ_ERR_SUCCESS)
+      {
+        printf("Error publishing: %s\n", mosquitto_strerror(result));
+      }
+
+      sleep(5);
+    }
   }
 
-  mosquitto_loop_stop(mosq, true);
-
-  mosquitto_destroy(mosq);
+  if (mosq != NULL)
+  {
+    mosquitto_disconnect_v5(mosq, result, NULL);
+    mosquitto_loop_stop(mosq, false);
+    mosquitto_destroy(mosq);
+  }
   mosquitto_lib_cleanup();
   free(connection_settings);
-  return 0;
+  free(obj);
+  return result;
 }

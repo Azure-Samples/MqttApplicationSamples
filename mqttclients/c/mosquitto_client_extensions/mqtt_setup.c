@@ -1,6 +1,7 @@
 /* Copyright (c) Microsoft Corporation. All rights reserved. */
 /* SPDX-License-Identifier: MIT */
 
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +9,14 @@
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
+
+volatile sig_atomic_t keep_running = 1;
+
+static void sig_handler(int _)
+{
+  (void)_;
+  keep_running = 0;
+}
 
 #define RETURN_IF_FAILED(rc)                     \
   do                                             \
@@ -164,6 +173,8 @@ struct mosquitto* mqtt_client_init(
     mqtt_client_obj* obj,
     mqtt_client_connection_settings* connection_settings)
 {
+  signal(SIGINT, sig_handler);
+
   struct mosquitto* mosq = NULL;
   bool subscribe = on_connect_with_subscribe != NULL;
 

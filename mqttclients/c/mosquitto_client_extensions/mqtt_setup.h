@@ -5,7 +5,10 @@
 #define MQTT_SETUP_H
 
 #include "mosquitto.h"
+#include <signal.h>
 #include <stdbool.h>
+
+extern volatile sig_atomic_t keep_running;
 
 typedef struct mqtt_client_connection_settings
 {

@@ -38,13 +38,16 @@ void on_connect_with_subscribe(
   /* Making subscriptions in the on_connect() callback means that if the
    * connection drops and is automatically resumed by the client, then the
    * subscriptions will be recreated when the client reconnects. */
-  result = mosquitto_subscribe_v5(mosq, NULL, SUB_TOPIC, QOS, 0, NULL);
-
-  if (result != MOSQ_ERR_SUCCESS)
+  if (keep_running
+      && (result = mosquitto_subscribe_v5(mosq, NULL, SUB_TOPIC, QOS, 0, NULL)) != MOSQ_ERR_SUCCESS)
   {
     printf("Error subscribing: %s\n", mosquitto_strerror(result));
+    keep_running = 0;
     /* We might as well disconnect if we were unable to subscribe */
-    mosquitto_disconnect_v5(mosq, reason_code, props);
+    if ((result = mosquitto_disconnect_v5(mosq, reason_code, props)) != MOSQ_ERR_SUCCESS)
+    {
+      printf("Error disconnecting: %s\n", mosquitto_strerror(result));
+    }
   }
 }
 
@@ -54,7 +57,7 @@ void on_connect_with_subscribe(
 int main(int argc, char* argv[])
 {
   struct mosquitto* mosq;
-  int result = 0;
+  int result = MOSQ_ERR_SUCCESS;
   mqtt_client_connection_settings* connection_settings
       = calloc(1, sizeof(mqtt_client_connection_settings));
 
@@ -62,26 +65,44 @@ int main(int argc, char* argv[])
   obj->print_message = print_message;
   obj->mqtt_version = MQTT_VERSION;
 
-  mosq = mqtt_client_init(false, argv[1], on_connect_with_subscribe, obj, connection_settings);
-  result = mosquitto_connect_bind_v5(
-      mosq,
-      connection_settings->hostname,
-      connection_settings->tcp_port,
-      connection_settings->keep_alive_in_seconds,
-      NULL,
-      NULL);
-
-  if (result != MOSQ_ERR_SUCCESS)
+  if ((mosq = mqtt_client_init(false, argv[1], on_connect_with_subscribe, obj, connection_settings))
+      == NULL)
   {
-    mosquitto_destroy(mosq);
+    result = MOSQ_ERR_UNKNOWN;
+  }
+  else if (
+      (result = mosquitto_connect_bind_v5(
+           mosq,
+           connection_settings->hostname,
+           connection_settings->tcp_port,
+           connection_settings->keep_alive_in_seconds,
+           NULL,
+           NULL))
+      != MOSQ_ERR_SUCCESS)
+  {
     printf("Connection Error: %s\n", mosquitto_strerror(result));
-    return 1;
+    result = MOSQ_ERR_UNKNOWN;
+  }
+  else if ((result = mosquitto_loop_start(mosq)) != MOSQ_ERR_SUCCESS)
+  {
+    printf("loop Error: %s\n", mosquitto_strerror(result));
+    result = MOSQ_ERR_UNKNOWN;
+  }
+  else
+  {
+    while (keep_running)
+    {
+    }
   }
 
-  mosquitto_loop_forever(mosq, -1, 1);
-
-  mosquitto_destroy(mosq);
+  if (mosq != NULL)
+  {
+    mosquitto_disconnect_v5(mosq, result, NULL);
+    mosquitto_loop_stop(mosq, false);
+    mosquitto_destroy(mosq);
+  }
   mosquitto_lib_cleanup();
   free(connection_settings);
-  return 0;
+  free(obj);
+  return result;
 }
