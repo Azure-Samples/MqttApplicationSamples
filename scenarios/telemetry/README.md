@@ -125,21 +125,21 @@ source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-echo "HOST_NAME=$host_name" > vehicle01.env
-echo "USERNAME=vehicle01" >> vehicle01.env
-echo "CERT_FILE=vehicle01.pem" >> vehicle01.env
-echo "KEY_FILE=vehicle01.key" >> vehicle01.env
+echo "MQTT_HOST_NAME=$host_name" > vehicle01.env
+echo "MQTT_USERNAME=vehicle01" >> vehicle01.env
+echo "MQTT_CERT_FILE=vehicle01.pem" >> vehicle01.env
+echo "MQTT_KEY_FILE=vehicle01.key" >> vehicle01.env
 
 
-echo "HOST_NAME=$host_name" > vehicle02.env
-echo "USERNAME=vehicle02" >> vehicle02.env
-echo "CERT_FILE=vehicle02.pem" >> vehicle02.env
-echo "KEY_FILE=vehicle02.key" >> vehicle02.env
+echo "MQTT_HOST_NAME=$host_name" > vehicle02.env
+echo "MQTT_USERNAME=vehicle02" >> vehicle02.env
+echo "MQTT_CERT_FILE=vehicle02.pem" >> vehicle02.env
+echo "MQTT_KEY_FILE=vehicle02.key" >> vehicle02.env
 
-echo "HOST_NAME=$host_name" > map-app.env
-echo "USERNAME=map-app" >> map-app.env
-echo "CERT_FILE=map-app.pem" >> map-app.env
-echo "KEY_FILE=map-app.key" >> map-app.env
+echo "MQTT_HOST_NAME=$host_name" > map-app.env
+echo "MQTT_USERNAME=map-app" >> map-app.env
+echo "MQTT_CERT_FILE=map-app.pem" >> map-app.env
+echo "MQTT_KEY_FILE=map-app.key" >> map-app.env
 ```
 
 ## Configure Mosquitto 
@@ -152,30 +152,30 @@ cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
 The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
 
 ```bash
-echo "HOST_NAME=localhost" > vehicle01.env
-echo "CERT_FILE=vehicle01.pem" >> vehicle01.env
-echo "KEY_FILE=vehicle01.key" >> vehicle01.env
-echo "CA_FILE=chain.pem" >> vehicle01.env
+echo "MQTT_HOST_NAME=localhost" > vehicle01.env
+echo "MQTT_CERT_FILE=vehicle01.pem" >> vehicle01.env
+echo "MQTT_KEY_FILE=vehicle01.key" >> vehicle01.env
+echo "MQTT_CA_FILE=chain.pem" >> vehicle01.env
 
-echo "HOST_NAME=localhost" > vehicle02.env
-echo "CERT_FILE=vehicle02.pem" >> vehicle02.env
-echo "KEY_FILE=vehicle02.key" >> vehicle02.env
-echo "CA_FILE=chain.pem" >> vehicle02.env
+echo "MQTT_HOST_NAME=localhost" > vehicle02.env
+echo "MQTT_CERT_FILE=vehicle02.pem" >> vehicle02.env
+echo "MQTT_KEY_FILE=vehicle02.key" >> vehicle02.env
+echo "MQTT_CA_FILE=chain.pem" >> vehicle02.env
 
-echo "HOST_NAME=localhost" > map-app.env
-echo "CERT_FILE=map-app.pem" >> map-app.env
-echo "KEY_FILE=map-app.key" >> map-app.env
-echo "CA_FILE=chain.pem" >> map-app.env
+echo "MQTT_HOST_NAME=localhost" > map-app.env
+echo "MQTT_CERT_FILE=map-app.pem" >> map-app.env
+echo "MQTT_KEY_FILE=map-app.key" >> map-app.env
+echo "MQTT_CA_FILE=chain.pem" >> map-app.env
 
 ```
 
 To use mosquitto without certificates: change the port to 1883, disable TLS and set the CA_FILE
 
 ```bash
-echo "HOST_NAME=localhost" > vehicle01.env
-echo "TCP_PORT=1883" >> vehicle01.env
-echo "USE_TLS=false" >> vehicle01.env
-echo "CLIENT_ID=vehicle01" >> vehicle01.env
+echo "MQTT_HOST_NAME=localhost" > vehicle01.env
+echo "MQTT_TCP_PORT=1883" >> vehicle01.env
+echo "MQTT_USE_TLS=false" >> vehicle01.env
+echo "MQTT_CLIENT_ID=vehicle01" >> vehicle01.env
 ```
 
 ## Run the Sample

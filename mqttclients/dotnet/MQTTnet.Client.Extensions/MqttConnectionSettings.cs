@@ -9,15 +9,15 @@ public enum AuthType
     Basic
 }
 
-public class ConnectionSettings
+public class MqttConnectionSettings
 {
-    private const int Default_KeepAliveInSeconds = 60;
+    private const int Default_KeepAliveInSeconds = 30;
     private const string Default_CleanSession = "true";
     private const int Default_TcpPort = 8883;
     private const string Default_UseTls = "true";
     private const string Default_DisableCrl = "false";
 
-    public string? HostName { get; set; }
+    public string HostName { get; }
     public string? ClientId { get; set; }
     public string? CertFile { get; set; }
     public string? KeyFile { get; set; }
@@ -27,7 +27,7 @@ public class ConnectionSettings
     {
         get => !string.IsNullOrEmpty(CertFile) ? AuthType.X509 : AuthType.Basic;
     }
-    public string? UserName { get; set; }
+    public string? Username { get; set; }
     public string? Password { get; set; }
     public int KeepAliveInSeconds { get; set; }
     public bool CleanSession { get; set; }
@@ -37,8 +37,9 @@ public class ConnectionSettings
     public bool DisableCrl { get; set; }
 
 
-    public ConnectionSettings()
+    public MqttConnectionSettings(string hostname)
     {
+        HostName = hostname;
         TcpPort = Default_TcpPort;
         KeepAliveInSeconds = Default_KeepAliveInSeconds;
         UseTls = Default_UseTls == "true";
@@ -46,10 +47,9 @@ public class ConnectionSettings
         CleanSession = Default_CleanSession == "true";
     }
 
-    public static ConnectionSettings FromConnectionString(string cs) => new(cs);
-    public ConnectionSettings(string cs) => ParseConnectionString(cs);
+    public static MqttConnectionSettings FromConnectionString(string cs) => ParseConnectionString(cs);
 
-    public static ConnectionSettings CreateFromEnvVars(string? envFile = "")
+    public static MqttConnectionSettings CreateFromEnvVars(string? envFile = "")
     {
         if (string.IsNullOrEmpty(envFile))
         {
@@ -74,26 +74,27 @@ public class ConnectionSettings
             string.Concat(pascal.Select(x => Char.IsUpper(x) ? "_" + x : x.ToString())).ToUpper().TrimStart('_');
 
         static string Env(string name) =>
-            Environment.GetEnvironmentVariable(ToUpperCaseFromPascalCase(name)) ?? string.Empty;
+            Environment.GetEnvironmentVariable("MQTT_" + ToUpperCaseFromPascalCase(name)) ?? string.Empty;
 
         string hostname = Env(nameof(HostName));
 
         ArgumentException.ThrowIfNullOrEmpty(hostname, nameof(hostname));
 
-        return new ConnectionSettings
+        return new MqttConnectionSettings(hostname)
         {
-            HostName = hostname,
             ClientId = Env(nameof(ClientId)),
             CertFile = Env(nameof(CertFile)),
             KeyFile = Env(nameof(KeyFile)),
-            UserName = Env(nameof(UserName)),
+            Username = Env(nameof(Username)),
             Password = Env(nameof(Password)),
             KeepAliveInSeconds = int.TryParse(Env(nameof(KeepAliveInSeconds)), out int keepAliveInSeconds) ? keepAliveInSeconds : Default_KeepAliveInSeconds,
             CleanSession = Env(nameof(CleanSession)) == "true",
             TcpPort = int.TryParse(Env(nameof(TcpPort)), out int tcpPort) ? tcpPort : Default_TcpPort,
             UseTls = string.IsNullOrEmpty(Env(nameof(UseTls))) || Env(nameof(UseTls)) == Default_UseTls,
             CaFile = Env(nameof(CaFile)),
-            DisableCrl = Env(nameof(DisableCrl)) == "true"
+            DisableCrl = Env(nameof(DisableCrl)) == "true",
+            KeyFilePassword = Env(nameof(KeyFilePassword)),
+
         };
     }
 
@@ -120,22 +121,28 @@ public class ConnectionSettings
         return result;
     }
 
-    private void ParseConnectionString(string cs)
+    private static MqttConnectionSettings ParseConnectionString(string connectionString)
     {
-        IDictionary<string, string> map = cs.ToDictionary(';', '=');
-        HostName = GetStringValue(map, nameof(HostName));
-        ClientId = GetStringValue(map, nameof(ClientId));
-        KeyFile = GetStringValue(map, nameof(KeyFile));
-        CertFile = GetStringValue(map, nameof(CertFile));
-        UserName = GetStringValue(map, nameof(UserName));
-        Password = GetStringValue(map, nameof(Password));
-        KeepAliveInSeconds = GetPositiveIntValueOrDefault(map, nameof(KeepAliveInSeconds), Default_KeepAliveInSeconds);
-        CleanSession = GetStringValue(map, nameof(CleanSession), Default_CleanSession) == "true";
-        TcpPort = GetPositiveIntValueOrDefault(map, nameof(TcpPort), Default_TcpPort);
-        UseTls = GetStringValue(map, nameof(UseTls), Default_UseTls) == "true";
-        CaFile = GetStringValue(map, nameof(CaFile));
-        DisableCrl = GetStringValue(map, nameof(DisableCrl), Default_DisableCrl) == "true";
-        ArgumentNullException.ThrowIfNullOrEmpty(HostName);
+        
+        IDictionary<string, string> map = connectionString.ToDictionary(';', '=');
+        string hostName = GetStringValue(map, nameof(HostName));
+        ArgumentNullException.ThrowIfNull(hostName, nameof(hostName));
+
+        MqttConnectionSettings cs = new(hostName)
+        {
+            ClientId = GetStringValue(map, nameof(ClientId)),
+            KeyFile = GetStringValue(map, nameof(KeyFile)),
+            CertFile = GetStringValue(map, nameof(CertFile)),
+            Username = GetStringValue(map, nameof(Username)),
+            Password = GetStringValue(map, nameof(Password)),
+            KeepAliveInSeconds = GetPositiveIntValueOrDefault(map, nameof(KeepAliveInSeconds), Default_KeepAliveInSeconds),
+            CleanSession = GetStringValue(map, nameof(CleanSession), Default_CleanSession) == "true",
+            TcpPort = GetPositiveIntValueOrDefault(map, nameof(TcpPort), Default_TcpPort),
+            UseTls = GetStringValue(map, nameof(UseTls), Default_UseTls) == "true",
+            CaFile = GetStringValue(map, nameof(CaFile)),
+            DisableCrl = GetStringValue(map, nameof(DisableCrl), Default_DisableCrl) == "true"
+        };
+        return cs;
     }
 
     private static void AppendIfNotEmpty(StringBuilder sb, string name, string val)
@@ -151,7 +158,7 @@ public class ConnectionSettings
         var result = new StringBuilder();
         AppendIfNotEmpty(result, nameof(HostName), HostName!);
         AppendIfNotEmpty(result, nameof(TcpPort), TcpPort.ToString());
-        AppendIfNotEmpty(result, nameof(UserName), UserName!);
+        AppendIfNotEmpty(result, nameof(Username), Username!);
         AppendIfNotEmpty(result, nameof(CleanSession), CleanSession.ToString());
         AppendIfNotEmpty(result, nameof(KeepAliveInSeconds), KeepAliveInSeconds.ToString());
         AppendIfNotEmpty(result, nameof(CertFile), CertFile!);

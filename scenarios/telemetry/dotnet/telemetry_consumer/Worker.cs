@@ -19,7 +19,7 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var cs = ConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile")!);
+        var cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile")!);
         _logger.LogInformation("Connecting to {cs}", cs);
 
         var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
@@ -28,7 +28,7 @@ public class Worker : BackgroundService
         {
             _logger.LogWarning("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
 
-            PositionTelemetryConsumer poisitionTelemetry = new(mqttClient.InternalClient)
+            PositionTelemetryConsumer positionTelemetry = new(mqttClient.InternalClient)
             {
                 OnTelemetryReceived = m => 
                 _logger.LogInformation("Received msg from {id}. Coordinates lat: {x}, lon: {y}",
@@ -36,7 +36,7 @@ public class Worker : BackgroundService
                         m.Payload!.Coordinates.Latitude, 
                         m.Payload.Coordinates.Longitude)
             };
-            await Task.Yield();
+            await positionTelemetry.StartAsync();
         };
 
         await mqttClient.StartAsync(new ManagedMqttClientOptionsBuilder()

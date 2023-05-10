@@ -5,7 +5,7 @@ using MQTTnet.Client.Extensions;
 
 //System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
 
-var cs = ConnectionSettings.CreateFromEnvVars();
+var cs = MqttConnectionSettings.CreateFromEnvVars();
 Console.WriteLine($"Connecting to {cs}");
 
 var mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
