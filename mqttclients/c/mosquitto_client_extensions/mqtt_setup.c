@@ -82,8 +82,7 @@ void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connec
   connection_settings->ca_file = getenv("MQTT_CA_FILE");
   printf("MQTT_CA_FILE = %s\n", connection_settings->ca_file);
 
-  connection_settings->ca_path
-      = getenv("MQTT_CA_PATH") ?: connection_settings->ca_file ? NULL : "/etc/ssl/certs";
+  connection_settings->ca_path = getenv("MQTT_CA_PATH");
   printf("MQTT_CA_PATH = %s\n", connection_settings->ca_path);
 
   connection_settings->cert_file = getenv("MQTT_CERT_FILE");
