@@ -19,7 +19,8 @@
 ### Configure Connection Settings 
 
 - Have a broker already available, such as mosquitto, or Azure EventGrid Namespace
-- Configure connection settings using `.env` files
+- Configure connection settings using Environment Variables, that can be set with `.env` files.
+- - Samples accept a cli arg  to specify the  .env file, such as `vehicle01.env`, if not set will try to load a `.env` file from the `$cwd`, and finally will use the EnvVars.
 - Samples can run from the command line, and using VSCode `launch.json`
 - Sample settings: MQTTVersion, HostName, Port, KeepAlive, CleanSession, Credentials, ClientId and TLS with custom CA Trust.
 
