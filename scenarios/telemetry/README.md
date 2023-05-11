@@ -200,14 +200,16 @@ To run the dotnet sample execute each line below in a different shell/terminal.
 
 ### C
 
-To build the C sample run:
+To build the C sample (from the root scenario folder) run:
 
 ```bash
-c/build.sh
+cmake --preset=telemetry
+cmake --build --preset=telemetry
+cd scenarios/telemetry
 ```
 The build script will copy the produced binary to `c/build/telemetry`
 
-To run the C sample execute each line below in a different shell/terminal.
+To run the C sample execute each line below in a different shell/terminal (from the root scenario folder `scenarios/telemetry`).
 
 ```
 c/build/telemetry_producer vehicle01.env
