@@ -58,26 +58,18 @@ int main(int argc, char* argv[])
 {
   struct mosquitto* mosq;
   int result = MOSQ_ERR_SUCCESS;
-  mqtt_client_connection_settings* connection_settings
-      = calloc(1, sizeof(mqtt_client_connection_settings));
 
   mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
   obj->print_message = print_message;
   obj->mqtt_version = MQTT_VERSION;
 
-  if ((mosq = mqtt_client_init(false, argv[1], on_connect_with_subscribe, obj, connection_settings))
-      == NULL)
+  if ((mosq = mqtt_client_init(false, argv[1], on_connect_with_subscribe, obj)) == NULL)
   {
     result = MOSQ_ERR_UNKNOWN;
   }
   else if (
       (result = mosquitto_connect_bind_v5(
-           mosq,
-           connection_settings->hostname,
-           connection_settings->tcp_port,
-           connection_settings->keep_alive_in_seconds,
-           NULL,
-           NULL))
+           mosq, obj->hostname, obj->tcp_port, obj->keep_alive_in_seconds, NULL, NULL))
       != MOSQ_ERR_SUCCESS)
   {
     printf("Connection Error: %s\n", mosquitto_strerror(result));
@@ -102,7 +94,6 @@ int main(int argc, char* argv[])
     mosquitto_destroy(mosq);
   }
   mosquitto_lib_cleanup();
-  free(connection_settings);
   free(obj);
   return result;
 }

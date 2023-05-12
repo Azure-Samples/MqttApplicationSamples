@@ -24,7 +24,10 @@ static void sig_handler(int _)
     enum mosq_err_t const mosq_result = (rc);    \
     if (mosq_result != MOSQ_ERR_SUCCESS)         \
     {                                            \
-      mosquitto_destroy(mosq);                   \
+      if (mosq != NULL)                          \
+      {                                          \
+        mosquitto_destroy(mosq);                 \
+      }                                          \
       printf(                                    \
           "Mosquitto Error: %s At [%s:%s:%d]\n", \
           mosquitto_strerror(mosq_result),       \
@@ -169,17 +172,22 @@ struct mosquitto* mqtt_client_init(
         int,
         int,
         const mosquitto_property* props),
-    mqtt_client_obj* obj,
-    mqtt_client_connection_settings* connection_settings)
+    mqtt_client_obj* obj)
 {
   signal(SIGINT, sig_handler);
 
   struct mosquitto* mosq = NULL;
+  mqtt_client_connection_settings* connection_settings
+      = calloc(1, sizeof(mqtt_client_connection_settings));
   bool subscribe = on_connect_with_subscribe != NULL;
 
   /* Get environment variables for connection settings */
   mqtt_client_read_env_file(env_file);
   mqtt_client_set_connection_settings(connection_settings);
+
+  obj->hostname = connection_settings->hostname;
+  obj->keep_alive_in_seconds = connection_settings->keep_alive_in_seconds;
+  obj->tcp_port = connection_settings->tcp_port;
 
   /* Required before calling other mosquitto functions */
   RETURN_IF_FAILED(mosquitto_lib_init());
@@ -235,6 +243,8 @@ struct mosquitto* mqtt_client_init(
         connection_settings->key_file,
         NULL));
   }
+
+  free(connection_settings);
 
   return mosq;
 }

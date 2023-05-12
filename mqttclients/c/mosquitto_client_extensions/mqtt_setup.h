@@ -31,6 +31,9 @@ typedef struct mqtt_client_obj
 {
   void (*print_message)(const struct mosquitto_message* message);
   int mqtt_version;
+  int keep_alive_in_seconds;
+  int tcp_port;
+  char* hostname;
 } mqtt_client_obj;
 
 struct mosquitto* mqtt_client_init(
@@ -42,7 +45,6 @@ struct mosquitto* mqtt_client_init(
         int,
         int,
         const mosquitto_property* props),
-    mqtt_client_obj* mqtt_client_obj,
-    mqtt_client_connection_settings* connection_settings);
+    mqtt_client_obj* mqtt_client_obj);
 
 #endif /* MQTT_SETUP_H */
