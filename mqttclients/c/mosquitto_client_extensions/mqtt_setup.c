@@ -1,6 +1,7 @@
 /* Copyright (c) Microsoft Corporation. All rights reserved. */
 /* SPDX-License-Identifier: MIT */
 
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,13 +10,24 @@
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
 
+volatile sig_atomic_t keep_running = 1;
+
+static void sig_handler(int _)
+{
+  (void)_;
+  keep_running = 0;
+}
+
 #define RETURN_IF_FAILED(rc)                     \
   do                                             \
   {                                              \
     enum mosq_err_t const mosq_result = (rc);    \
     if (mosq_result != MOSQ_ERR_SUCCESS)         \
     {                                            \
-      mosquitto_destroy(mosq);                   \
+      if (mosq != NULL)                          \
+      {                                          \
+        mosquitto_destroy(mosq);                 \
+      }                                          \
       printf(                                    \
           "Mosquitto Error: %s At [%s:%s:%d]\n", \
           mosquitto_strerror(mosq_result),       \
@@ -61,48 +73,47 @@ void mqtt_client_read_env_file(char* file_path)
 
 void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connection_settings)
 {
-  connection_settings->hostname = getenv("HOST_NAME");
-  printf("HOST_NAME = %s\n", connection_settings->hostname);
+  connection_settings->hostname = getenv("MQTT_HOST_NAME");
+  printf("MQTT_HOST_NAME = %s\n", connection_settings->hostname);
 
-  connection_settings->tcp_port = atoi(getenv("TCP_PORT") ?: "8883");
-  printf("TCP_PORT = %d\n", connection_settings->tcp_port);
+  connection_settings->tcp_port = atoi(getenv("MQTT_TCP_PORT") ?: "8883");
+  printf("MQTT_TCP_PORT = %d\n", connection_settings->tcp_port);
 
-  connection_settings->client_id = getenv("CLIENT_ID");
-  printf("CLIENT_ID = %s\n", connection_settings->client_id);
+  connection_settings->client_id = getenv("MQTT_CLIENT_ID");
+  printf("MQTT_CLIENT_ID = %s\n", connection_settings->client_id);
 
-  connection_settings->ca_file = getenv("CA_FILE");
-  printf("CA_FILE = %s\n", connection_settings->ca_file);
+  connection_settings->ca_file = getenv("MQTT_CA_FILE");
+  printf("MQTT_CA_FILE = %s\n", connection_settings->ca_file);
 
-  connection_settings->ca_path
-      = getenv("CA_PATH") ?: connection_settings->ca_file ? NULL : "/etc/ssl/certs";
-  printf("CA_PATH = %s\n", connection_settings->ca_path);
+  connection_settings->ca_path = getenv("MQTT_CA_PATH");
+  printf("MQTT_CA_PATH = %s\n", connection_settings->ca_path);
 
-  connection_settings->cert_file = getenv("CERT_FILE");
-  printf("CERT_FILE = %s\n", connection_settings->cert_file);
+  connection_settings->cert_file = getenv("MQTT_CERT_FILE");
+  printf("MQTT_CERT_FILE = %s\n", connection_settings->cert_file);
 
-  connection_settings->key_file = getenv("KEY_FILE");
-  printf("KEY_FILE = %s\n", connection_settings->key_file);
+  connection_settings->key_file = getenv("MQTT_KEY_FILE");
+  printf("MQTT_KEY_FILE = %s\n", connection_settings->key_file);
 
-  connection_settings->key_file_password = getenv("KEY_FILE_PASSWORD");
-  printf("KEY_FILE_PASSWORD = %s\n", connection_settings->key_file_password);
+  connection_settings->key_file_password = getenv("MQTT_KEY_FILE_PASSWORD");
+  printf("MQTT_KEY_FILE_PASSWORD = %s\n", connection_settings->key_file_password);
 
-  connection_settings->keep_alive_in_seconds = atoi(getenv("KEEP_ALIVE_IN_SECONDS") ?: "30");
-  printf("KEEP_ALIVE_IN_SECONDS = %d\n", connection_settings->keep_alive_in_seconds);
+  connection_settings->keep_alive_in_seconds = atoi(getenv("MQTT_KEEP_ALIVE_IN_SECONDS") ?: "30");
+  printf("MQTT_KEEP_ALIVE_IN_SECONDS = %d\n", connection_settings->keep_alive_in_seconds);
 
-  char* use_TLS = getenv("USE_TLS");
+  char* use_TLS = getenv("MQTT_USE_TLS");
   connection_settings->use_TLS = (use_TLS != NULL && strcmp(use_TLS, "false") == 0) ? false : true;
-  printf("USE_TLS = %s\n", connection_settings->use_TLS ? "true" : "false");
+  printf("MQTT_USE_TLS = %s\n", connection_settings->use_TLS ? "true" : "false");
 
-  connection_settings->username = getenv("USERNAME");
-  printf("USERNAME = %s\n", connection_settings->username);
+  connection_settings->username = getenv("MQTT_USERNAME");
+  printf("MQTT_USERNAME = %s\n", connection_settings->username);
 
-  connection_settings->password = getenv("PASSWORD");
-  printf("PASSWORD = %s\n", connection_settings->password);
+  connection_settings->password = getenv("MQTT_PASSWORD");
+  printf("MQTT_PASSWORD = %s\n", connection_settings->password);
 
-  char* clean_session = getenv("CLEAN_SESSION");
+  char* clean_session = getenv("MQTT_CLEAN_SESSION");
   connection_settings->clean_session
       = (clean_session != NULL && strcmp(clean_session, "false") == 0) ? false : true;
-  printf("CLEAN_SESSION = %s\n", connection_settings->clean_session ? "true" : "false");
+  printf("MQTT_CLEAN_SESSION = %s\n", connection_settings->clean_session ? "true" : "false");
 }
 
 static void _set_subscribe_callbacks(struct mosquitto* mosq)
@@ -161,23 +172,31 @@ struct mosquitto* mqtt_client_init(
         int,
         int,
         const mosquitto_property* props),
-    mqtt_client_obj* obj,
-    mqtt_client_connection_settings* connection_settings)
+    mqtt_client_obj* obj)
 {
+  signal(SIGINT, sig_handler);
+
   struct mosquitto* mosq = NULL;
+  mqtt_client_connection_settings* connection_settings
+      = calloc(1, sizeof(mqtt_client_connection_settings));
   bool subscribe = on_connect_with_subscribe != NULL;
 
   /* Get environment variables for connection settings */
   mqtt_client_read_env_file(env_file);
   mqtt_client_set_connection_settings(connection_settings);
 
-  /* Required before calling other mosquitto functions */
-  RETURN_IF_FAILED(mosquitto_lib_init());
-
   if (connection_settings->key_file_password != NULL)
   {
     obj->key_file_password = connection_settings->key_file_password;
   }
+
+  obj->hostname = connection_settings->hostname;
+  obj->keep_alive_in_seconds = connection_settings->keep_alive_in_seconds;
+  obj->tcp_port = connection_settings->tcp_port;
+  obj->client_id = connection_settings->client_id;
+
+  /* Required before calling other mosquitto functions */
+  RETURN_IF_FAILED(mosquitto_lib_init());
 
   /* Create a new client instance.
    * id = NULL -> ask the broker to generate a client id for us
@@ -230,6 +249,8 @@ struct mosquitto* mqtt_client_init(
         connection_settings->key_file,
         connection_settings->key_file_password != NULL ? key_file_password_callback : NULL));
   }
+
+  free(connection_settings);
 
   return mosq;
 }
