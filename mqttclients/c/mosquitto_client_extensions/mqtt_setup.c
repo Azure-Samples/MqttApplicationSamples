@@ -188,6 +188,7 @@ struct mosquitto* mqtt_client_init(
   obj->hostname = connection_settings->hostname;
   obj->keep_alive_in_seconds = connection_settings->keep_alive_in_seconds;
   obj->tcp_port = connection_settings->tcp_port;
+  obj->client_id = connection_settings->client_id;
 
   /* Required before calling other mosquitto functions */
   RETURN_IF_FAILED(mosquitto_lib_init());

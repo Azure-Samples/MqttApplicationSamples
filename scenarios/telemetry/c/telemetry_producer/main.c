@@ -22,7 +22,6 @@ int main(int argc, char* argv[])
   int result = MOSQ_ERR_SUCCESS;
 
   mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
-  obj->print_message = NULL;
   obj->mqtt_version = MQTT_VERSION;
 
   if ((mosq = mqtt_client_init(true, argv[1], NULL, obj)) == NULL)
@@ -44,8 +43,8 @@ int main(int argc, char* argv[])
   }
   else
   {
-    char topic[strlen(connection_settings->client_id) + 17];
-    sprintf(topic, "vehicles/%s/position", connection_settings->client_id);
+    char topic[strlen(obj->client_id) + 17];
+    sprintf(topic, "vehicles/%s/position", obj->client_id);
 
     while (keep_running)
     {
