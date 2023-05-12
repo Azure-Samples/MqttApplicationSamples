@@ -59,6 +59,67 @@
             "cwd": "${workspaceFolder}/scenarios/command/",
             "console": "integratedTerminal",
             "stopAtEntry": false
+        },
+        {
+            "name": "C Telemetry Producer",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/scenarios/telemetry/c/build/telemetry_producer",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/scenarios/telemetry",
+            "args": ["${workspaceFolder}/scenarios/telemetry/vehicle01.env"],
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build C Telemetry",
+            "presentation": {
+                "hidden": true,
+                "group": "C"
+            }
+        },
+        {
+            "name": "C Telemetry Consumer",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/scenarios/telemetry/c/build/telemetry_consumer",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/scenarios/telemetry",
+            "args": ["${workspaceFolder}/scenarios/telemetry/map-app.env"],
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build C Telemetry",
+            "presentation": {
+                "hidden": true,
+                "group": "C"
+            }
+        },
+        {
+            "name": "C Getting Started",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/scenarios/getting_started/c/build/getting_started",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/scenarios/getting_started",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build C Getting Started",
+            "presentation": {
+                "group": "C"
+            }
         }
     ],
     "compounds": [
@@ -69,6 +130,14 @@
         {
             "name": "command/dotnet",
             "configurations": ["command_producer/dotnet", "command_consumer/dotnet" ]
+        },
+        {
+            "name": "C Telemetry",
+            "configurations": ["C Telemetry Consumer", "C Telemetry Producer" ],
+            "stopAll": true,
+            "presentation": {
+                "group": "C"
+            }
         }
     ]
 }
