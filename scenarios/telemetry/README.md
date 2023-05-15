@@ -120,6 +120,8 @@ az resource create --id "$res_id/permissionBindings/vehiclesSub" --properties '{
 
 ### Create the .env files with connection details
 
+The required `.env` files can be configured manually, we provide the script below as a reference to create those files, as they are ignored from git.
+
 ```bash
 source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
