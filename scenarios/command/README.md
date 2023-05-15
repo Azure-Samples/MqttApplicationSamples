@@ -100,13 +100,13 @@ az resource create --id "$res_id/topicSpaces/vehiclesCommands" --properties '{
     "subscriptionSupport": "LowFanout"
 }'
 
-az resource create --id "$res_id/permissionBindings/vehiclesPub" --properties '{
+az resource create --id "$res_id/permissionBindings/vehiclesCmdPub" --properties '{
     "clientGroupName":"$all",
     "topicSpaceName":"vehiclesCommands",
     "permission":"Publisher"
 }'
 
-az resource create --id "$res_id/permissionBindings/vehiclesSub" --properties '{
+az resource create --id "$res_id/permissionBindings/vehiclesCmdSub" --properties '{
     "clientGroupName":"$all",
     "topicSpaceName":"vehiclesCommands",
     "permission":"Subscriber"

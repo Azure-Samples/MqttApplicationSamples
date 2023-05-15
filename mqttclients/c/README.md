@@ -1,0 +1,98 @@
+# Using C Samples
+
+## Unique to C Samples/mosquitto Client Library
+
+- For connections to Event Grid, setting the CA_PATH environment variable is required. This is the path to a directory containing the PEM encoded trusted CA certificate files. For CA_PATH to work correctly, the certificate files must have ".crt" as the file ending and you must run `openssl rehash <path to capath>` each time you add/remove a certificate. On many Linux setups, this can be set to `/etc/ssl/certs`.
+- If you set KEEP_ALIVE_IN_SECONDS to `0`, no keepalive checks are made and the client will never be disconnected by the broker if no messages are received. The minimum value for mosquitto is `5`, and the max is `65535`. There is no default value for the mosquitto library, but if you haven't passed a value to the environment variable, we will set it to `30` to align with the other language samples.
+
+## C Specific Prerequisites
+
+> Note: Some of these may be installed automatically if you use VS Code Extensions
+- [CMake](https://cmake.org/download/) version 3.20 or later to use cmake presets
+- Other requirements
+    ``` bash
+    sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
+    ```
+
+## Using the Command Line
+
+### Building the Samples
+
+From the root of the repo, run the following commands for which sample you want to build (ex. `getting_started` or `telemetry`)
+
+With CMake presets (requires version >= 3.20):
+
+``` bash
+cmake --preset=<sample name>
+cmake --build --preset=<sample name>
+```
+
+Without CMake presets:
+
+``` bash
+cmake -G Ninja -Bscenarios/<sample name>/c/build -DPRESET_PATH=scenarios/<sample name>/c .
+cmake --build scenarios/<sample name>/c/build
+```
+
+### Running the Samples
+
+- Generate .env file(s) and key/pem files as directed in main readmes
+- Navigate to scenario folder (ex. `cd scenarios/telemetry`)
+- Execute the binary from this location. The binary for all scenarios will be located at `./c/build/<scenario name>`. As a command line argument, pass in the path to the .env file to use. If you do not specify a .env file, the program will search for a file named `.env` in the current directory. Example:
+    ``` bash
+    ./c/build/telemetry_producer vehicle01.env
+    ```
+- If for some reason, you need to run the sample from a different location, the argument for the .env file and the file paths within the .env file should be written as their absolute paths.
+
+## Using VS Code
+
+- Install the VS Code extension `ms-vscode.cpptools-extension-pack`
+- sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
+- Generate .env file(s) and key/pem files as directed in main readmes
+- Go to the `Run and Debug` tab in VS Code and select one of the C samples from the dropdown
+- Click the Green Play button and you should be good to go!
+
+## Using the CMake Extension in VS Code
+
+> Note: This is not a default supported configuration, but can be useful for testing. Configuration changes needed for this to work are listed below
+
+- Install the VS Code extension `ms-vscode.cpptools-extension-pack`
+- sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
+- Generate .env file(s) and key/pem files as directed in main readmes
+- The CMake extension doesn't allow us to dictate where the sample runs from, so modify your .env files to use absolute paths for the CA_FILE, CERT_FILE, and KEY_FILE if needed for your sample
+- The CMake extension has limited capabilities for passing in command line arguments, so rename your .env files to be the name of the sample executable so they can be properly passed in (ex. `telemetry_producer.env`), and add the following to your settings.json to have the .env file be passed in:
+    ```json
+    "cmake.debugConfig": {
+        "args": ["${workspaceFolder}/scenarios/${command:cmake.activeBuildPresetName}/${command:cmake.buildTargetName}.env"],
+    },
+    ```
+- Now you can select the Configure Preset, Build Preset, and Build Target on the bottom bar of VS Code and use the Build/Run buttons from there.
+
+## Contributing
+
+We use [clang-format](https://releases.llvm.org/download.html#9.0.0) to format the code properly. Note that you NEED clang-format from Clang version 9.0.0. Subsequent versions format code differently and we settled on this one for consistency. If you download the pre-built binaries version, it should be located at `<expanded clang dir>/bin/clang-format`. On ubuntu, you can install it with this command:
+
+``` bash
+sudo apt install -y clang-format-9
+```
+
+To fix any style errors, run this command from the root of the repo (if you used a different install method than apt install, use `clang-format` instead of `clang-format-9`):
+
+``` bash
+clang-format-9 -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*")
+```
+
+## Additional Resources
+
+- To print out all mosquitto logs, set cmake option `LOG_ALL_MOSQUITTO` to ON. When set to OFF (the default value), only ping requests/responses get printed.
+- For a complete list of available functions from the mosquitto library, see their [api reference](https://mosquitto.org/api/files/mosquitto-h.html).
+
+- To declutter the bottom bar in VS Code a bit, you can hide some CMake buttons that we aren't using in your settings.json
+
+    ``` json
+    "cmake.statusbar.advanced": {
+        "ctest": {"visibility": "hidden"},
+        "testPreset": {"visibility": "hidden"},
+        "launchTarget": {"visibility": "hidden"},
+    }
+    ```

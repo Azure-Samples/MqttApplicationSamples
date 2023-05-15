@@ -1,15 +1,19 @@
 # Setup Environment
 
+| [Create CA](#create-ca) | [Configure Event Grid](#configure-event-grid-namespace) | [Configure Mosquitto](#configure-mosquitto-with-tls-and-x509-authentication) | [Development tools](#configure-development-tools) |
+
 These samples can work with any MQTT Broker configured to accept authenticated connections with X509 certificates. This document describes how to configure:
 
 - Azure Event Grid Namespaces
 - Mosquitto
 
-> To create the certificates use the `step cli` [https://smallstep.com/docs/step-cli/installation/](https://smallstep.com/docs/step-cli/installation/)
+Once your environment is configured you can configure your connection settings as environment variables that will be loaded by the [Mqtt client extensions](./mqttclients/README.md)
 
 ### Create CA
 
 All samples require a CA to generate the client certificates to connect.
+
+> To create the certificates use the `step cli` [https://smallstep.com/docs/step-cli/installation/](https://smallstep.com/docs/step-cli/installation/)
 
 To create the root and intermediate CA certificates run:
 
@@ -76,7 +80,11 @@ az resource create --id $res_id --is-full-object --properties '{
 Register the certificate to authenticate client certificates (usually the intermediate)
 
 ```bash
+source az.env
+res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
+
 capem=`cat ~/.step/certs/intermediate_ca.crt | tr -d "\n"`
+
 az resource create \
   --id "$res_id/caCertificates/Intermediate01" \
   --properties "{\"encodedCertificate\" : \"$capem\"}"
@@ -122,3 +130,32 @@ To start mosquitto with this configuration file run:
 ```bash
 mosquitto -c tls.conf
 ```
+
+## Configure development tools
+
+This repo leverages GitHub CodeSpaces, with a preconfigured `.devContainer` that includes all the required tools and SDK, and also a local mosquitto, and the `step` cli.
+
+### dotnet C#
+
+The samples use `dotnet7`, it can be installed in Windows, Linux or Mac from https://dotnet.microsoft.com/en-us/download
+
+Optionally you can use Visual Studio to build and debug the sample projects.
+
+See [dotnet extensions](./mqttclients/dotnet/README.md) for more details.
+
+
+### C
+
+We are using standard C, and the CMake 3.20 to build. You can install the required tools with:
+
+```bash
+sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev
+```
+
+See [c extensions](./mqttclients/c/README.md) for more details.
+
+### Python
+
+Python samples have been tested with python 3.10.4, to install follow the instructions from https://www.python.org/downloads/ 
+
+
