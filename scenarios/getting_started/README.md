@@ -68,6 +68,8 @@ az resource create --id "$res_id/permissionBindings/samplesSub" --properties '{
 
 ### Create the .env file with connection details
 
+The required `.env` files can be configured manually, we provide the script below as a reference to create those files, as they are ignored from git.
+
 ```bash
 cd scenarios/getting_started
 source ../../az.env
