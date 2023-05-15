@@ -8,7 +8,6 @@ on:
 
   workflow_dispatch:
 
-
 jobs:
 
   build:
@@ -18,10 +17,10 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-   - name: Execute unit tests
-      run: dotnet test scenarios/Scenarios.sln
+      - name: Execute unit tests
+          run: dotnet test scenarios/Scenarios.sln
