@@ -1,0 +1,27 @@
+name: dotnet Checks
+
+on:
+  push:
+    branches: [ "main" ]
+
+  pull_request:
+
+  workflow_dispatch:
+
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+   - name: Execute unit tests
+      run: dotnet test scenarios/Scenarios.sln
