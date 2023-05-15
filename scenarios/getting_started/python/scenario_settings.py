@@ -19,7 +19,7 @@ def _convert_to_int(value, name):
     except ValueError:
         raise ValueError(f"{name} must be an integer")
 
-def get_connection_settings(envfile=None):
+def get_settings(envfile=None):
     default_settings = {
         "MQTT_TCP_PORT": "8883",
         "MQTT_USE_TLS": "true",

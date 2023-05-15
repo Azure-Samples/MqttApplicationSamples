@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
 import scenario_settings
+from argparse import ArgumentParser
 
 def on_connect(client, _userdata, _flags, rc):
     if rc != 0:
