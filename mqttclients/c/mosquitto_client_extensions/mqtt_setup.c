@@ -185,11 +185,7 @@ struct mosquitto* mqtt_client_init(
   mqtt_client_read_env_file(env_file);
   mqtt_client_set_connection_settings(connection_settings);
 
-  if (connection_settings->key_file_password != NULL)
-  {
-    obj->key_file_password = connection_settings->key_file_password;
-  }
-
+  obj->key_file_password = connection_settings->key_file_password;
   obj->hostname = connection_settings->hostname;
   obj->keep_alive_in_seconds = connection_settings->keep_alive_in_seconds;
   obj->tcp_port = connection_settings->tcp_port;

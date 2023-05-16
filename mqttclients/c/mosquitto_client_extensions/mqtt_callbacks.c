@@ -109,7 +109,7 @@ void on_publish(
   printf("on_publish: Message with mid %d has been published.\n", mid);
 }
 
-int key_file_password_callback(char* buf, int size, int rwflag, void* userdata)
+int key_file_password_callback(char* dest_buf, int size, int rwflag, void* userdata)
 {
   mqtt_client_obj* client_obj = (mqtt_client_obj*)mosquitto_userdata(userdata);
   /* We pass the password in userdata to the callback. */
@@ -118,8 +118,8 @@ int key_file_password_callback(char* buf, int size, int rwflag, void* userdata)
   /* We don't want to overflow the buffer if the password is too long. */
   if (strlen(password) < (size_t)size)
   {
-    strcpy(buf, password);
-    return strlen(buf);
+    strcpy(dest_buf, password);
+    return strlen(dest_buf);
   }
   else
   {
