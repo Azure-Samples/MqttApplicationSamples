@@ -4,9 +4,17 @@ This sample shows how to perform basic MQTT operations: Connect, Publish and Sub
 
 | [Create the Client Certificate](#create-the-client-certificate) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
 
+- Connect with MQTT 3.1.1
+  - Validate TLS certificate enforcing TLS 1.2
+  - Authenticate with client certificates
+  - Configure connection settings such as KeepAlive and CleanSession
+- Publish messages to a topic
+- Subscribe to a topic to receive messages
+
+
 ## Create the client certificate
 
-Using the CA files, as described in [setup](../setup), create a certificate for `sample_client`.
+Using the CA created in [setup](../setup), issue a leaf certificate for `sample_client`.
 
 ```bash
 cd scenarios/getting_started
@@ -81,6 +89,7 @@ echo "MQTT_USERNAME=sample_client" >> .env
 echo "MQTT_CLIENT_ID=sample_client" >> .env
 echo "MQTT_CERT_FILE=sample_client.pem" >> .env
 echo "MQTT_KEY_FILE=sample_client.key" >> .env
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
 ## Configure Mosquitto 
@@ -131,17 +140,15 @@ To run the dotnet sample:
 
 ### C
 
-To build the C sample run:
+To build the C sample run from the root folder:
 
 ```bash
-c/build.sh
+cmake --preset=getting_started;cmake --build --preset=getting_started
 ```
 The build script will copy the produced binary to `c/build/getting_started`
 
 To run the C sample:
 
-```
+```bash
 c/build/getting_started
 ```
-
-

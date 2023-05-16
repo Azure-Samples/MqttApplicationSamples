@@ -131,17 +131,20 @@ echo "MQTT_HOST_NAME=$host_name" > vehicle01.env
 echo "MQTT_USERNAME=vehicle01" >> vehicle01.env
 echo "MQTT_CERT_FILE=vehicle01.pem" >> vehicle01.env
 echo "MQTT_KEY_FILE=vehicle01.key" >> vehicle01.env
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 
 
 echo "MQTT_HOST_NAME=$host_name" > vehicle02.env
 echo "MQTT_USERNAME=vehicle02" >> vehicle02.env
 echo "MQTT_CERT_FILE=vehicle02.pem" >> vehicle02.env
 echo "MQTT_KEY_FILE=vehicle02.key" >> vehicle02.env
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 
 echo "MQTT_HOST_NAME=$host_name" > map-app.env
 echo "MQTT_USERNAME=map-app" >> map-app.env
 echo "MQTT_CERT_FILE=map-app.pem" >> map-app.env
 echo "MQTT_KEY_FILE=map-app.key" >> map-app.env
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
 ## Configure Mosquitto 
@@ -202,11 +205,12 @@ To run the dotnet sample execute each line below in a different shell/terminal.
 
 ### C
 
-To build the C sample run:
+To build the C sample run from the root folder:
 
 ```bash
-c/build.sh
+cmake --preset=telemetry;cmake --build --preset=telemetry
 ```
+
 The build script will copy the produced binary to `c/build/telemetry`
 
 To run the C sample execute each line below in a different shell/terminal.
