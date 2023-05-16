@@ -1,4 +1,4 @@
-# Telemetry (Fan-in)
+# :point_right: Telemetry (Fan-in)
 
 | [Create the Client Certificates](#create-client-certificates) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
 
@@ -22,7 +22,7 @@ Messages will use [GeoJSON](https://geojson.org) to represent the coordinates.
 ```
 
 
-## Create Client Certificates
+## :lock: Create Client Certificates
 
 Run the following step commands to create the client certificates for `vehicle01`, `vehicle02` and `map-app`.
 
@@ -50,7 +50,7 @@ step certificate create \
 
 ```
 
-## Configure Event Grid Namespaces
+## :triangular_ruler: Configure Event Grid Namespaces
 
 Event Grid Namespaces requires to register the clients, and the topic spaces to set the client permissions. 
 
@@ -147,7 +147,7 @@ echo "MQTT_KEY_FILE=map-app.key" >> map-app.env
 echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
-## Configure Mosquitto 
+## :fly: Configure Mosquitto 
 
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
@@ -183,7 +183,7 @@ echo "MQTT_USE_TLS=false" >> vehicle01.env
 echo "MQTT_CLIENT_ID=vehicle01" >> vehicle01.env
 ```
 
-## Run the Sample
+## :game_die: Run the Sample
 
 All samples are designed to be executed from the root scenario folder.
 

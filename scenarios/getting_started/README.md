@@ -1,4 +1,4 @@
-# Getting Started
+# :point_right: Getting Started
 
 This sample shows how to perform basic MQTT operations: Connect, Publish and Subscribe.
 
@@ -12,7 +12,7 @@ This sample shows how to perform basic MQTT operations: Connect, Publish and Sub
 - Subscribe to a topic to receive messages
 
 
-## Create the client certificate
+##  :lock: Create the client certificate
 
 Using the CA created in [setup](../setup), issue a leaf certificate for `sample_client`.
 
@@ -26,7 +26,7 @@ step certificate create \
     --not-after 2400h
 ```
 
-## Configure Event Grid Namespaces
+## :triangular_ruler: Configure Event Grid Namespaces
 
 Event Grid Namespaces requires to register the client, and the topic spaces to set the client permissions. 
 
@@ -92,7 +92,7 @@ echo "MQTT_KEY_FILE=sample_client.key" >> .env
 echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
-## Configure Mosquitto 
+## :fly: Configure Mosquitto 
 
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
@@ -119,7 +119,7 @@ echo "MQTT_USE_TLS=false" >> .env
 echo "MQTT_CLIENT_ID=sample_client" >> .env
 ```
 
-## Run the Sample
+## :game_die: Run the Sample
 
 All samples are designed to be executed from the root scenario folder.
 

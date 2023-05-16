@@ -1,10 +1,10 @@
-# MQTT Application Samples
+# :dart: MQTT Application Samples
 
 Guidance to build Pub/Sub applications targeting MQTT Brokers in different programming languages.
 
 | [Setup](./Setup.md) | [Getting Started](./scenarios/getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |
 
-## Prerequisites
+## :magic_wand: Prerequisites
 
 To run this samples you need an MQTT Broker configured with mTLS to authenticate clients with X509 certificates, we provide instructions for:
 
@@ -23,7 +23,7 @@ Samples are provided in different programming languages: C#, Python and C.
 
 See [Setup](./Setup.md) for detailed instructions.
 
-## Language specific instructions
+## :book: Language specific instructions
 
 Each language requires developer tools, such as compilers and SDKs to build and run the samples:
 
@@ -31,7 +31,7 @@ Each language requires developer tools, such as compilers and SDKs to build and 
 - [C](./mqttclients/c/README.md)
 - Python (TBD)
 
-# Scenarios
+# :pencil2: Scenarios
 
 These samples implement PubSub patterns used in MQTT Applications.
 
@@ -47,8 +47,8 @@ Follow the instructions in each scenario README to configure the clients.
 | Scenario | Description | dotnet | C | python |
 | -------- | ------------|--------|---|------- |
 | [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| :white_check_mark:|:white_check_mark:|:white_check_mark:|
-| [Telemetry](./scenarios/telemetry/)  | Multiple clients (producers) send data that is received from a single client (consumer) | :white_check_mark:|:white_check_mark:|:asterisk:|
-| [Command](./scenarios/command/)  | Implements the request-response pattern using MQTT5 features  | :white_check_mark:|:asterisk:|:asterisk:|
-| [Alert](./scenarios/alert/)  | Multiple clients are subscribed to a single topic, that can be use to _fan_out_ an alert with a single message.  | :asterisk:|:asterisk:|:asterisk:|
+| [Telemetry](./scenarios/telemetry/)  | Multiple clients (producers) send data that is received from a single client (consumer) | :white_check_mark:|:white_check_mark:|:soon:|
+| [Command](./scenarios/command/)  | Implements the request-response pattern using MQTT5 features  | :white_check_mark:|:soon:|:soon:|
+| [Alert](./scenarios/alert/)  | Multiple clients are subscribed to a single topic, that can be use to _fan_out_ an alert with a single message.  | :soon:|:soon:|:soon:|
 
->note: :asterisk: in progress
+>note: :soon: in progress and will be added soon
