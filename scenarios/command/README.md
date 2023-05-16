@@ -1,4 +1,4 @@
-#  Command (Request/Response)
+#  :point_right: Command (Request/Response)
 
 | [Create the Client Certificates](#create-client-certificates) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
 
@@ -35,7 +35,7 @@ service Commands {
 }
 ```
 
-## Create Client Certificates
+## :lock: Create Client Certificates
 
 Run the following step commands to create the client certificates for `vehicle03` and `mobile-app`.
 
@@ -56,7 +56,7 @@ step certificate create \
 
 ```
 
-## Configure Event Grid Namespaces
+## :triangular_ruler: Configure Event Grid Namespaces
 
 Event Grid Namespaces requires to register the clients, and the topic spaces to set the client permissions. 
 
@@ -100,13 +100,13 @@ az resource create --id "$res_id/topicSpaces/vehiclesCommands" --properties '{
     "subscriptionSupport": "LowFanout"
 }'
 
-az resource create --id "$res_id/permissionBindings/vehiclesPub" --properties '{
+az resource create --id "$res_id/permissionBindings/vehiclesCmdPub" --properties '{
     "clientGroupName":"$all",
     "topicSpaceName":"vehiclesCommands",
     "permission":"Publisher"
 }'
 
-az resource create --id "$res_id/permissionBindings/vehiclesSub" --properties '{
+az resource create --id "$res_id/permissionBindings/vehiclesCmdSub" --properties '{
     "clientGroupName":"$all",
     "topicSpaceName":"vehiclesCommands",
     "permission":"Subscriber"
@@ -114,6 +114,8 @@ az resource create --id "$res_id/permissionBindings/vehiclesSub" --properties '{
 ```
 
 ### Create the .env files with connection details
+
+The required `.env` files can be configured manually, we provide the script below as a reference to create those files, as they are ignored from git.
 
 ```bash
 source ../../az.env
@@ -131,7 +133,7 @@ echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
 echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
 ```
 
-## Configure Mosquitto 
+## :fly: Configure Mosquitto 
 
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
@@ -162,7 +164,7 @@ echo "MQTT_USE_TLS=false" >> vehicle03.env
 echo "MQTT_CLIENT_ID=vehicle03" >> vehicle03.env
 ```
 
-## Run the Sample
+## :game_die: Run the Sample
 
 All samples are designed to be executed from the root scenario folder.
 
@@ -180,18 +182,3 @@ To run the dotnet sample execute each line below in a different shell/terminal.
  dotnet/command_producer/bin/Debug/net7.0/command_producer --envFile=vehicle03.env
  dotnet/command_consumer/bin/Debug/net7.0/command_consumer --envFile=mobile-app.env
 ```
-
-### C
-
-To build the C sample run:
-
-```bash
-c/build.sh
-```
-The build script will copy the produced binary to `c/build/command`
-
-To run the C sample execute each line below in a different shell/terminal.
-
-```
-c/build/command_producer vehicle03.env
-c/build/command_consumer mobile-app.env

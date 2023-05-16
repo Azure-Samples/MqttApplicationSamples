@@ -1,4 +1,4 @@
-# Telemetry (Fan-in)
+# :point_right: Telemetry (Fan-in)
 
 | [Create the Client Certificates](#create-client-certificates) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
 
@@ -22,7 +22,7 @@ Messages will use [GeoJSON](https://geojson.org) to represent the coordinates.
 ```
 
 
-## Create Client Certificates
+## :lock: Create Client Certificates
 
 Run the following step commands to create the client certificates for `vehicle01`, `vehicle02` and `map-app`.
 
@@ -50,7 +50,7 @@ step certificate create \
 
 ```
 
-## Configure Event Grid Namespaces
+## :triangular_ruler: Configure Event Grid Namespaces
 
 Event Grid Namespaces requires to register the clients, and the topic spaces to set the client permissions. 
 
@@ -120,6 +120,8 @@ az resource create --id "$res_id/permissionBindings/vehiclesSub" --properties '{
 
 ### Create the .env files with connection details
 
+The required `.env` files can be configured manually, we provide the script below as a reference to create those files, as they are ignored from git.
+
 ```bash
 source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
@@ -129,20 +131,23 @@ echo "MQTT_HOST_NAME=$host_name" > vehicle01.env
 echo "MQTT_USERNAME=vehicle01" >> vehicle01.env
 echo "MQTT_CERT_FILE=vehicle01.pem" >> vehicle01.env
 echo "MQTT_KEY_FILE=vehicle01.key" >> vehicle01.env
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 
 
 echo "MQTT_HOST_NAME=$host_name" > vehicle02.env
 echo "MQTT_USERNAME=vehicle02" >> vehicle02.env
 echo "MQTT_CERT_FILE=vehicle02.pem" >> vehicle02.env
 echo "MQTT_KEY_FILE=vehicle02.key" >> vehicle02.env
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 
 echo "MQTT_HOST_NAME=$host_name" > map-app.env
 echo "MQTT_USERNAME=map-app" >> map-app.env
 echo "MQTT_CERT_FILE=map-app.pem" >> map-app.env
 echo "MQTT_KEY_FILE=map-app.key" >> map-app.env
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
-## Configure Mosquitto 
+## :fly: Configure Mosquitto 
 
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
@@ -178,7 +183,7 @@ echo "MQTT_USE_TLS=false" >> vehicle01.env
 echo "MQTT_CLIENT_ID=vehicle01" >> vehicle01.env
 ```
 
-## Run the Sample
+## :game_die: Run the Sample
 
 All samples are designed to be executed from the root scenario folder.
 
@@ -200,13 +205,13 @@ To run the dotnet sample execute each line below in a different shell/terminal.
 
 ### C
 
-To build the C sample (from the root scenario folder) run:
+To build the C sample, run from the root folder:
 
 ```bash
 cmake --preset=telemetry
 cmake --build --preset=telemetry
-cd scenarios/telemetry
 ```
+
 The build script will copy the produced binary to `c/build/telemetry`
 
 To run the C sample execute each line below in a different shell/terminal (from the root scenario folder `scenarios/telemetry`).
