@@ -4,7 +4,7 @@
 
 This scenario simulates the request-response messaging pattern. Request-response uses two topics, one for the request and one for the response.
 
-Consider a use case where a user can unlock their car from a mobile app. The request to unlock are published on `vehicles/<vehicleId>/commands/unlock` and the response of unlock operation are published on `vehicles/<vehicleId>/commands/unlock/response`.
+Consider a use case where a user can unlock their car from a mobile app. The request to unlock is published on `vehicles/<vehicleId>/commands/unlock` and the response of unlock operation is published on `vehicles/<vehicleId>/commands/unlock/response`.
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
@@ -37,7 +37,7 @@ service Commands {
 
 ## :lock: Create Client Certificates
 
-Run the following step commands to create the client certificates for `vehicle03` and `mobile-app`.
+Run the following step commands to create the client certificates for `vehicle03` and `mobile-app` clients.  The client authentication name is provided in the subject name field of the client certificate.
 
 ```bash
 step certificate create \
@@ -60,34 +60,36 @@ step certificate create \
 
 Event Grid Namespaces requires to register the clients, and the topic spaces to set the client permissions. 
 
-### Create the Clients
+### Create the clients
 
-The clients will be created based on the certificate subject, you can register the 2 clients in the portal or by running the script below:
+The clients will be created with authentication name same as the value provided earlier in certificate subject field while creating the client certificates.  You can register the 2 clients in the portal or by running the script below:
 
 ```bash
 source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$res_id/clients/vehicle03" --properties '{
-    "state": "Enabled",
-    "clientCertificateAuthentication": {
-        "certificateSubject": {
-            "commonName": "vehicle03"
-        }
-    },
-    "attributes": {},
-    "description": "This is a test publisher client"
+	"authenticationName": "vehicle03",
+	"state": "Enabled",
+	"clientCertificateAuthentication": {
+	    "validationScheme": "SubjectMatchesAuthenticationName"
+	},
+	"attributes": {
+	    "type": "vehicle"
+    	},
+    	"description": "This is a vehicle client"
 }'
 
 az resource create --id "$res_id/clients/mobile-app" --properties '{
-    "state": "Enabled",
-    "clientCertificateAuthentication": {
-        "certificateSubject": {
-            "commonName": "mobile-app"
-        }
-    },
-    "attributes": {},
-    "description": "This is a test publisher client"
+	"authenticationName": "mobile-app",
+        "state": "Enabled",
+        "clientCertificateAuthentication": {
+            "validationScheme": "SubjectMatchesAuthenticationName"
+        },
+        "attributes": {
+            "room": "mobile"
+   	},
+    	"description": "This is a mobile app client"
 }'
 
 ```
@@ -96,8 +98,7 @@ az resource create --id "$res_id/clients/mobile-app" --properties '{
 
 ```bash
 az resource create --id "$res_id/topicSpaces/vehiclesCommands" --properties '{
-    "topicTemplates": ["vehicles/+/command/#"],
-    "subscriptionSupport": "LowFanout"
+    "topicTemplates": ["vehicles/+/command/#"]
 }'
 
 az resource create --id "$res_id/permissionBindings/vehiclesCmdPub" --properties '{
