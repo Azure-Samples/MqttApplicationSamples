@@ -66,6 +66,7 @@ res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/
 az account set -s $sub_id
 az resource create --id $res_id --is-full-object --properties '{
   "properties": {
+    "isZoneRedundant": true,
     "topicsConfiguration": {
       "inputSchema": "CloudEventSchemaV1_0"
     },
