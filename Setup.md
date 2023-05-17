@@ -67,7 +67,7 @@ az resource create \
 > Each scenario includes the detailed instructions to configure the namespace resources needed for the scenario.
 
 > [!NOTE]
-> For portal configuration instructions, go [here]https://learn.microsoft.com/en-us/azure/event-grid/mqtt-publish-and-subscribe-portal).
+> For portal configuration, use [this link](https://portal.azure.com/?microsoft_azure_marketplace_ItemHideKey=PubSubNamespace&microsoft_azure_eventgrid_assettypeoptions={"PubSubNamespace":{"options":""}}) and follow [these instructions](https://learn.microsoft.com/en-us/azure/event-grid/mqtt-publish-and-subscribe-portal).
 
 
 ### Configure environment variables
