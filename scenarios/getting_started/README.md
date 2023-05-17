@@ -166,3 +166,35 @@ To run the C sample (from the root scenario folder `scenarios/getting_started`):
 ```bash
 c/build/getting_started
 ```
+
+### Python
+
+#### Create a virtual environment
+
+It is recommended to use a Python virtual environment for this sample. To avoid creating a python virtual environment, skip to [run the sample](#run-the-sample).
+
+Create and activate the virtual environment:
+```bash
+python -m venv <desired location for virtual environment>
+source  <virtual environment directory>/bin/activate
+```
+By activating the virtual environment, all the python dependencies will be installed only within the virtual environment rather than system-wide.
+
+#### Run the sample
+*The commands below assume you are in the MqttApplicationSamples/scenarios/getting_started directory.*
+
+
+Install internal sample package:
+```bash
+pip install ../../mqttclients/python
+```
+
+Run the sample using settings from an envfile:
+```bash
+python python/getting_started.py --envfile <path to .env file>
+```
+
+Run the sample using settings from environment variables:
+```bash
+python python/getting_started.py
+```
