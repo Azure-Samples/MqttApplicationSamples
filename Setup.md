@@ -2,20 +2,14 @@
 
 | [Create CA](#create-ca) | [Configure Event Grid](#configure-event-grid-namespace) | [Configure Mosquitto](#configure-mosquitto-with-tls-and-x509-authentication) | [Development tools](#configure-development-tools) |
 
-These samples can work with any MQTT Broker configured to accept authenticated connections with X509 certificates. This document describes how to configure:
-
-- Azure Event Grid Namespaces
-- Mosquitto
-
 Once your environment is configured you can configure your connection settings as environment variables that will be loaded by the [Mqtt client extensions](./mqttclients/README.md)
 
 ### Create CA
 
 All samples require a CA to generate the client certificates to connect.
 
-> To create the certificates use the `step cli` [https://smallstep.com/docs/step-cli/installation/](https://smallstep.com/docs/step-cli/installation/)
-
-To create the root and intermediate CA certificates run:
+- Follow this link to install the `step cli`: [https://smallstep.com/docs/step-cli/installation/](https://smallstep.com/docs/step-cli/installation/)
+- To create the root and intermediate CA certificates run:
 
 ```bash
 step ca init \
@@ -35,29 +29,9 @@ Follow the cli instructions, when done make sure you remember the password used 
 
 ## Configure Event Grid Namespace
 
-Access the Azure portal by using [this link](https://portal.azure.com/?microsoft_azure_marketplace_ItemHideKey=PubSubNamespace&microsoft_azure_eventgrid_assettypeoptions={"PubSubNamespace":{"options":""}}).
-
-1. Create new resource, search for Event Grid
-2. Select `Event Grid Namespace`
-3. Select your resource group and deploy to a supported region (US Central EUAP)
-4. Navigate to the new created resource
-5. Select configuration and enable MQTT
-6. Configure the CA certificate by registering the intermediate ca cert file (~/.step/certs/intermediate_ca.crt)
-7. Configure Clients, TopicSpaces and Permissions
-
-> Each scenario includes detailed instructions to configure TopicSpaces, Clients and Permissions, along with `az cli` scripts.
-
-Create or update `az.env` with subscription, resource group, and the name for the EventGrid Namespace.
-
-```text
-sub_id=<subscription-id>
-rg=resource-group-name
-name=event-grid-namespace
-```
-
-## Create the Event Grid Namespace instance
-
-To run the `az` cli, make sure you are authenticated `az login` with an account that has permissions on the selected subscription.
+To run the `az` cli:
+- Install [AZ CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
+- Authenticate using  `az login`.
 
 ```bash
 source az.env
@@ -90,7 +64,21 @@ az resource create \
   --id "$res_id/caCertificates/Intermediate01" \
   --properties "{\"encodedCertificate\" : \"$capem\"}"
 ```
+> Each scenario includes the detailed instructions to configure the namespace resources needed for the scenario.
 
+> [!NOTE]
+> For portal configuration, use [this link](https://portal.azure.com/?microsoft_azure_marketplace_ItemHideKey=PubSubNamespace&microsoft_azure_eventgrid_assettypeoptions={"PubSubNamespace":{"options":""}}) and follow [these instructions](https://learn.microsoft.com/en-us/azure/event-grid/mqtt-publish-and-subscribe-portal).
+
+
+### Configure environment variables
+
+Create or update `az.env` file under MQTTApplicationSamples folder that includes the subscription, resource group, and the name for the Event Grid Namespace as follows:
+
+```text
+sub_id=<subscription-id>
+rg=<resource-group-name>
+name=<event-grid-namespace>
+```
 
 ## Configure Mosquitto with TLS and X509 Authentication
 
@@ -138,7 +126,7 @@ This repo leverages GitHub CodeSpaces, with a preconfigured `.devContainer` that
 
 ### dotnet C#
 
-The samples use `dotnet7`, it can be installed in Windows, Linux or Mac from https://dotnet.microsoft.com/en-us/download
+The samples use `dotnet7`, it can be installed in Windows, Linux, or Mac from https://dotnet.microsoft.com/en-us/download
 
 Optionally you can use Visual Studio to build and debug the sample projects.
 
@@ -158,5 +146,3 @@ See [c extensions](./mqttclients/c/README.md) for more details.
 ### Python
 
 Python samples have been tested with python 3.10.4, to install follow the instructions from https://www.python.org/downloads/ 
-
-
