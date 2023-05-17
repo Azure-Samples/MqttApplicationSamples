@@ -1,0 +1,49 @@
+{
+    "version": 2,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 20,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "telemetry",
+            "displayName": "C Telemetry",
+            "binaryDir": "${sourceDir}/scenarios/${presetName}/c/build",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "PRESET_PATH": "${sourceDir}/scenarios/${presetName}/c"
+            }
+        },
+        {
+            "name": "getting_started",
+            "displayName": "C Getting Started",
+            "binaryDir": "${sourceDir}/scenarios/${presetName}/c/build",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "PRESET_PATH": "${sourceDir}/scenarios/${presetName}/c"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "telemetry",
+            "displayName": "C Telemetry",
+            "configurePreset": "telemetry",
+            "targets": [
+                "telemetry_consumer",
+                "telemetry_producer"
+            ]
+        },
+        {
+            "name": "getting_started",
+            "displayName": "C Getting Started",
+            "configurePreset": "getting_started",
+            "targets": [
+                "getting_started"
+            ]
+        }
+    ]
+}

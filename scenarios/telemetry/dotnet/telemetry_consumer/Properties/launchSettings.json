@@ -1,0 +1,14 @@
+﻿{
+  "profiles": {
+    "localhost": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "MQTT_HOST_NAME": "localhost",
+        "MQTT_TCP_PORT": "1883",
+        "MQTT_USE_TLS": "false",
+        "MQTT_CLIENT_ID": "mobile-app",
+        "MQTT_USERNAME": "sample_user"
+      }
+    }
+  }
+}

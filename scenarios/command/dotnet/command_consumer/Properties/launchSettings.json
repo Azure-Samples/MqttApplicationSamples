@@ -1,0 +1,13 @@
+﻿{
+  "profiles": {
+    "defaults": {
+      "commandName": "Project",
+      "workingDirectory": "../../"
+    },
+    "mobile-app": {
+      "commandName": "Project",
+      "workingDirectory": "../../",
+      "commandLineArgs": "--envFile=mobile-app.env"
+    }
+  }
+}
