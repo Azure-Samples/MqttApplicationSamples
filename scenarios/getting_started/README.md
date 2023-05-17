@@ -183,6 +183,10 @@ By activating the virtual environment, all the python dependencies will be insta
 #### Run the sample
 *The commands below assume you are in the MqttApplicationSamples/scenarios/getting_started directory.*
 
+Install the Paho client:
+```bash
+pip install paho-mqtt
+```
 
 Install internal sample package:
 ```bash
