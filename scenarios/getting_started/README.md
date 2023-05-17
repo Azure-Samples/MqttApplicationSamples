@@ -153,14 +153,15 @@ To run the dotnet sample:
 
 ### C
 
-To build the C sample run from the root folder:
+To build the C sample, run from the root folder:
 
 ```bash
-cmake --preset=getting_started;cmake --build --preset=getting_started
+cmake --preset=getting_started
+cmake --build --preset=getting_started
 ```
 The build script will copy the produced binary to `c/build/getting_started`
 
-To run the C sample:
+To run the C sample (from the root scenario folder `scenarios/getting_started`):
 
 ```bash
 c/build/getting_started
