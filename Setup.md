@@ -32,7 +32,7 @@ Follow the cli instructions, when done make sure you remember the password used 
 
 ### Configure environment variables
 
-Create or update `az.env` file under MQTTApplicationSamples folder that includes the subscription, resource group, and the name for the Event Grid Namespace as follows:
+Create or update `az.env` file under MQTTApplicationSamples folder that includes an existing subscription, an existing resource group, and a new name of your choice for the Event Grid Namespace as follows:
 
 ```text
 sub_id=<subscription-id>
@@ -134,7 +134,7 @@ See [dotnet extensions](./mqttclients/dotnet/README.md) for more details.
 
 ### C
 
-We are using standard C, and [CMake](https://cmake.org/download/) to build. You can install the additionally required tools with:
+We are using standard C, and [CMake](https://cmake.org/download/) to build. To use CMake presets, make sure to install v3.20 or later. You can install additional required tools with:
 
 ```bash
 sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev
