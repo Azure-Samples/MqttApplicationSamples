@@ -1,6 +1,6 @@
 #  :point_right: Command (Request/Response)
 
-| [Create the Client Certificates](#create-client-certificates) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
+| [Create Client Certificates](#lock-create-client-certificates) | [Configure Event Grid Namespaces](#triangular_ruler-configure-event-grid-namespaces) | [Configure Mosquitto](#fly-configure-mosquitto) | [Run the Sample](#game_die-run-the-sample) |
 
 This scenario simulates the request-response messaging pattern. Request-response uses two topics, one for the request and one for the response.
 
@@ -58,7 +58,7 @@ step certificate create \
 
 ## :triangular_ruler: Configure Event Grid Namespaces
 
-Event Grid Namespaces requires to register the clients, and the topic spaces to set the client permissions. 
+Event Grid Namespaces requires to register the clients, and the topic spaces to set the client permissions.
 
 ### Create the clients
 
@@ -132,7 +132,7 @@ echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
 echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
 ```
 
-## :fly: Configure Mosquitto 
+## :fly: Configure Mosquitto
 
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 

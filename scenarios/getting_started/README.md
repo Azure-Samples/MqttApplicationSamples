@@ -1,8 +1,8 @@
 # :point_right: Getting Started
 
-| [Create the Client Certificate](#create-the-client-certificate) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
+| [Create the Client Certificate](#lock-create-the-client-certificate) | [Configure Event Grid Namespaces](#triangular_ruler-configure-event-grid-namespaces) | [Configure Mosquitto](#fly-configure-mosquitto) | [Run the Sample](#game_die-run-the-sample) |
 
-This scenario showcases how to create resources such as client, topic spaces, and permission bindings to publish and subscribe MQTT messages.  
+This scenario showcases how to create resources such as client, topic spaces, and permission bindings to publish and subscribe MQTT messages.
 
 The sample provides step by step instructions on how to perform following tasks:
 
@@ -102,7 +102,7 @@ echo "MQTT_KEY_FILE=sample_client.key" >> .env
 echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
-## :fly: Configure Mosquitto 
+## :fly: Configure Mosquitto
 
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
