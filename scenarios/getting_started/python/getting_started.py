@@ -38,8 +38,8 @@ if settings["MQTT_CLEAN_SESSION"] == False:
 print("Initializing Paho MQTT client")
 client = mqtt.Client(settings["MQTT_CLIENT_ID"])
 
-if settings["MQTT_USER_NAME"] is not None:
-    client.username_pw_set(settings["MQTT_USER_NAME"], settings["MQTT_PASSWORD"])
+if settings["MQTT_USERNAME"] is not None:
+    client.username_pw_set(settings["MQTT_USERNAME"], settings["MQTT_PASSWORD"])
 
 if settings["MQTT_USE_TLS"]:
     client.tls_set(

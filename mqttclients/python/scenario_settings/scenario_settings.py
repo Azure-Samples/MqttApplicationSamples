@@ -32,7 +32,7 @@ def get_settings(envfile=None):
         "MQTT_CLEAN_SESSION": getenv("MQTT_CLEAN_SESSION"),
         "MQTT_KEEP_ALIVE_IN_SECONDS": getenv("MQTT_KEEP_ALIVE_IN_SECONDS"),
         "MQTT_CLIENT_ID": getenv("MQTT_CLIENT_ID"), 
-        "MQTT_USER_NAME": getenv("MQTT_USER_NAME"),
+        "MQTT_USERNAME": getenv("MQTT_USERNAME"),
         "MQTT_PASSWORD": getenv("MQTT_PASSWORD"),
         "MQTT_CA_FILE": getenv("MQTT_CA_FILE"),
         "MQTT_CA_PATH": getenv("MQTT_CA_PATH"),
@@ -53,12 +53,11 @@ def get_settings(envfile=None):
     if settings["MQTT_CA_PATH"] is not None:
         # TODO: verify paho behavior
         # Paho client doesn't directly support CA paths but we could manually create an SSLContext and pass it in if we wanted to support it
-        raise ValueError("MQTT_CA_PATH is not supported")
-    if settings["MQTT_PASSWORD"] is not None and settings["MQTT_USER_NAME"] is None:
+        # Paho also uses the default system CA path without having to specify it, so we wouldn't need to specify it for Event Grid
+        # Pass for now, but we should determine how we want to handle this.
+        pass
+    if settings["MQTT_PASSWORD"] is not None and settings["MQTT_USERNAME"] is None:
         # MQTT 5 supports password without username, but the Paho client doesn't
-        raise ValueError("MQTT_USER_NAME is required when MQTT_PASSWORD is set")
+        raise ValueError("MQTT_USERNAME is required when MQTT_PASSWORD is set")
 
     return settings
-
-
-    
