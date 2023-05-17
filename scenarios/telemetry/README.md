@@ -150,6 +150,9 @@ echo "MQTT_KEY_FILE=map-app.key" >> map-app.env
 echo "MQTT_CA_PATH=/etc/ssl/certs" >> map-app.env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
+### Configure routing
+To route your filtered MQTT messages from your Event Grid namespace to an Azure Event Hubs, follow the [routing instructions]((./Routing_Instructions.md)).
+
 ## :fly: Configure Mosquitto
 
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
