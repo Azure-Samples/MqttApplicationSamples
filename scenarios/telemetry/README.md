@@ -2,9 +2,9 @@
 
 | [Create the Client Certificates](#create-client-certificates) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
 
-This scenario shows how multiple clients send data (the producers) to a different set of topics that can be consumed by a single application (the consumer).
+This scenario shows how multiple clients send data (the producers) to different topics that can be consumed by a single application (the consumer).  This scenario also showcases routing the data to an Azure service. 
 
-Consider a use case where a backend solution needs to identify the location of vehicles on a map. Vehicles should be prohibited from listening to other vehicles location on their behalf.
+Consider a use case where a backend solution needs to identify the location of vehicles on a map. Vehicles should be prohibited from listening to other vehicles location on their behalf. Finally, the location data need to be routed to a storage queue.
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
@@ -24,7 +24,7 @@ Messages will use [GeoJSON](https://geojson.org) to represent the coordinates.
 
 ## :lock: Create Client Certificates
 
-Run the following step commands to create the client certificates for `vehicle01`, `vehicle02` and `map-app`.
+Run the following step commands to create the client certificates for `vehicle01`, `vehicle02` and `map-app` clients.
 
 ```bash
 step certificate create \
@@ -54,7 +54,7 @@ step certificate create \
 
 Event Grid Namespaces requires to register the clients, and the topic spaces to set the client permissions. 
 
-### Create the Clients
+### Create the clients
 
 The clients will be created based on the certificate subject, you can register the 3 clients in the portal or by running the script below:
 
@@ -63,46 +63,48 @@ source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$res_id/clients/vehicle01" --properties '{
+    "authenticationName": "vehicle01",
     "state": "Enabled",
     "clientCertificateAuthentication": {
-        "certificateSubject": {
-            "commonName": "vehicle01"
-        }
+        "validationScheme": "SubjectMatchesAuthenticationName"
     },
-    "attributes": {},
+    "attributes": {
+            "type": "vehicle"
+    },
     "description": "This is a test publisher client"
 }'
 
 az resource create --id "$res_id/clients/vehicle02" --properties '{
+    "authenticationName": "vehicle02",
     "state": "Enabled",
     "clientCertificateAuthentication": {
-        "certificateSubject": {
-            "commonName": "vehicle02"
-        }
+        "validationScheme": "SubjectMatchesAuthenticationName"
     },
-    "attributes": {},
+    "attributes": {
+            "type": "vehicle"
+    },
     "description": "This is a test publisher client"
 }'
 
 az resource create --id "$res_id/clients/map-app" --properties '{
+    "authenticationName": "map-app",
     "state": "Enabled",
     "clientCertificateAuthentication": {
-        "certificateSubject": {
-            "commonName": "map-app"
-        }
+        "validationScheme": "SubjectMatchesAuthenticationName"
     },
-    "attributes": {},
-    "description": "This is a test publisher client"
+    "attributes": {
+            "type": "map-client"
+    },
+    "description": "This is a test subscriber client"
 }'
 
 ```
 
-### Configure Permissions with Topic Spaces
+### Configure topic spaces and permission bindings
 
 ```bash
 az resource create --id "$res_id/topicSpaces/vehicles" --properties '{
-    "topicTemplates": ["vehicles/#"],
-    "subscriptionSupport": "LowFanout"
+    "topicTemplates": ["vehicles/#"]
 }'
 
 az resource create --id "$res_id/permissionBindings/vehiclesPub" --properties '{
@@ -205,18 +207,19 @@ To run the dotnet sample execute each line below in a different shell/terminal.
 
 ### C
 
-To build the C sample run from the root folder:
+To build the C sample, run from the root folder:
 
 ```bash
-cmake --preset=telemetry;cmake --build --preset=telemetry
+cmake --preset=telemetry
+cmake --build --preset=telemetry
 ```
 
 The build script will copy the produced binary to `c/build/telemetry`
 
-To run the C sample execute each line below in a different shell/terminal.
+To run the C sample execute each line below in a different shell/terminal (from the root scenario folder `scenarios/telemetry`).
 
-```
+```bash
 c/build/telemetry_producer vehicle01.env
 c/build/telemetry_producer vehicle02.env
 c/build/telemetry_consumer map-app.env
-
+```

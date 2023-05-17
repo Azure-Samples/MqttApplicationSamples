@@ -1,20 +1,32 @@
 # :point_right: Getting Started
 
-This sample shows how to perform basic MQTT operations: Connect, Publish and Subscribe.
-
 | [Create the Client Certificate](#create-the-client-certificate) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
 
+This scenario showcases how to create resources such as client, topic spaces, and permission bindings to publish and subscribe MQTT messages.  
+
+The sample provides step by step instructions on how to perform following tasks:
+
+- Create client certificate, which is used to authenticate the client connection
+- Create the resources including client, topic spaces, permission bindings
+- Use $all client group, which is the default client group with all the clients in a namespace, to authorize publish and subscribe access in permission bindings
 - Connect with MQTT 3.1.1
   - Validate TLS certificate enforcing TLS 1.2
-  - Authenticate with client certificates
+  - Authenticate the client connection using client certificates
   - Configure connection settings such as KeepAlive and CleanSession
 - Publish messages to a topic
 - Subscribe to a topic to receive messages
 
+To keep the scenario simple, a single client called "sample_client" publishes and subscribes to MQTT messages on topics shown in the table.  
+
+|Client|Role|Operation|Topic/Topic Filter|
+|------|----|---------|------------------|
+|sample_client|publisher|publish|sample/topic1|
+|sample_client|subscriber|subscribe|sample/+|
+
 
 ##  :lock: Create the client certificate
 
-Using the CA created in [setup](../setup), issue a leaf certificate for `sample_client`.
+Using the CA files, as described in [setup](../setup), create a certificate for `sample_client` client.  Client certificate is created with subject name as "sample_client".  This must match the authentication name of the client.
 
 ```bash
 cd scenarios/getting_started
@@ -28,37 +40,38 @@ step certificate create \
 
 ## :triangular_ruler: Configure Event Grid Namespaces
 
-Event Grid Namespaces requires to register the client, and the topic spaces to set the client permissions. 
+Ensure to create an Event Grid namespace by following the steps in [setup](../setup).  Event Grid namespace requires registering the client, and the topic spaces to authorize the publish/subscribe permissions.
 
 ### Create the Client
 
-We will use the certificateSubject `sample_client`, from the portal or with the script below:
+We will use the SubjectMatchesAuthenticationName validation scheme for `sample_client` to create the client from the portal or with the script:
 
 ```bash
 source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$res_id/clients/sample_client" --properties '{
+    "authenticationName": "sample_client",
     "state": "Enabled",
     "clientCertificateAuthentication": {
-        "certificateSubject": {
-            "commonName": "sample_client"
-        }
+        "validationScheme": "SubjectMatchesAuthenticationName"
     },
-    "attributes": {},
+    "attributes": {
+        "type": "sample-client"
+    },
     "description": "This is a test publisher client"
 }'
 ```
 
-### Configure Permissions with Topic Spaces
+### Create topic spaces and permission bindings
+Run the commands to create the "samples" topic space, and the two permission bindings that provide publish and subscribe access to $all client group on the samples topic space.
 
 ```bash
 source ../../az.env
 res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$res_id/topicSpaces/samples" --properties '{
-    "topicTemplates": ["sample/#"],
-    "subscriptionSupport": "LowFanout"
+    "topicTemplates": ["sample/#"]
 }'
 
 az resource create --id "$res_id/permissionBindings/samplesPub" --properties '{
@@ -140,14 +153,15 @@ To run the dotnet sample:
 
 ### C
 
-To build the C sample run from the root folder:
+To build the C sample, run from the root folder:
 
 ```bash
-cmake --preset=getting_started;cmake --build --preset=getting_started
+cmake --preset=getting_started
+cmake --build --preset=getting_started
 ```
 The build script will copy the produced binary to `c/build/getting_started`
 
-To run the C sample:
+To run the C sample (from the root scenario folder `scenarios/getting_started`):
 
 ```bash
 c/build/getting_started
