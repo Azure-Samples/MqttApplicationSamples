@@ -68,6 +68,7 @@ source az.env
 az account set -s $sub_id
 az resource create --id $res_id --is-full-object --properties '{
   "properties": {
+    "isZoneRedundant": true,
     "topicsConfiguration": {
       "inputSchema": "CloudEventSchemaV1_0"
     },
