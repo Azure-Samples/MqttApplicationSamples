@@ -24,7 +24,7 @@ The instructions are provided for the following MQTT Brokers:
         - clone this repository to any directory in your Linux environment: `git clone https://github.com/Azure/MQTTBrokerPrivatePreview.git`
 - Follow the instructions in the [Setup](./Setup.md) to setup your environment.
 - Navigate to each of the scenario folders and follow its README.md instructions to run the scenario.
-    - To configure the MQTT connection, the samples use `.env` files, with variables to specify the hostname, port, certificates, etc. The `.env` files must be located in the scenario folder, e.g. `scenarios/getting_started`, and can be reused across samples/languages, including the client certificates.
+    - To configure the MQTT connection, the samples use `.env` files, with variables to specify the host name, port, certificates, etc. The `.env` files must be located in the scenario folder, e.g. `scenarios/getting_started`, and can be reused across samples/languages, including the client certificates.
 
 ## :book: Language specific instructions
 
@@ -45,7 +45,7 @@ Each scenario requires the following configurations:
 - Configure Authentication: mTLS certificates and clients.
 - Configure Authorization: Define which client(s) can interact with which topic(s).
 
-Follow the instructions in the [Prerequisites](#Prerequisites) to configure these scenarios.
+Follow the instructions in the [Prerequisites](#magic_wand-prerequisites) to configure these scenarios.
 
 | Scenario | Description | dotnet | C | python |
 | -------- | ------------|--------|---|------- |

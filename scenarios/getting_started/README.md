@@ -1,8 +1,8 @@
 # :point_right: Getting Started
 
-| [Create the Client Certificate](#create-the-client-certificate) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
+| [Create the Client Certificate](#lock-create-the-client-certificate) | [Configure Event Grid Namespaces](#triangular_ruler-configure-event-grid-namespaces) | [Configure Mosquitto](#fly-configure-mosquitto) | [Run the Sample](#game_die-run-the-sample) |
 
-This scenario showcases how to create resources such as client, topic spaces, and permission bindings to publish and subscribe MQTT messages.  
+This scenario showcases how to create resources such as client, topic spaces, and permission bindings to publish and subscribe MQTT messages.
 
 The sample provides step by step instructions on how to perform following tasks:
 
@@ -26,7 +26,7 @@ To keep the scenario simple, a single client called "sample_client" publishes an
 
 ##  :lock: Create the client certificate
 
-Using the CA files, as described in [setup](../setup), create a certificate for `sample_client` client.  Client certificate is created with subject name as "sample_client".  This must match the authentication name of the client.
+Using the CA files, as described in [setup](../../Setup.md), create a certificate for `sample_client` client.  Client certificate is created with subject name as "sample_client".  This must match the authentication name of the client.
 
 ```bash
 cd scenarios/getting_started
@@ -48,7 +48,6 @@ We will use the SubjectMatchesAuthenticationName validation scheme for `sample_c
 
 ```bash
 source ../../az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$res_id/clients/sample_client" --properties '{
     "authenticationName": "sample_client",
@@ -68,7 +67,6 @@ Run the commands to create the "samples" topic space, and the two permission bin
 
 ```bash
 source ../../az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$res_id/topicSpaces/samples" --properties '{
     "topicTemplates": ["sample/#"]
@@ -94,7 +92,6 @@ The required `.env` files can be configured manually, we provide the script belo
 ```bash
 cd scenarios/getting_started
 source ../../az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
 echo "MQTT_HOST_NAME=$host_name" > .env
@@ -105,7 +102,7 @@ echo "MQTT_KEY_FILE=sample_client.key" >> .env
 echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
-## :fly: Configure Mosquitto 
+## :fly: Configure Mosquitto
 
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 

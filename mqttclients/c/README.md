@@ -86,7 +86,6 @@ clang-format-9 -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*")
 
 - To print out all mosquitto logs, set cmake option `LOG_ALL_MOSQUITTO` to ON. When set to OFF (the default value), only ping requests/responses get printed.
 - For a complete list of available functions from the mosquitto library, see their [api reference](https://mosquitto.org/api/files/mosquitto-h.html).
-
 - To declutter the bottom bar in VS Code a bit, you can hide some CMake buttons that we aren't using in your settings.json
 
     ``` json
