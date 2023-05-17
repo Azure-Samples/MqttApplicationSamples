@@ -13,7 +13,7 @@ Once your environment is configured you can configure your connection settings a
 
 All samples require a CA to generate the client certificates to connect.
 
-> To create the certificates use the `step cli` [https://smallstep.com/docs/step-cli/installation/](https://smallstep.com/docs/step-cli/installation/)
+> To create the certificates use `step cli` [https://smallstep.com/docs/step-cli/installation/](https://smallstep.com/docs/step-cli/installation/)
 
 To create the root and intermediate CA certificates run:
 
@@ -39,7 +39,7 @@ Access the Azure portal by using [this link](https://portal.azure.com/?microsoft
 
 1. Create new resource, search for Event Grid
 2. Select `Event Grid Namespace`
-3. Select your resource group and deploy to a supported region (US Central EUAP)
+3. Select your resource group and deploy to a [supported region](https://github.com/Azure/MQTTBrokerPrivatePreview#concepts)
 4. Navigate to the new created resource
 5. Select configuration and enable MQTT
 6. Configure the CA certificate by registering the intermediate ca cert file (~/.step/certs/intermediate_ca.crt)
@@ -47,21 +47,23 @@ Access the Azure portal by using [this link](https://portal.azure.com/?microsoft
 
 > Each scenario includes detailed instructions to configure TopicSpaces, Clients and Permissions, along with `az cli` scripts.
 
-Create or update `az.env` with subscription, resource group, and the name for the EventGrid Namespace.
+Create or update `az.env` at the repo root with subscription, resource group, and the name for the EventGrid Namespace.
 
 ```text
 sub_id=<subscription-id>
-rg=resource-group-name
-name=event-grid-namespace
+rg=<resource-group-name>
+name=<event-grid-namespace>
+res_id="/subscriptions/${sub_id}/resourceGroups/${rg}/providers/Microsoft.EventGrid/namespaces/${name}"
 ```
 
 ## Create the Event Grid Namespace instance
+
+Install [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
 
 To run the `az` cli, make sure you are authenticated `az login` with an account that has permissions on the selected subscription.
 
 ```bash
 source az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az account set -s $sub_id
 az resource create --id $res_id --is-full-object --properties '{
@@ -81,7 +83,6 @@ Register the certificate to authenticate client certificates (usually the interm
 
 ```bash
 source az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 capem=`cat ~/.step/certs/intermediate_ca.crt | tr -d "\n"`
 
@@ -146,7 +147,7 @@ See [dotnet extensions](./mqttclients/dotnet/README.md) for more details.
 
 ### C
 
-We are using standard C, and the CMake 3.20 to build. You can install the required tools with:
+We are using standard C, and [CMake](https://cmake.org/download/) to build. You can install the additionally required tools with:
 
 ```bash
 sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev

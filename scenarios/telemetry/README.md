@@ -60,7 +60,6 @@ The clients will be created based on the certificate subject, you can register t
 
 ```bash
 source ../../az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$res_id/clients/vehicle01" --properties '{
     "authenticationName": "vehicle01",
@@ -126,7 +125,6 @@ The required `.env` files can be configured manually, we provide the script belo
 
 ```bash
 source ../../az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
 echo "MQTT_HOST_NAME=$host_name" > vehicle01.env

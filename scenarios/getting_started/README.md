@@ -26,7 +26,7 @@ To keep the scenario simple, a single client called "sample_client" publishes an
 
 ##  :lock: Create the client certificate
 
-Using the CA files, as described in [setup](../setup), create a certificate for `sample_client` client.  Client certificate is created with subject name as "sample_client".  This must match the authentication name of the client.
+Using the CA files, as described in [setup](../../Setup.md), create a certificate for `sample_client` client.  Client certificate is created with subject name as "sample_client".  This must match the authentication name of the client.
 
 ```bash
 cd scenarios/getting_started
@@ -48,7 +48,6 @@ We will use the SubjectMatchesAuthenticationName validation scheme for `sample_c
 
 ```bash
 source ../../az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$res_id/clients/sample_client" --properties '{
     "authenticationName": "sample_client",
@@ -68,7 +67,6 @@ Run the commands to create the "samples" topic space, and the two permission bin
 
 ```bash
 source ../../az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$res_id/topicSpaces/samples" --properties '{
     "topicTemplates": ["sample/#"]
@@ -94,7 +92,6 @@ The required `.env` files can be configured manually, we provide the script belo
 ```bash
 cd scenarios/getting_started
 source ../../az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
 echo "MQTT_HOST_NAME=$host_name" > .env
