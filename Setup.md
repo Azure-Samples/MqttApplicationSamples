@@ -39,7 +39,7 @@ Access the Azure portal by using [this link](https://portal.azure.com/?microsoft
 
 1. Create new resource, search for Event Grid
 2. Select `Event Grid Namespace`
-3. Select your resource group and deploy to a [supported region](https://github.com/Azure/MQTTBrokerPrivatePreview#concepts)
+3. Select your resource group and deploy to a supported region (US Central EUAP)
 4. Navigate to the new created resource
 5. Select configuration and enable MQTT
 6. Configure the CA certificate by registering the intermediate ca cert file (~/.step/certs/intermediate_ca.crt)

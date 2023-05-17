@@ -45,7 +45,7 @@ Each scenario requires the following configurations:
 - Configure Authentication: mTLS certificates and clients.
 - Configure Authorization: Define which client(s) can interact with which topic(s).
 
-Follow the instructions in the [Prerequisites](#Prerequisites) to configure these scenarios.
+Follow the instructions in the [Prerequisites](#magic_wand-prerequisites) to configure these scenarios.
 
 | Scenario | Description | dotnet | C | python |
 | -------- | ------------|--------|---|------- |
