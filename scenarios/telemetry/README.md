@@ -1,8 +1,8 @@
 # :point_right: Telemetry (Fan-in)
 
-| [Create the Client Certificates](#create-client-certificates) | [Configure Event Grid Namespaces](#configure-event-grid-namespaces) | [Configure Mosquitto](#configure-mosquitto) | [Run the Sample](#run-the-sample) |
+| [Create Client Certificates](#lock-create-client-certificates) | [Configure Event Grid Namespaces](#triangular_ruler-configure-event-grid-namespaces) | [Configure Mosquitto](#fly-configure-mosquitto) | [Run the Sample](#game_die-run-the-sample) |
 
-This scenario shows how multiple clients send data (the producers) to different topics that can be consumed by a single application (the consumer).  This scenario also showcases routing the data to an Azure service. 
+This scenario shows how multiple clients send data (the producers) to different topics that can be consumed by a single application (the consumer).  This scenario also showcases routing the data to an Azure service.
 
 Consider a use case where a backend solution needs to identify the location of vehicles on a map. Vehicles should be prohibited from listening to other vehicles location on their behalf. Finally, the location data need to be routed to a storage queue.
 
@@ -21,12 +21,12 @@ Messages will use [GeoJSON](https://geojson.org) to represent the coordinates.
 }
 ```
 
-
 ## :lock: Create Client Certificates
 
 Run the following step commands to create the client certificates for `vehicle01`, `vehicle02` and `map-app` clients.
 
 ```bash
+cd scenarios/telemetry
 step certificate create \
     vehicle01 vehicle01.pem vehicle01.key \
     --ca ~/.step/certs/intermediate_ca.crt \
@@ -52,7 +52,7 @@ step certificate create \
 
 ## :triangular_ruler: Configure Event Grid Namespaces
 
-Event Grid Namespaces requires to register the clients, and the topic spaces to set the client permissions. 
+Event Grid Namespaces requires to register the clients, and the topic spaces to set the client permissions.
 
 ### Create the clients
 
@@ -60,7 +60,6 @@ The clients will be created based on the certificate subject, you can register t
 
 ```bash
 source ../../az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az resource create --id "$res_id/clients/vehicle01" --properties '{
     "authenticationName": "vehicle01",
@@ -126,30 +125,32 @@ The required `.env` files can be configured manually, we provide the script belo
 
 ```bash
 source ../../az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
 echo "MQTT_HOST_NAME=$host_name" > vehicle01.env
 echo "MQTT_USERNAME=vehicle01" >> vehicle01.env
+echo "MQTT_CLIENT_ID=vehicle01" >> vehicle01.env
 echo "MQTT_CERT_FILE=vehicle01.pem" >> vehicle01.env
 echo "MQTT_KEY_FILE=vehicle01.key" >> vehicle01.env
-echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> vehicle01.env # required by mosquitto_lib to validate EG Tls cert 
 
 
 echo "MQTT_HOST_NAME=$host_name" > vehicle02.env
 echo "MQTT_USERNAME=vehicle02" >> vehicle02.env
+echo "MQTT_CLIENT_ID=vehicle02" >> vehicle02.env
 echo "MQTT_CERT_FILE=vehicle02.pem" >> vehicle02.env
 echo "MQTT_KEY_FILE=vehicle02.key" >> vehicle02.env
-echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> vehicle02.env # required by mosquitto_lib to validate EG Tls cert 
 
 echo "MQTT_HOST_NAME=$host_name" > map-app.env
 echo "MQTT_USERNAME=map-app" >> map-app.env
+echo "MQTT_CLIENT_ID=map-app" >> map-app.env
 echo "MQTT_CERT_FILE=map-app.pem" >> map-app.env
 echo "MQTT_KEY_FILE=map-app.key" >> map-app.env
-echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> map-app.env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
-## :fly: Configure Mosquitto 
+## :fly: Configure Mosquitto
 
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 

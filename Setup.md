@@ -29,13 +29,24 @@ Follow the cli instructions, when done make sure you remember the password used 
 
 ## Configure Event Grid Namespace
 
+
+### Configure environment variables
+
+Create or update `az.env` file under MQTTApplicationSamples folder that includes an existing subscription, an existing resource group, and a new name of your choice for the Event Grid Namespace as follows:
+
+```text
+sub_id=<subscription-id>
+rg=<resource-group-name>
+name=<event-grid-namespace>
+res_id="/subscriptions/${sub_id}/resourceGroups/${rg}/providers/Microsoft.EventGrid/namespaces/${name}"
+```
+
 To run the `az` cli:
-- Install [AZ CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
+- Install [AZ CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
 - Authenticate using  `az login`.
 
 ```bash
 source az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 az account set -s $sub_id
 az resource create --id $res_id --is-full-object --properties '{
@@ -56,7 +67,6 @@ Register the certificate to authenticate client certificates (usually the interm
 
 ```bash
 source az.env
-res_id="/subscriptions/$sub_id/resourceGroups/$rg/providers/Microsoft.EventGrid/namespaces/$name"
 
 capem=`cat ~/.step/certs/intermediate_ca.crt | tr -d "\n"`
 
@@ -68,17 +78,6 @@ az resource create \
 
 > [!NOTE]
 > For portal configuration, use [this link](https://portal.azure.com/?microsoft_azure_marketplace_ItemHideKey=PubSubNamespace&microsoft_azure_eventgrid_assettypeoptions={"PubSubNamespace":{"options":""}}) and follow [these instructions](https://learn.microsoft.com/en-us/azure/event-grid/mqtt-publish-and-subscribe-portal).
-
-
-### Configure environment variables
-
-Create or update `az.env` file under MQTTApplicationSamples folder that includes the subscription, resource group, and the name for the Event Grid Namespace as follows:
-
-```text
-sub_id=<subscription-id>
-rg=<resource-group-name>
-name=<event-grid-namespace>
-```
 
 ## Configure Mosquitto with TLS and X509 Authentication
 
@@ -135,7 +134,7 @@ See [dotnet extensions](./mqttclients/dotnet/README.md) for more details.
 
 ### C
 
-We are using standard C, and the CMake 3.20 to build. You can install the required tools with:
+We are using standard C, and [CMake](https://cmake.org/download/) to build. To use CMake presets, make sure to install v3.20 or later. You can install additional required tools with:
 
 ```bash
 sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev
