@@ -13,6 +13,9 @@
             "stopAtEntry": false,
             "env": {
                 "HostName" : "localhost"
+            },
+            "presentation": {
+                "group": "dotnet"
             }
 
         },
@@ -26,6 +29,9 @@
             "args": ["--envFile", "vehicle01.env"],
             "console": "integratedTerminal",
             "stopAtEntry": false,
+            "presentation": {
+                "group": "dotnet"
+            }
         },
         {
             "name": "telemetry_consumer/dotnet",
@@ -36,7 +42,10 @@
             "cwd": "${workspaceFolder}/scenarios/telemetry/",
             "args": ["--envFile", "map-app.env"],
             "console": "integratedTerminal",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "presentation": {
+                "group": "dotnet"
+            }
         },
         {
             "name": "command_consumer/dotnet",
@@ -48,6 +57,9 @@
             "cwd": "${workspaceFolder}/scenarios/command/",
             "console": "integratedTerminal",
             "stopAtEntry": false,
+            "presentation": {
+                "group": "dotnet"
+            }
         },
         {
             "name": "command_producer/dotnet",
@@ -58,7 +70,10 @@
             "args": ["--envFile", "vehicle03.env"],
             "cwd": "${workspaceFolder}/scenarios/command/",
             "console": "integratedTerminal",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "presentation": {
+                "group": "dotnet"
+            }
         },
         {
             "name": "C Telemetry Producer",
@@ -77,7 +92,7 @@
             ],
             "preLaunchTask": "Build C Telemetry",
             "presentation": {
-                "hidden": true,
+                "order": 3,
                 "group": "C"
             }
         },
@@ -98,7 +113,7 @@
             ],
             "preLaunchTask": "Build C Telemetry",
             "presentation": {
-                "hidden": true,
+                "order": 4,
                 "group": "C"
             }
         },
@@ -118,6 +133,7 @@
             ],
             "preLaunchTask": "Build C Getting Started",
             "presentation": {
+                "order": 1,
                 "group": "C"
             }
         }
@@ -125,17 +141,24 @@
     "compounds": [
         {
             "name": "telemetry/dotnet",
-            "configurations": ["telemetry_producer/dotnet", "telemetry_consumer/dotnet" ]
+            "configurations": ["telemetry_producer/dotnet", "telemetry_consumer/dotnet" ],
+            "presentation": {
+                "group": "dotnet"
+            }
         },
         {
             "name": "command/dotnet",
-            "configurations": ["command_producer/dotnet", "command_consumer/dotnet" ]
+            "configurations": ["command_producer/dotnet", "command_consumer/dotnet" ],
+            "presentation": {
+                "group": "dotnet"
+            }
         },
         {
             "name": "C Telemetry",
             "configurations": ["C Telemetry Consumer", "C Telemetry Producer" ],
             "stopAll": true,
             "presentation": {
+                "order": 2,
                 "group": "C"
             }
         }
