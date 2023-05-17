@@ -87,7 +87,7 @@ az resource create --id "$res_id/clients/mobile-app" --properties '{
             "validationScheme": "SubjectMatchesAuthenticationName"
         },
         "attributes": {
-            "room": "mobile"
+            "type": "mobile"
    	},
     	"description": "This is a mobile app client"
 }'
