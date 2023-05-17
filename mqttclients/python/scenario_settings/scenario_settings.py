@@ -40,7 +40,9 @@ def get_settings(envfile=None):
         "MQTT_KEY_FILE": getenv("MQTT_KEY_FILE"),
         "MQTT_KEY_FILE_PASSWORD": getenv("MQTT_KEY_FILE_PASSWORD"),
     }
-    settings = defaultdict(None, { **default_settings, **envvar_settings, **dotenv_values(envfile) })
+    dotenv_settings = dotenv_values(envfile) if envfile is not None else {}
+
+    settings = defaultdict(None, { **default_settings, **envvar_settings, **dotenv_settings })
     
     settings["MQTT_TCP_PORT"] = _convert_to_int(settings["MQTT_TCP_PORT"], "MQTT_TCP_PORT")
     settings["MQTT_USE_TLS"] = _convert_to_bool(settings["MQTT_USE_TLS"], "MQTT_USE_TLS")
@@ -49,7 +51,7 @@ def get_settings(envfile=None):
     if settings["MQTT_HOST_NAME"] is None:
         raise ValueError("MQTT_HOST_NAME is required")
     if settings["MQTT_CA_PATH"] is not None:
-        # TODO: verify what I said here is correct
+        # TODO: verify paho behavior
         # Paho client doesn't directly support CA paths but we could manually create an SSLContext and pass it in if we wanted to support it
         raise ValueError("MQTT_CA_PATH is not supported")
     if settings["MQTT_PASSWORD"] is not None and settings["MQTT_USER_NAME"] is None:
