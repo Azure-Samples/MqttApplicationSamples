@@ -2,6 +2,22 @@ from dotenv import dotenv_values
 from os import getenv
 from collections import defaultdict
 
+_setting_names = [
+    "MQTT_HOST_NAME",
+    "MQTT_TCP_PORT",
+    "MQTT_USE_TLS",
+    "MQTT_CLEAN_SESSION",
+    "MQTT_KEEP_ALIVE_IN_SECONDS",
+    "MQTT_CLIENT_ID",
+    "MQTT_USERNAME",
+    "MQTT_PASSWORD",
+    "MQTT_CA_FILE",
+    "MQTT_CA_PATH",
+    "MQTT_CERT_FILE",
+    "MQTT_KEY_FILE",
+    "MQTT_KEY_FILE_PASSWORD", 
+]
+
 def _convert_to_bool(value, name):
         if value is None:
             return None
@@ -25,24 +41,14 @@ def get_settings(envfile=None):
         "MQTT_USE_TLS": "true",
         "MQTT_KEEP_ALIVE_IN_SECONDS": "30",
     }
-    envvar_settings = {
-        "MQTT_HOST_NAME": getenv("MQTT_HOST_NAME"),
-        "MQTT_TCP_PORT": getenv("MQTT_TCP_PORT"),
-        "MQTT_USE_TLS": getenv("MQTT_USE_TLS"),
-        "MQTT_CLEAN_SESSION": getenv("MQTT_CLEAN_SESSION"),
-        "MQTT_KEEP_ALIVE_IN_SECONDS": getenv("MQTT_KEEP_ALIVE_IN_SECONDS"),
-        "MQTT_CLIENT_ID": getenv("MQTT_CLIENT_ID"), 
-        "MQTT_USERNAME": getenv("MQTT_USERNAME"),
-        "MQTT_PASSWORD": getenv("MQTT_PASSWORD"),
-        "MQTT_CA_FILE": getenv("MQTT_CA_FILE"),
-        "MQTT_CA_PATH": getenv("MQTT_CA_PATH"),
-        "MQTT_CERT_FILE": getenv("MQTT_CERT_FILE"),
-        "MQTT_KEY_FILE": getenv("MQTT_KEY_FILE"),
-        "MQTT_KEY_FILE_PASSWORD": getenv("MQTT_KEY_FILE_PASSWORD"),
-    }
+    envvar_settings = {}
+    for name in _setting_names:
+        if (value := getenv(name)) is not None:
+            envvar_settings[name] = value
+
     dotenv_settings = dotenv_values(envfile) if envfile is not None else {}
 
-    settings = defaultdict(None, { **default_settings, **envvar_settings, **dotenv_settings })
+    settings = defaultdict(lambda: None, { **default_settings, **envvar_settings, **dotenv_settings })
     
     settings["MQTT_TCP_PORT"] = _convert_to_int(settings["MQTT_TCP_PORT"], "MQTT_TCP_PORT")
     settings["MQTT_USE_TLS"] = _convert_to_bool(settings["MQTT_USE_TLS"], "MQTT_USE_TLS")
