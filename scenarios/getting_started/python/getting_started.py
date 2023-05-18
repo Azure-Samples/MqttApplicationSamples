@@ -27,7 +27,7 @@ def on_message(_client, _userdata, message):
     print(f"Received message on topic {message.topic} with payload {message.payload}")
 
 parser = ArgumentParser()
-parser.add_argument("--envfile", help="path to .env file to use")
+parser.add_argument("--envfile", help="path to the .env file to use")
 args = parser.parse_args()
 
 settings = scenario_settings.get_settings(args.envfile)
