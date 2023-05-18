@@ -30,7 +30,7 @@ parser = ArgumentParser()
 parser.add_argument("--env-file", help="path to the .env file to use")
 args = parser.parse_args()
 
-settings = scenario_settings.get_settings(args.envfile)
+settings = scenario_settings.get_settings(args.env_file)
 
 if settings["MQTT_CLEAN_SESSION"] == False:
     raise ValueError("This sample does not support connecting with existing sessions")
