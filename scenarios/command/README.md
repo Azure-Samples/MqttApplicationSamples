@@ -125,11 +125,13 @@ echo "MQTT_HOST_NAME=$host_name" > vehicle03.env
 echo "MQTT_USERNAME=vehicle03" >> vehicle03.env
 echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
 echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> vehicle03.env # required by mosquitto_lib to validate EG Tls cert 
 
 echo "MQTT_HOST_NAME=$host_name" > mobile-app.env
 echo "MQTT_USERNAME=mobile-app" >> mobile-app.env
 echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
 echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
+echo "MQTT_CA_PATH=/etc/ssl/certs" >> mobile-app.env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
 ## :fly: Configure Mosquitto
@@ -137,11 +139,14 @@ echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
 ```bash
+cd ../../_mosquitto
 cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
+cp chain.pem ../scenarios/command
 ```
 The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
 
 ```bash
+cd ../scenarios/command
 echo "MQTT_HOST_NAME=localhost" > vehicle03.env
 echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
 echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
@@ -157,10 +162,16 @@ echo "MQTT_CA_FILE=chain.pem" >> mobile-app.env
 To use mosquitto without certificates: change the port to 1883, disable TLS and set the CA_FILE
 
 ```bash
+cd ../scenarios/command
 echo "MQTT_HOST_NAME=localhost" > vehicle03.env
 echo "MQTT_TCP_PORT=1883" >> vehicle03.env
 echo "MQTT_USE_TLS=false" >> vehicle03.env
 echo "MQTT_CLIENT_ID=vehicle03" >> vehicle03.env
+
+echo "MQTT_HOST_NAME=localhost" > mobile-app.env
+echo "MQTT_TCP_PORT=1883" >> mobile-app.env
+echo "MQTT_USE_TLS=false" >> mobile-app.env
+echo "MQTT_CLIENT_ID=mobile-app" >> mobile-app.env
 ```
 
 ## :game_die: Run the Sample
