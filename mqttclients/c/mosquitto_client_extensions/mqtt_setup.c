@@ -24,6 +24,7 @@ static void sig_handler(int _)
     enum mosq_err_t const mosq_result = (rc);    \
     if (mosq_result != MOSQ_ERR_SUCCESS)         \
     {                                            \
+      free(connection_settings);                 \
       if (mosq != NULL)                          \
       {                                          \
         mosquitto_destroy(mosq);                 \
@@ -71,49 +72,96 @@ void mqtt_client_read_env_file(char* file_path)
   }
 }
 
-void mqtt_client_set_connection_settings(mqtt_client_connection_settings* connection_settings)
+int set_char_connection_setting(char** connection_setting, char* env_name, bool required)
 {
-  connection_settings->hostname = getenv("MQTT_HOST_NAME");
-  printf("MQTT_HOST_NAME = %s\n", connection_settings->hostname);
+  char* env_value = getenv(env_name);
+  if (env_value == NULL && required)
+  {
+    printf("Environment variable %s is required but not set.\n", env_name);
+    return 1;
+  }
+  *connection_setting = env_value;
+  printf("%s = %s\n", env_name, *connection_setting);
 
-  connection_settings->tcp_port = atoi(getenv("MQTT_TCP_PORT") ?: "8883");
-  printf("MQTT_TCP_PORT = %d\n", connection_settings->tcp_port);
+  return 0;
+}
 
-  connection_settings->client_id = getenv("MQTT_CLIENT_ID");
-  printf("MQTT_CLIENT_ID = %s\n", connection_settings->client_id);
+int set_int_connection_setting(int* connection_setting, char* env_name, int default_value)
+{
+  char* env_value = getenv(env_name);
+  if (env_value == NULL)
+  {
+    *connection_setting = default_value;
+    printf("%s = %d (Default value)\n", env_name, *connection_setting);
+  }
+  else
+  {
+    int env_int_value = atoi(env_value);
+    if (env_int_value == 0 && strcmp(env_value, "0") != 0)
+    {
+      printf("Environment variable %s (value: %s) is not a valid integer.\n", env_name, env_value);
+      return 1;
+    }
+    else
+    {
+      *connection_setting = env_int_value;
+      printf("%s = %d\n", env_name, *connection_setting);
+    }
+  }
+  return 0;
+}
 
-  connection_settings->ca_file = getenv("MQTT_CA_FILE");
-  printf("MQTT_CA_FILE = %s\n", connection_settings->ca_file);
+int set_bool_connection_setting(bool* connection_setting, char* env_name, bool default_value)
+{
+  char* env_value = getenv(env_name);
+  if (env_value == NULL)
+  {
+    *connection_setting = default_value;
+    printf("%s = %s (Default value)\n", env_name, *connection_setting ? "true" : "false");
+    return 0;
+  }
+  else
+  {
+    if (strcmp(env_value, "true") == 0)
+    {
+      *connection_setting = true;
+    }
+    else if (strcmp(env_value, "false") == 0)
+    {
+      *connection_setting = false;
+    }
+    else
+    {
+      printf("Environment variable %s (value: %s) is not a valid boolean.\n", env_name, env_value);
+      return 1;
+    }
+    printf("%s = %s\n", env_name, *connection_setting ? "true" : "false");
+    return 0;
+  }
+}
 
-  connection_settings->ca_path = getenv("MQTT_CA_PATH");
-  printf("MQTT_CA_PATH = %s\n", connection_settings->ca_path);
+int mqtt_client_set_connection_settings(mqtt_client_connection_settings* connection_settings)
+{
+  int failures = 0;
 
-  connection_settings->cert_file = getenv("MQTT_CERT_FILE");
-  printf("MQTT_CERT_FILE = %s\n", connection_settings->cert_file);
+  failures += set_char_connection_setting(&connection_settings->hostname, "MQTT_HOST_NAME", true);
+  failures += set_int_connection_setting(&connection_settings->tcp_port, "MQTT_TCP_PORT", 8883);
+  failures += set_bool_connection_setting(&connection_settings->use_TLS, "MQTT_USE_TLS", true);
+  failures += set_bool_connection_setting(
+      &connection_settings->clean_session, "MQTT_CLEAN_SESSION", true);
+  failures += set_int_connection_setting(
+      &connection_settings->keep_alive_in_seconds, "MQTT_KEEP_ALIVE_IN_SECONDS", 30);
+  failures += set_char_connection_setting(&connection_settings->client_id, "MQTT_CLIENT_ID", false);
+  failures += set_char_connection_setting(&connection_settings->username, "MQTT_USERNAME", false);
+  failures += set_char_connection_setting(&connection_settings->password, "MQTT_PASSWORD", false);
+  failures += set_char_connection_setting(&connection_settings->ca_file, "MQTT_CA_FILE", false);
+  failures += set_char_connection_setting(&connection_settings->ca_path, "MQTT_CA_PATH", false);
+  failures += set_char_connection_setting(&connection_settings->cert_file, "MQTT_CERT_FILE", false);
+  failures += set_char_connection_setting(&connection_settings->key_file, "MQTT_KEY_FILE", false);
+  failures += set_char_connection_setting(
+      &connection_settings->key_file_password, "MQTT_KEY_FILE_PASSWORD", false);
 
-  connection_settings->key_file = getenv("MQTT_KEY_FILE");
-  printf("MQTT_KEY_FILE = %s\n", connection_settings->key_file);
-
-  connection_settings->key_file_password = getenv("MQTT_KEY_FILE_PASSWORD");
-  printf("MQTT_KEY_FILE_PASSWORD = %s\n", connection_settings->key_file_password);
-
-  connection_settings->keep_alive_in_seconds = atoi(getenv("MQTT_KEEP_ALIVE_IN_SECONDS") ?: "30");
-  printf("MQTT_KEEP_ALIVE_IN_SECONDS = %d\n", connection_settings->keep_alive_in_seconds);
-
-  char* use_TLS = getenv("MQTT_USE_TLS");
-  connection_settings->use_TLS = (use_TLS != NULL && strcmp(use_TLS, "false") == 0) ? false : true;
-  printf("MQTT_USE_TLS = %s\n", connection_settings->use_TLS ? "true" : "false");
-
-  connection_settings->username = getenv("MQTT_USERNAME");
-  printf("MQTT_USERNAME = %s\n", connection_settings->username);
-
-  connection_settings->password = getenv("MQTT_PASSWORD");
-  printf("MQTT_PASSWORD = %s\n", connection_settings->password);
-
-  char* clean_session = getenv("MQTT_CLEAN_SESSION");
-  connection_settings->clean_session
-      = (clean_session != NULL && strcmp(clean_session, "false") == 0) ? false : true;
-  printf("MQTT_CLEAN_SESSION = %s\n", connection_settings->clean_session ? "true" : "false");
+  return failures;
 }
 
 static void _set_subscribe_callbacks(struct mosquitto* mosq)
@@ -130,7 +178,7 @@ static void _set_publish_callbacks(struct mosquitto* mosq)
 void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* str)
 {
 #ifndef LOG_ALL_MOSQUITTO
-  if (strstr(str, "PINGREQ") != NULL || strstr(str, "PINGRESP") != NULL)
+  if (level == MOSQ_LOG_ERR || strstr(str, "PINGREQ") != NULL || strstr(str, "PINGRESP") != NULL)
   {
     printf("%s\n", str);
   }
@@ -183,7 +231,11 @@ struct mosquitto* mqtt_client_init(
 
   /* Get environment variables for connection settings */
   mqtt_client_read_env_file(env_file);
-  mqtt_client_set_connection_settings(connection_settings);
+  if (mqtt_client_set_connection_settings(connection_settings) != 0)
+  {
+    printf("Error: Failed to set connection settings.\n");
+    return NULL;
+  }
 
   obj->hostname = connection_settings->hostname;
   obj->keep_alive_in_seconds = connection_settings->keep_alive_in_seconds;
@@ -208,6 +260,11 @@ struct mosquitto* mqtt_client_init(
 
   mosquitto_log_callback_set(mosq, on_mosquitto_log);
 
+  printf(
+      "MQTT_VERSION = %s\n",
+      obj->mqtt_version == MQTT_PROTOCOL_V5
+          ? "MQTT_PROTOCOL_V5"
+          : obj->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311" : "UNKNOWN");
   RETURN_IF_FAILED(mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, obj->mqtt_version));
 
   /*callbacks */
@@ -244,8 +301,6 @@ struct mosquitto* mqtt_client_init(
         connection_settings->key_file,
         NULL));
   }
-
-  free(connection_settings);
 
   return mosq;
 }
