@@ -17,12 +17,11 @@ The instructions are provided for the following MQTT Brokers:
     - To test in Github Codespaces:
         -  Click on the **Code** button on the top right of the page
         -  select the **Codespaces** tab, then click + to create a new codespace
-    - To test locally on your machine:
-        - Use a Linux environment as the samples are optimized to run in Linux.
-            - To install and run Linux on Windows, run `wsl --install -d Ubuntu`. After installation is complete, you can run `wsl` to start running commands on your Ubuntu subsystem whenever you open a new terminal window. [Learn more](https://learn.microsoft.com/en-us/windows/wsl/)
-        > Note: To run in native Windows you must adapt the scripts to use Windows paths
-- clone this repository to any directory in your environment: `git clone https://github.com/Azure/MQTTBrokerPrivatePreview.git`
-- Follow the instructions in the [Setup](./Setup.md) to setup your environment.
+- To test locally on your machine:
+    - Use a Linux environment as the samples are optimized to run in Linux.
+        - To install and run Linux on Windows, run `wsl --install -d Ubuntu`. After installation is complete, you can run `wsl` to start running commands on your Ubuntu subsystem whenever you open a new terminal window. [Learn more](https://learn.microsoft.com/en-us/windows/wsl/)
+        - **Note:** To run in native Windows, you must adapt the scripts to use Windows paths.
+    - Clone this repository to any directory in your Linux environment: `git clone https://github.com/Azure/MQTTBrokerPrivatePreview.git`
 - Navigate to each of the scenario folders and follow its README.md instructions to run the scenario.
     - To configure the MQTT connection, the samples use `.env` files, with variables to specify the host name, port, certificates, etc. The `.env` files must be located in the scenario folder, e.g. `scenarios/getting_started`, and can be reused across samples/languages, including the client certificates.
 
