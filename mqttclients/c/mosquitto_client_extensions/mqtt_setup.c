@@ -77,10 +77,9 @@ void mqtt_client_read_env_file(char* file_path)
  * @param connection_setting The connection setting to set.
  * @param env_name The name of the environment variable to read.
  * @param required Whether the function should fail if the environment variable isn't set.
- * 
+ *
  * @return 0 if successful, 1 if invalid.
- * 
-*/
+ */
 int set_char_connection_setting(char** connection_setting, char* env_name, bool required)
 {
   char* env_value = getenv(env_name);
@@ -100,10 +99,9 @@ int set_char_connection_setting(char** connection_setting, char* env_name, bool 
  * @param connection_setting The connection setting to set.
  * @param env_name The name of the environment variable to read.
  * @param default_value The default value to use if the environment variable isn't set.
- * 
+ *
  * @return 0 if successful, 1 if environment variable isn't an int.
- * 
-*/
+ */
 int set_int_connection_setting(int* connection_setting, char* env_name, int default_value)
 {
   char* env_value = getenv(env_name);
@@ -134,10 +132,9 @@ int set_int_connection_setting(int* connection_setting, char* env_name, int defa
  * @param connection_setting The connection setting to set.
  * @param env_name The name of the environment variable to read.
  * @param default_value The default value to use if the environment variable isn't set.
- * 
+ *
  * @return 0 if successful, 1 if environment variable isn't a bool.
- * 
-*/
+ */
 int set_bool_connection_setting(bool* connection_setting, char* env_name, bool default_value)
 {
   char* env_value = getenv(env_name);
@@ -170,9 +167,9 @@ int set_bool_connection_setting(bool* connection_setting, char* env_name, bool d
 /**
  * @brief Set a connection settings from environment variables.
  * @param connection_settings The connection settings struct to write to.
- * 
+ *
  * @return 0 if successful, or the number of invalid environment variables.
-*/
+ */
 int mqtt_client_set_connection_settings(mqtt_client_connection_settings* connection_settings)
 {
   int failures = 0;
