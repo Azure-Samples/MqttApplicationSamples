@@ -239,7 +239,6 @@ To build the C sample, run from the root folder:
 ```bash
 cmake --preset=telemetry
 cmake --build --preset=telemetry
-cd scenarios/telemetry
 ```
 
 The build script will copy the produced binary to `c/build/telemetry`
