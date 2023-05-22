@@ -21,11 +21,11 @@ IF SUFFICIENT INFORMATION IS NOT PROVIDED VIA THE FOLLOWING TEMPLATE THE ISSUE M
 ### Expected/desired behavior
 >
 
+### Language
+> C, dotnet, or Python
+
 ### OS and Version?
 > Windows 7, 8 or 10. Linux (which distribution). macOS (Yosemite? El Capitan? Sierra?)
-
-### Versions
->
 
 ### Mention any other details that might be useful
 
