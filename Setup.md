@@ -86,7 +86,7 @@ The local instance of mosquitto requires a certificate to expose a TLS endpoint,
 Using the test ca, create a certificate for `localhost`, and store the certificate files in the `_mosquitto` folder.
 
 ```bash
-# from _mosquitto folder
+# from folder _mosquitto
 cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
 step certificate create localhost localhost.crt localhost.key \
       --ca ~/.step/certs/intermediate_ca.crt \
