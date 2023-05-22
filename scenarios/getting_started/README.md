@@ -107,12 +107,14 @@ echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to valida
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
 ```bash
-cd _mosquitto
+cd ../../_mosquitto
 cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
+cp chain.pem ../scenarios/getting_started
 ```
 The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
 
 ```bash
+cd ../scenarios/getting_started
 echo "MQTT_HOST_NAME=localhost" > .env
 echo "MQTT_CLIENT_ID=sample_client" >> .env
 echo "MQTT_CERT_FILE=sample_client.pem" >> .env
@@ -123,6 +125,7 @@ echo "MQTT_CA_FILE=chain.pem" >> .env
 To use mosquitto without certificates
 
 ```bash
+cd ../scenarios/getting_started
 echo "MQTT_HOST_NAME=localhost" > .env
 echo "MQTT_TCP_PORT=1883" >> .env
 echo "MQTT_USE_TLS=false" >> .env
@@ -158,11 +161,14 @@ cmake --build --preset=getting_started
 ```
 The build script will copy the produced binary to `c/build/getting_started`
 
-To run the C sample (from the root scenario folder `scenarios/getting_started`):
+To run the C sample:
 
 ```bash
+cd scenarios/getting_started
 c/build/getting_started
 ```
+
+For alternate building/running methods and more information, see the [C documentation](../../mqttclients/c/README.md).
 
 ### Python
 
