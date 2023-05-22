@@ -1,3 +1,15 @@
+---
+page_type: sample
+languages:
+- csharp
+- c
+- python
+name: "MQTT Application Samples"
+description: "Guidance to build Pub/Sub applications targeting MQTT Brokers."
+products:
+- azure
+- azure-event-grid
+---
 # :dart: MQTT Application Samples
 
 | [Setup](./Setup.md) | [Getting Started](./scenarios/getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |

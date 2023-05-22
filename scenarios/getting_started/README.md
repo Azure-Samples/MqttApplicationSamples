@@ -111,6 +111,7 @@ To establish the TLS connection, the CA needs to be trusted, most MQTT clients a
 ```bash
 # from folder _mosquitto
 cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
+cp chain.pem ../scenarios/getting_started
 ```
 The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
 
@@ -164,12 +165,14 @@ cmake --build --preset=getting_started
 ```
 The build script will copy the produced binary to `c/build/getting_started`
 
-To run the C sample (from the root scenario folder `scenarios/getting_started`):
+To run the C sample:
 
 ```bash
 # from folder scenarios/getting_started
 c/build/getting_started
 ```
+
+For alternate building/running methods and more information, see the [C documentation](../../mqttclients/c/README.md).
 
 ### Python
 

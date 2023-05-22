@@ -52,7 +52,7 @@ public abstract class CommandProducer<T, TResp>
         set
         {
             _requestTopic = value.Replace("{clientId}", _mqttClient.Options.ClientId).Replace("{commandName}", _commandName);
-            _ = _mqttClient.SubscribeAsync(_requestTopic);
+            _ = _mqttClient.SubscribeAsync(_requestTopic,  MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
         }
     }
 }

@@ -56,12 +56,13 @@ public abstract class CommandConsumer<T, TResp>
         _correlationId = Guid.NewGuid();
         string requestTopic = RequestTopicPattern!.Replace("{clientId}", clientId).Replace("{commandName}", _commandName);
         string responseTopic = ResponseTopicPattern!.Replace("{clientId}", clientId).Replace("{commandName}", _commandName);
-        _ = _mqttClient.SubscribeAsync(responseTopic);
+        _ = _mqttClient.SubscribeAsync(responseTopic, MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
         _ = _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
             .WithTopic(requestTopic)
             .WithContentType(_serializer.ContentType)
             .WithPayload(_serializer.ToBytes(request!))
             .WithCorrelationData(_correlationId.ToByteArray())
+            .WithQualityOfServiceLevel( MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
             .WithResponseTopic(responseTopic)
             .Build());
 
