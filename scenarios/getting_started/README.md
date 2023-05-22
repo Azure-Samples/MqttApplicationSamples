@@ -183,6 +183,11 @@ source  <virtual environment directory>/bin/activate
 ```
 By activating the virtual environment, all the python dependencies will be installed only within the virtual environment rather than system-wide.
 
+Once you are done using the virtual environment, you can deactivate by running:
+```bash
+deactivate
+```
+
 #### Run the sample
 *The commands below assume you are in the MqttApplicationSamples/scenarios/getting_started directory.*
 

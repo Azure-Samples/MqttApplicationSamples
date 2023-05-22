@@ -26,7 +26,7 @@ public class Worker : BackgroundService
 
         mqttClient.InternalClient.ConnectedAsync += async cea =>
         {
-            _logger.LogWarning("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
+            _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
 
             PositionTelemetryConsumer positionTelemetry = new(mqttClient.InternalClient)
             {
