@@ -40,6 +40,7 @@ service Commands {
 Run the following step commands to create the client certificates for `vehicle03` and `mobile-app` clients.  The client authentication name is provided in the subject name field of the client certificate.
 
 ```bash
+# from folder scenarios/command
 step certificate create \
     vehicle03 vehicle03.pem vehicle03.key \
     --ca ~/.step/certs/intermediate_ca.crt \
@@ -65,6 +66,7 @@ Event Grid Namespaces requires to register the clients, and the topic spaces to 
 The clients will be created with authentication name same as the value provided earlier in certificate subject field while creating the client certificates.  You can register the 2 clients in the portal or by running the script below:
 
 ```bash
+# from folder scenarios/command
 source ../../az.env
 
 az resource create --id "$res_id/clients/vehicle03" --properties '{
@@ -96,6 +98,7 @@ az resource create --id "$res_id/clients/mobile-app" --properties '{
 ### Configure Permissions with Topic Spaces
 
 ```bash
+# from folder scenarios/command
 az resource create --id "$res_id/topicSpaces/vehiclesCommands" --properties '{
     "topicTemplates": ["vehicles/+/command/#"]
 }'
@@ -118,6 +121,7 @@ az resource create --id "$res_id/permissionBindings/vehiclesCmdSub" --properties
 The required `.env` files can be configured manually, we provide the script below as a reference to create those files, as they are ignored from git.
 
 ```bash
+# from folder scenarios/command
 source ../../az.env
 host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
@@ -137,11 +141,13 @@ echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
 ```bash
+# from folder _mosquitto
 cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
 ```
 The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
 
 ```bash
+# from folder scenarios/command
 echo "MQTT_HOST_NAME=localhost" > vehicle03.env
 echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
 echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
@@ -157,6 +163,7 @@ echo "MQTT_CA_FILE=chain.pem" >> mobile-app.env
 To use mosquitto without certificates: change the port to 1883, disable TLS and set the CA_FILE
 
 ```bash
+# from folder scenarios/command
 echo "MQTT_HOST_NAME=localhost" > vehicle03.env
 echo "MQTT_TCP_PORT=1883" >> vehicle03.env
 echo "MQTT_USE_TLS=false" >> vehicle03.env
@@ -172,6 +179,7 @@ All samples are designed to be executed from the root scenario folder.
 To build the dotnet sample run:
 
 ```bash
+# from folder scenarios/command
 dotnet build dotnet/command.sln 
 ```
 

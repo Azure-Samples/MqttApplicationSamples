@@ -26,7 +26,7 @@ Messages will use [GeoJSON](https://geojson.org) to represent the coordinates.
 Run the following step commands to create the client certificates for `vehicle01`, `vehicle02` and `map-app` clients.
 
 ```bash
-cd scenarios/telemetry
+# from folder scenarios/telemetry
 step certificate create \
     vehicle01 vehicle01.pem vehicle01.key \
     --ca ~/.step/certs/intermediate_ca.crt \
@@ -59,6 +59,7 @@ Event Grid Namespaces requires to register the clients, and the topic spaces to 
 The clients will be created based on the certificate subject, you can register the 3 clients in the portal or by running the script below:
 
 ```bash
+# from folder scenarios/telemetry
 source ../../az.env
 
 az resource create --id "$res_id/clients/vehicle01" --properties '{
@@ -102,6 +103,7 @@ az resource create --id "$res_id/clients/map-app" --properties '{
 ### Configure topic spaces and permission bindings
 
 ```bash
+# from folder scenarios/telemetry
 az resource create --id "$res_id/topicSpaces/vehicles" --properties '{
     "topicTemplates": ["vehicles/#"]
 }'
@@ -124,6 +126,7 @@ az resource create --id "$res_id/permissionBindings/vehiclesSub" --properties '{
 The required `.env` files can be configured manually, we provide the script below as a reference to create those files, as they are ignored from git.
 
 ```bash
+# from folder scenarios/telemetry
 source ../../az.env
 host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
@@ -155,11 +158,13 @@ echo "MQTT_CA_PATH=/etc/ssl/certs" >> map-app.env # required by mosquitto_lib to
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
 ```bash
+# from folder _mosquitto
 cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
 ```
 The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
 
 ```bash
+# from folder scenarios/telemetry
 echo "MQTT_HOST_NAME=localhost" > vehicle01.env
 echo "MQTT_CERT_FILE=vehicle01.pem" >> vehicle01.env
 echo "MQTT_KEY_FILE=vehicle01.key" >> vehicle01.env
@@ -180,6 +185,7 @@ echo "MQTT_CA_FILE=chain.pem" >> map-app.env
 To use mosquitto without certificates: change the port to 1883, disable TLS and set the CA_FILE
 
 ```bash
+# from folder scenarios/telemetry
 echo "MQTT_HOST_NAME=localhost" > vehicle01.env
 echo "MQTT_TCP_PORT=1883" >> vehicle01.env
 echo "MQTT_USE_TLS=false" >> vehicle01.env
@@ -195,12 +201,14 @@ All samples are designed to be executed from the root scenario folder.
 To build the dotnet sample run:
 
 ```bash
+# from folder scenarios/telemetry
 dotnet build dotnet/telemetry.sln 
 ```
 
 To run the dotnet sample execute each line below in a different shell/terminal.
 
 ```bash
+# from folder scenarios/telemetry
  dotnet/telemetry_producer/bin/Debug/net7.0/telemetry_producer --envFile=vehicle01.env
  dotnet/telemetry_producer/bin/Debug/net7.0/telemetry_producer --envFile=vehicle02.env
  dotnet/telemetry_consumer/bin/Debug/net7.0/telemetry_consumer --envFile=map-app.env
@@ -217,9 +225,10 @@ cmake --build --preset=telemetry
 
 The build script will copy the produced binary to `c/build/telemetry`
 
-To run the C sample execute each line below in a different shell/terminal (from the root scenario folder `scenarios/telemetry`).
+To run the C sample execute each line below in a different shell/terminal.
 
 ```bash
+# from folder scenarios/telemetry
 c/build/telemetry_producer vehicle01.env
 c/build/telemetry_producer vehicle02.env
 c/build/telemetry_consumer map-app.env
