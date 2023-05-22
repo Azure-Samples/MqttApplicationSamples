@@ -210,7 +210,11 @@ To run the dotnet sample execute each line below in a different shell/terminal.
 ```bash
 # from folder scenarios/telemetry
  dotnet/telemetry_producer/bin/Debug/net7.0/telemetry_producer --envFile=vehicle01.env
+```
+```bash
  dotnet/telemetry_producer/bin/Debug/net7.0/telemetry_producer --envFile=vehicle02.env
+```
+```bash
  dotnet/telemetry_consumer/bin/Debug/net7.0/telemetry_consumer --envFile=map-app.env
 ```
 
@@ -230,6 +234,10 @@ To run the C sample execute each line below in a different shell/terminal.
 ```bash
 # from folder scenarios/telemetry
 c/build/telemetry_producer vehicle01.env
+```
+```bash
 c/build/telemetry_producer vehicle02.env
+```
+```bash
 c/build/telemetry_consumer map-app.env
 ```
