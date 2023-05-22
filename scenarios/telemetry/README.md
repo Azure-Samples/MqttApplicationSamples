@@ -155,22 +155,28 @@ echo "MQTT_CA_PATH=/etc/ssl/certs" >> map-app.env # required by mosquitto_lib to
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
 ```bash
+cd ../../_mosquitto
 cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
+cp chain.pem ../scenarios/telemetry
 ```
 The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
 
 ```bash
+cd ../scenarios/telemetry
 echo "MQTT_HOST_NAME=localhost" > vehicle01.env
+echo "MQTT_CLIENT_ID=vehicle01" >> vehicle01.env
 echo "MQTT_CERT_FILE=vehicle01.pem" >> vehicle01.env
 echo "MQTT_KEY_FILE=vehicle01.key" >> vehicle01.env
 echo "MQTT_CA_FILE=chain.pem" >> vehicle01.env
 
 echo "MQTT_HOST_NAME=localhost" > vehicle02.env
+echo "MQTT_CLIENT_ID=vehicle02" >> vehicle02.env
 echo "MQTT_CERT_FILE=vehicle02.pem" >> vehicle02.env
 echo "MQTT_KEY_FILE=vehicle02.key" >> vehicle02.env
 echo "MQTT_CA_FILE=chain.pem" >> vehicle02.env
 
 echo "MQTT_HOST_NAME=localhost" > map-app.env
+echo "MQTT_CLIENT_ID=map-app" >> map-app.env
 echo "MQTT_CERT_FILE=map-app.pem" >> map-app.env
 echo "MQTT_KEY_FILE=map-app.key" >> map-app.env
 echo "MQTT_CA_FILE=chain.pem" >> map-app.env
@@ -180,10 +186,21 @@ echo "MQTT_CA_FILE=chain.pem" >> map-app.env
 To use mosquitto without certificates: change the port to 1883, disable TLS and set the CA_FILE
 
 ```bash
+cd ../scenarios/telemetry
 echo "MQTT_HOST_NAME=localhost" > vehicle01.env
+echo "MQTT_CLIENT_ID=vehicle01" >> vehicle01.env
 echo "MQTT_TCP_PORT=1883" >> vehicle01.env
 echo "MQTT_USE_TLS=false" >> vehicle01.env
-echo "MQTT_CLIENT_ID=vehicle01" >> vehicle01.env
+
+echo "MQTT_HOST_NAME=localhost" > vehicle02.env
+echo "MQTT_CLIENT_ID=vehicle02" >> vehicle02.env
+echo "MQTT_TCP_PORT=1883" >> vehicle02.env
+echo "MQTT_USE_TLS=false" >> vehicle02.env
+
+echo "MQTT_HOST_NAME=localhost" > map-app.env
+echo "MQTT_CLIENT_ID=map-app" >> map-app.env
+echo "MQTT_TCP_PORT=1883" >> map-app.env
+echo "MQTT_USE_TLS=false" >> map-app.env
 ```
 
 ## :game_die: Run the Sample
@@ -213,6 +230,7 @@ To build the C sample, run from the root folder:
 ```bash
 cmake --preset=telemetry
 cmake --build --preset=telemetry
+cd scenarios/telemetry
 ```
 
 The build script will copy the produced binary to `c/build/telemetry`
@@ -224,3 +242,5 @@ c/build/telemetry_producer vehicle01.env
 c/build/telemetry_producer vehicle02.env
 c/build/telemetry_consumer map-app.env
 ```
+
+For alternate building/running methods and more information, see the [C documentation](../../mqttclients/c/README.md).

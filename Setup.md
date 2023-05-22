@@ -81,6 +81,12 @@ az resource create \
 
 ## Configure Mosquitto with TLS and X509 Authentication
 
+Install `mosquitto`
+
+```bash
+sudo apt-get update && sudo apt-get install mosquitto -y
+```
+
 The local instance of mosquitto requires a certificate to expose a TLS endpoint, the chain `chain.pem` used to create this cert needs to be trusted by clients.
 
 Using the test ca, create a certificate for `localhost`, and store the certificate files in the `_mosquitto` folder.
@@ -117,6 +123,18 @@ To start mosquitto with this configuration file run:
 
 ```bash
 mosquitto -c tls.conf
+```
+
+If you get `Error: Address already in use`, you can run
+
+```bash
+ps -ef | grep mosquitto
+```
+
+to find the running mosquitto instance, and use the process id returned to end it:
+
+```bash
+sudo kill <process id>
 ```
 
 ## Configure development tools
