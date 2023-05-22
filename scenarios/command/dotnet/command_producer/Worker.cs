@@ -24,7 +24,7 @@ public class Worker : BackgroundService
 
         mqttClient.InternalClient.ConnectedAsync += async cea =>
         {
-            _logger.LogWarning("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
+            _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
 
             UnlockCommandProducer commandUnlock = new(mqttClient.InternalClient)
             { 
@@ -43,7 +43,7 @@ public class Worker : BackgroundService
 
     async Task<unlockResponse> Unlock(unlockRequest unlockRequest) 
     {
-        _logger.LogWarning("Received Unlock request from {from}", unlockRequest.RequestedFrom);
+        _logger.LogInformation("Received Unlock request from {from}", unlockRequest.RequestedFrom);
 
         return await Task.FromResult(new unlockResponse 
         { 
