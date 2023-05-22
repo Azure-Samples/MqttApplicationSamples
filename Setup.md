@@ -81,7 +81,7 @@ az resource create \
 
 ## Configure Mosquitto with TLS and X509 Authentication
 
-Install mosquitto
+Install `mosquitto`
 
 ```bash
 sudo apt-get update && sudo apt-get install mosquitto -y

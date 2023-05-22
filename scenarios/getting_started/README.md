@@ -125,7 +125,7 @@ echo "MQTT_CA_FILE=chain.pem" >> .env
 To use mosquitto without certificates
 
 ```bash
-cd scenarios/getting_started
+cd ../scenarios/getting_started
 echo "MQTT_HOST_NAME=localhost" > .env
 echo "MQTT_TCP_PORT=1883" >> .env
 echo "MQTT_USE_TLS=false" >> .env

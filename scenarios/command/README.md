@@ -40,6 +40,7 @@ service Commands {
 Run the following step commands to create the client certificates for `vehicle03` and `mobile-app` clients.  The client authentication name is provided in the subject name field of the client certificate.
 
 ```bash
+cd scenarios/command
 step certificate create \
     vehicle03 vehicle03.pem vehicle03.key \
     --ca ~/.step/certs/intermediate_ca.crt \
