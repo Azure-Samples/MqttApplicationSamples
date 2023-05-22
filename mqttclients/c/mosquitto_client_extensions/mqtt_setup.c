@@ -18,7 +18,7 @@ static void sig_handler(int _)
   keep_running = 0;
 }
 
-#define RETURN_IF_FAILED(rc)                     \
+#define MQTT_RETURN_IF_FAILED(rc)                     \
   do                                             \
   {                                              \
     enum mosq_err_t const mosq_result = (rc);    \
@@ -76,22 +76,22 @@ void mqtt_client_read_env_file(char* file_path)
  * @brief Sets a string connection setting from environment variables.
  * @param connection_setting The connection setting to set.
  * @param env_name The name of the environment variable to read.
- * @param required Whether the function should fail if the environment variable isn't set.
+ * @param fail_not_defined Whether the function should fail if the environment variable isn't set.
  *
- * @return 0 if successful, 1 if invalid.
+ * @return true if connection setting successfully set, false if invalid.
  */
-int set_char_connection_setting(char** connection_setting, char* env_name, bool required)
+bool set_char_connection_setting(char** connection_setting, const char* env_name, bool fail_not_defined)
 {
   char* env_value = getenv(env_name);
-  if (env_value == NULL && required)
+  if (env_value == NULL && fail_not_defined)
   {
     printf("Environment variable %s is required but not set.\n", env_name);
-    return 1;
+    return false;
   }
   *connection_setting = env_value;
   printf("%s = %s\n", env_name, *connection_setting);
 
-  return 0;
+  return true;
 }
 
 /**
@@ -100,9 +100,9 @@ int set_char_connection_setting(char** connection_setting, char* env_name, bool 
  * @param env_name The name of the environment variable to read.
  * @param default_value The default value to use if the environment variable isn't set.
  *
- * @return 0 if successful, 1 if environment variable isn't an int.
+ * @return true if connection setting successfully set, false if environment variable isn't an int.
  */
-int set_int_connection_setting(int* connection_setting, char* env_name, int default_value)
+bool set_int_connection_setting(int* connection_setting, char* env_name, int default_value)
 {
   char* env_value = getenv(env_name);
   if (env_value == NULL)
@@ -116,7 +116,7 @@ int set_int_connection_setting(int* connection_setting, char* env_name, int defa
     if (env_int_value == 0 && strcmp(env_value, "0") != 0)
     {
       printf("Environment variable %s (value: %s) is not a valid integer.\n", env_name, env_value);
-      return 1;
+      return false;
     }
     else
     {
@@ -124,7 +124,7 @@ int set_int_connection_setting(int* connection_setting, char* env_name, int defa
       printf("%s = %d\n", env_name, *connection_setting);
     }
   }
-  return 0;
+  return true;
 }
 
 /**
@@ -133,16 +133,16 @@ int set_int_connection_setting(int* connection_setting, char* env_name, int defa
  * @param env_name The name of the environment variable to read.
  * @param default_value The default value to use if the environment variable isn't set.
  *
- * @return 0 if successful, 1 if environment variable isn't a bool.
+ * @return true if connection setting successfully set, false if environment variable isn't a bool.
  */
-int set_bool_connection_setting(bool* connection_setting, char* env_name, bool default_value)
+bool set_bool_connection_setting(bool* connection_setting, char* env_name, bool default_value)
 {
   char* env_value = getenv(env_name);
   if (env_value == NULL)
   {
     *connection_setting = default_value;
     printf("%s = %s (Default value)\n", env_name, *connection_setting ? "true" : "false");
-    return 0;
+    return true;
   }
   else
   {
@@ -157,10 +157,10 @@ int set_bool_connection_setting(bool* connection_setting, char* env_name, bool d
     else
     {
       printf("Environment variable %s (value: %s) is not a valid boolean.\n", env_name, env_value);
-      return 1;
+      return false;
     }
     printf("%s = %s\n", env_name, *connection_setting ? "true" : "false");
-    return 0;
+    return true;
   }
 }
 
@@ -168,30 +168,30 @@ int set_bool_connection_setting(bool* connection_setting, char* env_name, bool d
  * @brief Set a connection settings from environment variables.
  * @param connection_settings The connection settings struct to write to.
  *
- * @return 0 if successful, or the number of invalid environment variables.
+ * @return true if successful, or false if any environment variables are invalid.
  */
-int mqtt_client_set_connection_settings(mqtt_client_connection_settings* connection_settings)
+bool mqtt_client_set_connection_settings(mqtt_client_connection_settings* connection_settings)
 {
-  int failures = 0;
+  bool set_successfully = true;
 
-  failures += set_char_connection_setting(&connection_settings->hostname, "MQTT_HOST_NAME", true);
-  failures += set_int_connection_setting(&connection_settings->tcp_port, "MQTT_TCP_PORT", 8883);
-  failures += set_bool_connection_setting(&connection_settings->use_TLS, "MQTT_USE_TLS", true);
-  failures += set_bool_connection_setting(
+  set_successfully = set_successfully && set_char_connection_setting(&connection_settings->hostname, "MQTT_HOST_NAME", true);
+  set_successfully = set_successfully && set_int_connection_setting(&connection_settings->tcp_port, "MQTT_TCP_PORT", 8883);
+  set_successfully = set_successfully && set_bool_connection_setting(&connection_settings->use_TLS, "MQTT_USE_TLS", true);
+  set_successfully = set_successfully && set_bool_connection_setting(
       &connection_settings->clean_session, "MQTT_CLEAN_SESSION", true);
-  failures += set_int_connection_setting(
+  set_successfully = set_successfully && set_int_connection_setting(
       &connection_settings->keep_alive_in_seconds, "MQTT_KEEP_ALIVE_IN_SECONDS", 30);
-  failures += set_char_connection_setting(&connection_settings->client_id, "MQTT_CLIENT_ID", false);
-  failures += set_char_connection_setting(&connection_settings->username, "MQTT_USERNAME", false);
-  failures += set_char_connection_setting(&connection_settings->password, "MQTT_PASSWORD", false);
-  failures += set_char_connection_setting(&connection_settings->ca_file, "MQTT_CA_FILE", false);
-  failures += set_char_connection_setting(&connection_settings->ca_path, "MQTT_CA_PATH", false);
-  failures += set_char_connection_setting(&connection_settings->cert_file, "MQTT_CERT_FILE", false);
-  failures += set_char_connection_setting(&connection_settings->key_file, "MQTT_KEY_FILE", false);
-  failures += set_char_connection_setting(
+  set_successfully = set_successfully && set_char_connection_setting(&connection_settings->client_id, "MQTT_CLIENT_ID", false);
+  set_successfully = set_successfully && set_char_connection_setting(&connection_settings->username, "MQTT_USERNAME", false);
+  set_successfully = set_successfully && set_char_connection_setting(&connection_settings->password, "MQTT_PASSWORD", false);
+  set_successfully = set_successfully && set_char_connection_setting(&connection_settings->ca_file, "MQTT_CA_FILE", false);
+  set_successfully = set_successfully && set_char_connection_setting(&connection_settings->ca_path, "MQTT_CA_PATH", false);
+  set_successfully = set_successfully && set_char_connection_setting(&connection_settings->cert_file, "MQTT_CERT_FILE", false);
+  set_successfully = set_successfully && set_char_connection_setting(&connection_settings->key_file, "MQTT_KEY_FILE", false);
+  set_successfully = set_successfully && set_char_connection_setting(
       &connection_settings->key_file_password, "MQTT_KEY_FILE_PASSWORD", false);
 
-  return failures;
+  return set_successfully;
 }
 
 static void _set_subscribe_callbacks(struct mosquitto* mosq)
@@ -261,7 +261,7 @@ struct mosquitto* mqtt_client_init(
 
   /* Get environment variables for connection settings */
   mqtt_client_read_env_file(env_file);
-  if (mqtt_client_set_connection_settings(connection_settings) != 0)
+  if (!mqtt_client_set_connection_settings(connection_settings))
   {
     printf("Error: Failed to set connection settings.\n");
     return NULL;
@@ -273,7 +273,7 @@ struct mosquitto* mqtt_client_init(
   obj->client_id = connection_settings->client_id;
 
   /* Required before calling other mosquitto functions */
-  RETURN_IF_FAILED(mosquitto_lib_init());
+  MQTT_RETURN_IF_FAILED(mosquitto_lib_init());
 
   /* Create a new client instance.
    * id = NULL -> ask the broker to generate a client id for us
@@ -295,7 +295,7 @@ struct mosquitto* mqtt_client_init(
       obj->mqtt_version == MQTT_PROTOCOL_V5
           ? "MQTT_PROTOCOL_V5"
           : obj->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311" : "UNKNOWN");
-  RETURN_IF_FAILED(mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, obj->mqtt_version));
+  MQTT_RETURN_IF_FAILED(mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, obj->mqtt_version));
 
   /*callbacks */
   mosquitto_connect_v5_callback_set(mosq, on_connect_with_subscribe ?: on_connect);
@@ -315,7 +315,7 @@ struct mosquitto* mqtt_client_init(
 
   if (connection_settings->username)
   {
-    RETURN_IF_FAILED(mosquitto_username_pw_set(
+    MQTT_RETURN_IF_FAILED(mosquitto_username_pw_set(
         mosq, connection_settings->username, connection_settings->password));
   }
 
@@ -323,7 +323,7 @@ struct mosquitto* mqtt_client_init(
   {
     /* Need ca_file for mosquitto broker, but ca_path for event grid - fine for the unneeded one to
      * be null */
-    RETURN_IF_FAILED(mosquitto_tls_set(
+    MQTT_RETURN_IF_FAILED(mosquitto_tls_set(
         mosq,
         connection_settings->ca_file,
         connection_settings->ca_path,
