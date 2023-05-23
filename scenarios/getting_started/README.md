@@ -29,7 +29,7 @@ To keep the scenario simple, a single client called "sample_client" publishes an
 Using the CA files, as described in [setup](../../Setup.md), create a certificate for `sample_client` client.  Client certificate is created with subject name as "sample_client".  This must match the authentication name of the client.
 
 ```bash
-cd scenarios/getting_started
+# from folder scenarios/getting_started
 step certificate create \
     sample_client sample_client.pem sample_client.key \
     --ca ~/.step/certs/intermediate_ca.crt \
@@ -47,6 +47,7 @@ Ensure to create an Event Grid namespace by following the steps in [setup](../se
 We will use the SubjectMatchesAuthenticationName validation scheme for `sample_client` to create the client from the portal or with the script:
 
 ```bash
+# from folder scenarios/getting_started
 source ../../az.env
 
 az resource create --id "$res_id/clients/sample_client" --properties '{
@@ -66,6 +67,7 @@ az resource create --id "$res_id/clients/sample_client" --properties '{
 Run the commands to create the "samples" topic space, and the two permission bindings that provide publish and subscribe access to $all client group on the samples topic space.
 
 ```bash
+# from folder scenarios/getting_started
 source ../../az.env
 
 az resource create --id "$res_id/topicSpaces/samples" --properties '{
@@ -90,7 +92,7 @@ az resource create --id "$res_id/permissionBindings/samplesSub" --properties '{
 The required `.env` files can be configured manually, we provide the script below as a reference to create those files, as they are ignored from git.
 
 ```bash
-cd scenarios/getting_started
+# from folder scenarios/getting_started
 source ../../az.env
 host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
@@ -107,14 +109,14 @@ echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to valida
 To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
 
 ```bash
-cd ../../_mosquitto
+# from folder _mosquitto
 cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
 cp chain.pem ../scenarios/getting_started
 ```
 The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
 
 ```bash
-cd ../scenarios/getting_started
+# from folder scenarios/getting_started
 echo "MQTT_HOST_NAME=localhost" > .env
 echo "MQTT_CLIENT_ID=sample_client" >> .env
 echo "MQTT_CERT_FILE=sample_client.pem" >> .env
@@ -125,7 +127,7 @@ echo "MQTT_CA_FILE=chain.pem" >> .env
 To use mosquitto without certificates
 
 ```bash
-cd ../scenarios/getting_started
+# from folder scenarios/getting_started
 echo "MQTT_HOST_NAME=localhost" > .env
 echo "MQTT_TCP_PORT=1883" >> .env
 echo "MQTT_USE_TLS=false" >> .env
@@ -141,6 +143,7 @@ All samples are designed to be executed from the root scenario folder.
 To build the dotnet sample run:
 
 ```bash
+# from folder scenarios/getting_started
 dotnet build dotnet/getting_started.sln 
 ```
 
@@ -156,6 +159,7 @@ To run the dotnet sample:
 To build the C sample, run from the root folder:
 
 ```bash
+# from the root of the repo
 cmake --preset=getting_started
 cmake --build --preset=getting_started
 ```
@@ -164,7 +168,7 @@ The build script will copy the produced binary to `c/build/getting_started`
 To run the C sample:
 
 ```bash
-cd scenarios/getting_started
+# from folder scenarios/getting_started
 c/build/getting_started
 ```
 
@@ -203,6 +207,7 @@ pip install ../../mqttclients/python
 
 Run the sample using settings from an envfile:
 ```bash
+# from folder scenarios/getting_started
 python python/getting_started.py --env-file <path to .env file>
 ```
 
