@@ -20,8 +20,7 @@ The instructions are provided for the following MQTT Brokers:
 - **Azure Event Grid Namespaces** 
 - **Mosquitto** for local development
 
-> [!NOTE]
-> These samples can also be leveraged for any MQTT Broker that supports X509 certificates authentication
+> Note: These samples can also be leveraged for any MQTT Broker that supports X509 certificates authentication
 
 ## :magic_wand: Prerequisites
 
