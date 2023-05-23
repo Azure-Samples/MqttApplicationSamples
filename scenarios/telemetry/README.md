@@ -2,7 +2,7 @@
 
 | [Create Client Certificates](#lock-create-client-certificates) | [Configure Event Grid Namespaces](#triangular_ruler-configure-event-grid-namespaces) | [Configure Mosquitto](#fly-configure-mosquitto) | [Run the Sample](#game_die-run-the-sample) |
 
-This scenario shows how multiple clients send data (the producers) to different topics that can be consumed by a single application (the consumer).  This scenario also showcases routing the data to an Azure service.
+This scenario shows how multiple clients send data (the producers) to different topics that can be consumed by a single application (the consumer).  This scenario also showcases routing the data to Azure Event Hubs.
 
 Consider a use case where a backend solution needs to identify the location of vehicles on a map. Vehicles should be prohibited from listening to other vehicles location on their behalf. Finally, the location data need to be routed to a storage queue.
 
@@ -152,6 +152,9 @@ echo "MQTT_CERT_FILE=map-app.pem" >> map-app.env
 echo "MQTT_KEY_FILE=map-app.key" >> map-app.env
 echo "MQTT_CA_PATH=/etc/ssl/certs" >> map-app.env # required by mosquitto_lib to validate EG Tls cert 
 ```
+### Configure routing
+
+Follow the [Routing Instructions](./Routing_Instructions.md) to route the telemetry to an Azure Event Hubs instance.
 
 ## :fly: Configure Mosquitto
 
