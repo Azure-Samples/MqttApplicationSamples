@@ -10,7 +10,8 @@
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
 
-// A certificate path (any string) is required when configuring mosquitto to use OS certificates.
+// A certificate path (any string) is required when configuring mosquitto to use OS certificates
+// when use_TLS is true and you're not using a ca file.
 #define REQUIRED_TLS_SET_CERT_PATH "L"
 
 volatile sig_atomic_t keep_running = 1;
@@ -310,9 +311,9 @@ struct mosquitto* mqtt_client_init(
 
   printf(
       "MQTT_VERSION = %s\n",
-      obj->mqtt_version == MQTT_PROTOCOL_V5
-          ? "MQTT_PROTOCOL_V5"
-          : obj->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311" : "UNKNOWN");
+      obj->mqtt_version == MQTT_PROTOCOL_V5         ? "MQTT_PROTOCOL_V5"
+          : obj->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311"
+                                                    : "UNKNOWN");
   MQTT_RETURN_IF_FAILED(mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, obj->mqtt_version));
 
   /*callbacks */
