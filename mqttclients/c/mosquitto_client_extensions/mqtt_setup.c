@@ -11,7 +11,7 @@
 #include "mqtt_setup.h"
 
 // A certificate path (any string) is required when configuring mosquitto to use OS certificates.
-#define REQUIRED_TLS_CERT_PATH "L"
+#define REQUIRED_TLS_SET_CERT_PATH "L"
 
 volatile sig_atomic_t keep_running = 1;
 
