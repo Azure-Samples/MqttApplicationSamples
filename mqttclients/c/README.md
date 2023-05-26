@@ -2,7 +2,6 @@
 
 ## Unique to C Samples/mosquitto Client Library
 
-- For connections to Event Grid, setting the CA_PATH environment variable is required. This is the path to a directory containing the PEM encoded trusted CA certificate files. For CA_PATH to work correctly, the certificate files must have ".crt" as the file ending and you must run `openssl rehash <path to capath>` each time you add/remove a certificate. On many Linux setups, this can be set to `/etc/ssl/certs`.
 - If you set KEEP_ALIVE_IN_SECONDS to `0`, no keepalive checks are made and the client will never be disconnected by the broker if no messages are received. The minimum value for mosquitto is `5`, and the max is `65535`. There is no default value for the mosquitto library, but if you haven't passed a value to the environment variable, we will set it to `30` to align with the other language samples.
 
 ## C Specific Prerequisites
