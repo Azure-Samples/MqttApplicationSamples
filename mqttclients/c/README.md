@@ -10,6 +10,7 @@
 - [CMake](https://cmake.org/download/) version 3.20 or later to use cmake presets
 - Other requirements
     ``` bash
+    sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
     sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
     ```
 
@@ -46,7 +47,6 @@ cmake --build scenarios/<sample name>/c/build
 ## Using VS Code
 
 - Install the VS Code extension `ms-vscode.cpptools-extension-pack`
-- sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
 - Generate .env file(s) and key/pem files as directed in main readmes
 - Go to the `Run and Debug` tab in VS Code and select one of the C samples from the dropdown
 - Click the Green Play button and you should be good to go!
@@ -56,7 +56,6 @@ cmake --build scenarios/<sample name>/c/build
 > Note: This is not a default supported configuration, but can be useful for testing. Configuration changes needed for this to work are listed below
 
 - Install the VS Code extension `ms-vscode.cpptools-extension-pack`
-- sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
 - Generate .env file(s) and key/pem files as directed in main readmes
 - The CMake extension doesn't allow us to dictate where the sample runs from, so modify your .env files to use absolute paths for the CA_FILE, CERT_FILE, and KEY_FILE if needed for your sample
 - The CMake extension has limited capabilities for passing in command line arguments, so rename your .env files to be the name of the sample executable so they can be properly passed in (ex. `telemetry_producer.env`), and add the following to your settings.json to have the .env file be passed in:
