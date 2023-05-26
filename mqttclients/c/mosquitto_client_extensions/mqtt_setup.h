@@ -48,4 +48,15 @@ struct mosquitto* mqtt_client_init(
         const mosquitto_property* props),
     mqtt_client_obj* mqtt_client_obj);
 
+bool set_char_connection_setting(
+    char** connection_setting,
+    const char* env_name,
+    bool fail_not_defined);
+
+bool set_int_connection_setting(int* connection_setting, char* env_name, int default_value);
+
+bool set_bool_connection_setting(bool* connection_setting, char* env_name, bool default_value);
+
+bool mqtt_client_set_connection_settings(mqtt_client_connection_settings* connection_settings);
+
 #endif /* MQTT_SETUP_H */
