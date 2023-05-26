@@ -311,9 +311,9 @@ struct mosquitto* mqtt_client_init(
 
   printf(
       "MQTT_VERSION = %s\n",
-      obj->mqtt_version == MQTT_PROTOCOL_V5         ? "MQTT_PROTOCOL_V5"
-          : obj->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311"
-                                                    : "UNKNOWN");
+      obj->mqtt_version == MQTT_PROTOCOL_V5
+          ? "MQTT_PROTOCOL_V5"
+          : obj->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311" : "UNKNOWN");
   MQTT_RETURN_IF_FAILED(mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, obj->mqtt_version));
 
   /*callbacks */
