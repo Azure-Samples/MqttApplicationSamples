@@ -1,15 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "mqtt_client_test.h"
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+// clang-format off
+// cmocka has to come after stddef.h
 #include <cmocka.h>
+// clang-format on
 
+#include "mqtt_client_test.h"
 #include "mqtt_setup.h"
 
 #define assert_bool_equal(expected, actual) assert_int_equal(expected, actual)
