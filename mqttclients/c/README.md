@@ -82,6 +82,23 @@ To fix any style errors, run this command from the root of the repo (if you used
 clang-format-9 -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*")
 ```
 
+## Running Tests
+The Unit Tests are using the [CMocka](https://cmocka.org/) framework.
+On Ubuntu, this can be installed by running:
+
+`sudo apt install libcmocka-dev libcmocka0`
+
+To configure and build the unit tests:
+
+```bash
+cd c/tests
+mkdir build
+cd build
+cmake ..
+cmake --build .
+ctest
+```
+
 ## Additional Resources
 
 - To print out all mosquitto logs, set cmake option `LOG_ALL_MOSQUITTO` to ON. When set to OFF (the default value), only ping requests/responses get printed.

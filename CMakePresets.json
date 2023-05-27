@@ -25,6 +25,16 @@
                 "CMAKE_BUILD_TYPE": "Debug",
                 "PRESET_PATH": "${sourceDir}/scenarios/${presetName}/c"
             }
+        },
+        {
+            "name": "tests",
+            "displayName": "Unit Tests",
+            "binaryDir": "${sourceDir}/mqttclients/c/tests/build",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "PRESET_PATH": "${sourceDir}/mqttclients/c/${presetName}"
+            }
         }
     ],
     "buildPresets": [
@@ -44,6 +54,14 @@
             "targets": [
                 "getting_started"
             ]
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "extension_tests",
+            "description": "",
+            "displayName": "Extension Tests",
+            "configurePreset": "tests"
         }
     ]
 }

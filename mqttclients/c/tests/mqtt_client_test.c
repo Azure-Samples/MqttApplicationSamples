@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 #include "mqtt_client_test.h"
-#include <cmocka.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cmocka.h>
 
 #include "mqtt_setup.h"
 
