@@ -33,7 +33,8 @@
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "PRESET_PATH": "${sourceDir}/mqttclients/c/${presetName}"
+                "PRESET_PATH": "${sourceDir}/mqttclients/c/${presetName}",
+                "ENABLE_UNIT_TESTS": "ON"
             }
         }
     ],
