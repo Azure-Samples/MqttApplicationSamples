@@ -62,7 +62,10 @@
             "name": "extension_tests",
             "description": "",
             "displayName": "Extension Tests",
-            "configurePreset": "tests"
+            "configurePreset": "tests",
+            "output": {
+                "verbosity": "verbose"
+            }
         }
     ]
 }
