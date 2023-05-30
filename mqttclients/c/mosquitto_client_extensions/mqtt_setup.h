@@ -8,6 +8,11 @@
 #include <signal.h>
 #include <stdbool.h>
 
+#define DEFAULT_TCP_PORT 8883
+#define DEFAULT_KEEP_ALIVE_IN_SECONDS 30
+#define DEFAULT_USE_TLS true
+#define DEFAULT_CLEAN_SESSION true
+
 extern volatile sig_atomic_t keep_running;
 
 typedef struct mqtt_client_connection_settings

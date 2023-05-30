@@ -38,9 +38,6 @@ static const char* valid_cert_file = "test_cert_file";
 static const char* valid_key_file = "test_key_file";
 static const char* valid_key_file_password = "test_key_file_password";
 
-static const int default_tcp_port = 8883;
-static const int default_keep_alive_in_seconds = 30;
-
 static int setup(void** state)
 {
   mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
@@ -86,8 +83,8 @@ static void test_set_int_connection_setting_default_value_sucess(void** state)
   mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
 
   assert_true(set_int_connection_setting(
-      &connection_settings->tcp_port, "MQTT_TCP_PORT", default_tcp_port));
-  assert_int_equal(connection_settings->tcp_port, default_tcp_port);
+      &connection_settings->tcp_port, "MQTT_TCP_PORT", DEFAULT_TCP_PORT));
+  assert_int_equal(connection_settings->tcp_port, DEFAULT_TCP_PORT);
 }
 
 // Test successful setting of an int environment variable
@@ -98,7 +95,7 @@ static void test_set_int_connection_setting_sucess(void** state)
 
   setenv("MQTT_TCP_PORT", valid_tcp_port_str, 1);
   assert_true(set_int_connection_setting(
-      &connection_settings->tcp_port, "MQTT_TCP_PORT", default_tcp_port));
+      &connection_settings->tcp_port, "MQTT_TCP_PORT", DEFAULT_TCP_PORT));
   assert_int_equal(connection_settings->tcp_port, valid_tcp_port);
 }
 
@@ -110,7 +107,7 @@ static void test_set_int_connection_setting_invalid_int_failure(void** state)
 
   setenv("MQTT_TCP_PORT", invalid_env_var, 1);
   assert_false(set_int_connection_setting(
-      &connection_settings->tcp_port, "MQTT_TCP_PORT", default_tcp_port));
+      &connection_settings->tcp_port, "MQTT_TCP_PORT", DEFAULT_TCP_PORT));
   assert_null(connection_settings->tcp_port);
 }
 
@@ -121,8 +118,8 @@ static void test_set_bool_connection_setting_default_value_sucess(void** state)
   mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
 
   assert_true(
-      set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", true));
-  assert_true(connection_settings->clean_session);
+      set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION));
+  assert_bool_equal(connection_settings->clean_session, DEFAULT_CLEAN_SESSION);
 }
 
 // Test successful setting of an bool environment variable
@@ -133,7 +130,7 @@ static void test_set_bool_connection_setting_sucess(void** state)
 
   setenv("MQTT_CLEAN_SESSION", valid_clean_session_str, 1);
   assert_true(
-      set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", true));
+      set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION));
   assert_bool_equal(connection_settings->clean_session, valid_clean_session);
 }
 
@@ -145,7 +142,7 @@ static void test_set_bool_connection_setting_invalid_bool_failure(void** state)
 
   setenv("MQTT_CLEAN_SESSION", invalid_env_var, 1);
   assert_false(
-      set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", true));
+      set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION));
   assert_null(connection_settings->clean_session);
 }
 
@@ -169,10 +166,10 @@ static void test_mqtt_client_set_connection_settings_min_sucess(void** state)
   assert_true(mqtt_client_set_connection_settings(connection_settings));
 
   assert_string_equal(connection_settings->hostname, valid_host_name);
-  assert_int_equal(connection_settings->tcp_port, default_tcp_port);
-  assert_true(connection_settings->use_TLS);
-  assert_true(connection_settings->clean_session);
-  assert_int_equal(connection_settings->keep_alive_in_seconds, default_keep_alive_in_seconds);
+  assert_int_equal(connection_settings->tcp_port, DEFAULT_TCP_PORT);
+  assert_bool_equal(connection_settings->use_TLS, DEFAULT_USE_TLS);
+  assert_bool_equal(connection_settings->clean_session, DEFAULT_CLEAN_SESSION);
+  assert_int_equal(connection_settings->keep_alive_in_seconds, DEFAULT_KEEP_ALIVE_IN_SECONDS);
   assert_null(connection_settings->client_id);
   assert_null(connection_settings->username);
   assert_null(connection_settings->password);
