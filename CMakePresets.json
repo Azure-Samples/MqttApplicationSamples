@@ -28,7 +28,7 @@
         },
         {
             "name": "tests",
-            "displayName": "Unit Tests",
+            "displayName": "Extension Tests",
             "binaryDir": "${sourceDir}/mqttclients/c/tests/build",
             "generator": "Ninja",
             "cacheVariables": {
