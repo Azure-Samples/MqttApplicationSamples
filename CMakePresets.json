@@ -27,13 +27,13 @@
             }
         },
         {
-            "name": "tests",
-            "displayName": "Extension Tests",
+            "name": "mqtt_client_extension_tests",
+            "displayName": "MQTT Client Extension Tests",
             "binaryDir": "${sourceDir}/mqttclients/c/tests/build",
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "PRESET_PATH": "${sourceDir}/mqttclients/c/${presetName}",
+                "PRESET_PATH": "${sourceDir}/mqttclients/c/tests",
                 "ENABLE_UNIT_TESTS": "ON"
             }
         }
@@ -59,10 +59,10 @@
     ],
     "testPresets": [
         {
-            "name": "extension_tests",
+            "name": "mqtt_client_extension_tests",
             "description": "",
-            "displayName": "Extension Tests",
-            "configurePreset": "tests",
+            "displayName": "MQTT Client Extension Tests",
+            "configurePreset": "mqtt_client_extension_tests",
             "output": {
                 "verbosity": "verbose"
             }

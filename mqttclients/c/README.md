@@ -91,7 +91,7 @@ On Ubuntu, this can be installed by running:
 To configure and build the unit tests:
 
 ```bash
-cd c/tests
+# from folder mqttclients/c/tests
 mkdir build
 cd build
 cmake ..

@@ -55,6 +55,6 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          cmake --preset=tests
+          cmake --preset=mqtt_client_extension_tests
           cmake --build mqttclients/c/tests/build
-          ctest --preset extension_tests
+          ctest --preset mqtt_client_extension_tests
