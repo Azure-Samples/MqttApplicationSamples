@@ -180,16 +180,20 @@ bool mqtt_client_set_connection_settings(mqtt_client_connection_settings* connec
   set_successfully = set_successfully
       && set_char_connection_setting(&connection_settings->hostname, "MQTT_HOST_NAME", true);
   set_successfully = set_successfully
-      && set_int_connection_setting(&connection_settings->tcp_port, "MQTT_TCP_PORT", DEFAULT_TCP_PORT);
-  set_successfully = set_successfully
-      && set_bool_connection_setting(&connection_settings->use_TLS, "MQTT_USE_TLS", DEFAULT_USE_TLS);
+      && set_int_connection_setting(
+                         &connection_settings->tcp_port, "MQTT_TCP_PORT", DEFAULT_TCP_PORT);
   set_successfully = set_successfully
       && set_bool_connection_setting(
-                         &connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION);
+                         &connection_settings->use_TLS, "MQTT_USE_TLS", DEFAULT_USE_TLS);
   set_successfully
       = set_successfully
+      && set_bool_connection_setting(
+            &connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION);
+  set_successfully = set_successfully
       && set_int_connection_setting(
-            &connection_settings->keep_alive_in_seconds, "MQTT_KEEP_ALIVE_IN_SECONDS", DEFAULT_KEEP_ALIVE_IN_SECONDS);
+                         &connection_settings->keep_alive_in_seconds,
+                         "MQTT_KEEP_ALIVE_IN_SECONDS",
+                         DEFAULT_KEEP_ALIVE_IN_SECONDS);
   set_successfully = set_successfully
       && set_char_connection_setting(&connection_settings->client_id, "MQTT_CLIENT_ID", false);
   set_successfully = set_successfully

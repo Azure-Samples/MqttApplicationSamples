@@ -117,8 +117,8 @@ static void test_set_bool_connection_setting_default_value_sucess(void** state)
   mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
   mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
 
-  assert_true(
-      set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION));
+  assert_true(set_bool_connection_setting(
+      &connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION));
   assert_bool_equal(connection_settings->clean_session, DEFAULT_CLEAN_SESSION);
 }
 
@@ -129,8 +129,8 @@ static void test_set_bool_connection_setting_sucess(void** state)
   mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
 
   setenv("MQTT_CLEAN_SESSION", valid_clean_session_str, 1);
-  assert_true(
-      set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION));
+  assert_true(set_bool_connection_setting(
+      &connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION));
   assert_bool_equal(connection_settings->clean_session, valid_clean_session);
 }
 
@@ -141,8 +141,8 @@ static void test_set_bool_connection_setting_invalid_bool_failure(void** state)
   mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
 
   setenv("MQTT_CLEAN_SESSION", invalid_env_var, 1);
-  assert_false(
-      set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION));
+  assert_false(set_bool_connection_setting(
+      &connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION));
   assert_null(connection_settings->clean_session);
 }
 
