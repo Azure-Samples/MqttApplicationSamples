@@ -13,11 +13,8 @@
 // clang-format on
 
 #include "mqtt_client_test.h"
-#include "mqtt_setup.h"
 
 #define assert_bool_equal(expected, actual) assert_int_equal(expected, actual)
-
-static mqtt_client_connection_settings* connection_settings;
 
 static const char* invalid_env_var = "cat";
 
@@ -46,40 +43,37 @@ static const int default_keep_alive_in_seconds = 30;
 
 static int setup(void** state)
 {
-  (void)state;
-  connection_settings = calloc(1, sizeof(mqtt_client_connection_settings));
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  test_state->connection_settings = calloc(1, sizeof(mqtt_client_connection_settings));
+  clearenv();
 
   return 0;
 }
 
 static int teardown(void** state)
 {
-  (void)state;
-  free(connection_settings);
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  free(test_state->connection_settings);
 
   return 0;
-}
-
-static void test_mqtt_client_basic_sucess(void** state)
-{
-  (void)state;
-
-  assert_int_equal(1, 1);
 }
 
 // Test failure if required char environment variable is not defined
 static void test_set_char_connection_setting_env_var_not_defined_failure(void** state)
 {
-  (void)state;
-  clearenv();
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
+
   assert_false(set_char_connection_setting(&connection_settings->hostname, "MQTT_HOST_NAME", true));
+  assert_null(connection_settings->hostname);
 }
 
 // Test successful setting of a char environment variable
 static void test_set_char_connection_setting_sucess(void** state)
 {
-  (void)state;
-  clearenv();
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
+
   setenv("MQTT_HOST_NAME", valid_host_name, 1);
   assert_true(set_char_connection_setting(&connection_settings->hostname, "MQTT_HOST_NAME", true));
   assert_string_equal(connection_settings->hostname, valid_host_name);
@@ -88,8 +82,9 @@ static void test_set_char_connection_setting_sucess(void** state)
 // Test successful setting of an int environment variable's default value
 static void test_set_int_connection_setting_default_value_sucess(void** state)
 {
-  (void)state;
-  clearenv();
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
+
   assert_true(set_int_connection_setting(
       &connection_settings->tcp_port, "MQTT_TCP_PORT", default_tcp_port));
   assert_int_equal(connection_settings->tcp_port, default_tcp_port);
@@ -98,8 +93,9 @@ static void test_set_int_connection_setting_default_value_sucess(void** state)
 // Test successful setting of an int environment variable
 static void test_set_int_connection_setting_sucess(void** state)
 {
-  (void)state;
-  clearenv();
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
+
   setenv("MQTT_TCP_PORT", valid_tcp_port_str, 1);
   assert_true(set_int_connection_setting(
       &connection_settings->tcp_port, "MQTT_TCP_PORT", default_tcp_port));
@@ -109,18 +105,21 @@ static void test_set_int_connection_setting_sucess(void** state)
 // Test failure if invalid int environment variable is defined
 static void test_set_int_connection_setting_invalid_int_failure(void** state)
 {
-  (void)state;
-  clearenv();
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
+
   setenv("MQTT_TCP_PORT", invalid_env_var, 1);
   assert_false(set_int_connection_setting(
       &connection_settings->tcp_port, "MQTT_TCP_PORT", default_tcp_port));
+  assert_null(connection_settings->tcp_port);
 }
 
 // Test successful setting of an bool environment variable's default value
 static void test_set_bool_connection_setting_default_value_sucess(void** state)
 {
-  (void)state;
-  clearenv();
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
+
   assert_true(
       set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", true));
   assert_true(connection_settings->clean_session);
@@ -129,8 +128,9 @@ static void test_set_bool_connection_setting_default_value_sucess(void** state)
 // Test successful setting of an bool environment variable
 static void test_set_bool_connection_setting_sucess(void** state)
 {
-  (void)state;
-  clearenv();
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
+
   setenv("MQTT_CLEAN_SESSION", valid_clean_session_str, 1);
   assert_true(
       set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", true));
@@ -140,26 +140,29 @@ static void test_set_bool_connection_setting_sucess(void** state)
 // Test failure if invalid bool environment variable is defined
 static void test_set_bool_connection_setting_invalid_bool_failure(void** state)
 {
-  (void)state;
-  clearenv();
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
+
   setenv("MQTT_CLEAN_SESSION", invalid_env_var, 1);
   assert_false(
       set_bool_connection_setting(&connection_settings->clean_session, "MQTT_CLEAN_SESSION", true));
+  assert_null(connection_settings->clean_session);
 }
 
 // Test failed setting of all connection settings if no environment variables are defined
 static void test_mqtt_client_set_connection_settings_no_env_vars_failure(void** state)
 {
-  (void)state;
-  clearenv();
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
+
   assert_false(mqtt_client_set_connection_settings(connection_settings));
 }
 
 // Test minimum successful setting of all connection settings
 static void test_mqtt_client_set_connection_settings_min_sucess(void** state)
 {
-  (void)state;
-  clearenv();
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
 
   setenv("MQTT_HOST_NAME", valid_host_name, 1);
 
@@ -183,8 +186,8 @@ static void test_mqtt_client_set_connection_settings_min_sucess(void** state)
 // Test setting all connection settings
 static void test_mqtt_client_set_connection_settings_max_sucess(void** state)
 {
-  (void)state;
-  clearenv();
+  mqtt_client_test_state* test_state = (mqtt_client_test_state*)state;
+  mqtt_client_connection_settings* connection_settings = test_state->connection_settings;
 
   setenv("MQTT_HOST_NAME", valid_host_name, 1);
   setenv("MQTT_TCP_PORT", valid_tcp_port_str, 1);
@@ -220,21 +223,29 @@ static void test_mqtt_client_set_connection_settings_max_sucess(void** state)
 int test_mqtt_client()
 {
   const struct CMUnitTest tests[]
-      = { cmocka_unit_test(test_mqtt_client_basic_sucess),
-          // char connection settings tests
-          cmocka_unit_test(test_set_char_connection_setting_env_var_not_defined_failure),
-          cmocka_unit_test(test_set_char_connection_setting_sucess),
+      = { // char connection settings tests
+          cmocka_unit_test_setup_teardown(
+              test_set_char_connection_setting_env_var_not_defined_failure, setup, teardown),
+          cmocka_unit_test_setup_teardown(test_set_char_connection_setting_sucess, setup, teardown),
           // int connection settings tests
-          cmocka_unit_test(test_set_int_connection_setting_default_value_sucess),
-          cmocka_unit_test(test_set_int_connection_setting_sucess),
-          cmocka_unit_test(test_set_int_connection_setting_invalid_int_failure),
+          cmocka_unit_test_setup_teardown(
+              test_set_int_connection_setting_default_value_sucess, setup, teardown),
+          cmocka_unit_test_setup_teardown(test_set_int_connection_setting_sucess, setup, teardown),
+          cmocka_unit_test_setup_teardown(
+              test_set_int_connection_setting_invalid_int_failure, setup, teardown),
           // bool connection settings tests
-          cmocka_unit_test(test_set_bool_connection_setting_default_value_sucess),
-          cmocka_unit_test(test_set_bool_connection_setting_sucess),
-          cmocka_unit_test(test_set_bool_connection_setting_invalid_bool_failure),
+          cmocka_unit_test_setup_teardown(
+              test_set_bool_connection_setting_default_value_sucess, setup, teardown),
+          cmocka_unit_test_setup_teardown(test_set_bool_connection_setting_sucess, setup, teardown),
+          cmocka_unit_test_setup_teardown(
+              test_set_bool_connection_setting_invalid_bool_failure, setup, teardown),
           // set all connection settings tests
-          cmocka_unit_test(test_mqtt_client_set_connection_settings_no_env_vars_failure),
-          cmocka_unit_test(test_mqtt_client_set_connection_settings_min_sucess),
-          cmocka_unit_test(test_mqtt_client_set_connection_settings_max_sucess) };
-  return cmocka_run_group_tests_name("mqtt_client", tests, setup, teardown);
+          cmocka_unit_test_setup_teardown(
+              test_mqtt_client_set_connection_settings_no_env_vars_failure, setup, teardown),
+          cmocka_unit_test_setup_teardown(
+              test_mqtt_client_set_connection_settings_min_sucess, setup, teardown),
+          cmocka_unit_test_setup_teardown(
+              test_mqtt_client_set_connection_settings_max_sucess, setup, teardown)
+        };
+  return cmocka_run_group_tests_name("mqtt_client", tests, NULL, NULL);
 }
