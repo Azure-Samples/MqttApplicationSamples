@@ -152,7 +152,14 @@ See [dotnet extensions](./mqttclients/dotnet/README.md) for more details.
 
 ### C
 
-We are using standard C, and [CMake](https://cmake.org/download/) to build. To use CMake presets, make sure to install v3.20 or later. You can install additional required tools with:
+We are using standard C, and CMake to build. These are the required tools:
+- [CMake](https://cmake.org/download/) Version 3.20 or higher to use CMake presets
+- [Mosquitto](https://mosquitto.org/download/) Version 2.0.0 or higher
+- [Ninja build system](https://github.com/ninja-build/ninja/releases) Version 1.10 or higher
+- GNU C++ compiler
+- SSL
+
+An example of installing these tools (other than CMake) is shown below:
 
 ```bash
 sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa

@@ -7,12 +7,18 @@
 ## C Specific Prerequisites
 
 > Note: Some of these may be installed automatically if you use VS Code Extensions
-- [CMake](https://cmake.org/download/) version 3.20 or later to use cmake presets
-- Other requirements
-    ``` bash
-    sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
-    sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
-    ```
+- [CMake](https://cmake.org/download/) Version 3.20 or higher to use CMake presets
+- [Mosquitto](https://mosquitto.org/download/) Version 2.0.0 or higher
+- [Ninja build system](https://github.com/ninja-build/ninja/releases) Version 1.10 or higher
+- GNU C++ compiler
+- SSL
+
+An example of installing these tools (other than CMake) is shown below:
+
+``` bash
+sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
+sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
+```
 
 ## Using the Command Line
 
