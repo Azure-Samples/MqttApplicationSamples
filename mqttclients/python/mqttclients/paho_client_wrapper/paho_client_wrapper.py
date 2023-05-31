@@ -6,10 +6,8 @@ import os
 import ssl
 from typing import Optional, Final
 import dotenv
-from paho.mqtt import client as mqtt
+import paho.mqtt.client as mqtt
 from .connection_settings import ConnectionSettings, get_connection_settings
-# import connection_settings as cs
-# from connection_settings import ConnectionSettings, get_connection_settings
 from .mqtt_helpers import IncomingMessageList, IncomingAckList, ConnectionStatus
 from typing import Any, Tuple, List, TypeVar, Optional
 
@@ -40,8 +38,10 @@ class PahoClientWrapper(object):
     def __init__(self, connection_settings: ConnectionSettings) -> None:
         self.device_id = connection_settings['MQTT_CLIENT_ID']
         self.mqtt_client = mqtt.Client(
-            client_id=self.client_id,
-            clean_session=connection_settings['MQTT_CLEAN_SESSION']
+            client_id=self.device_id,
+            clean_session=connection_settings['MQTT_CLEAN_SESSION'],
+            protocol=mqtt.MQTTv311,
+            transport="tcp",
         )
         self.mqtt_client.enable_logger()
         if 'MQTT_USERNAME' in connection_settings:

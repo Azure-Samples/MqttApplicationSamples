@@ -205,13 +205,13 @@ Install internal sample package:
 pip install ../../mqttclients/python
 ```
 
-Run the sample using settings from an envfile:
+Run the sample using settings from an envfile. This assumes the env file is placed inside the `getting_started` directory and the sample is also ran from there.
 ```bash
 # from folder scenarios/getting_started
 python python/getting_started.py --env-file <path to .env file>
 ```
 
-Run the sample using settings from environment variables:
+Run the sample using settings from a file containing environment variables.
 ```bash
 python python/getting_started.py
 ```

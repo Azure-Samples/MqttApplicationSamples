@@ -1,4 +1,4 @@
-# from typing import TypedDict, Required, Optional, Final
+
 import sys
 
 if sys.version_info >= (3, 11):
@@ -11,7 +11,6 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import TypedDict
 
-# from typing_extensions import Required
 from typing import Optional, Final
 import dotenv
 import os
@@ -69,18 +68,9 @@ def _convert_to_bool(value: str, name: str) -> bool:
 # Check if no file path is given how does this function behave?
 # Like if u don't provide anything can it find the .env file?
 def get_connection_settings(env_filename: Optional[str] = None) -> ConnectionSettings:
-    # # print("env file name")
-    # # print(env_filename)
-    # print("items")
-    # dotenv.load_dotenv(".env")
-    # print("dict")
-    # print(dotenv.dotenv_values(env_filename))
-    # d = dotenv.dotenv_values(env_filename)
-    # for key, value in d.items():
-    #     print(key, value)
-    # print("other code")
+    env_file_dict = dotenv.dotenv_values(env_filename)
     # TODO: test envfile finding if filename is None
-    envfile_values = {k: v for k, v in d.items() if k in mqtt_setting_names}
+    envfile_values = {k: v for k, v in env_file_dict.items() if k in mqtt_setting_names}
     # print(envfile_values)
     envvar_values = {k: v for k, v in os.environ.items() if k in mqtt_setting_names}
     # print(envvar_values)
@@ -93,12 +83,10 @@ def get_connection_settings(env_filename: Optional[str] = None) -> ConnectionSet
     }
     
     final_values = {**default_values, **envvar_values, **envfile_values}
-    print("Final")
-    print(final_values)
+
     if 'MQTT_HOST_NAME' not in final_values:
         raise ValueError('MQTT_HOST_NAME must be set')
 
-    # MQTT 5 supports passwords without usernames, but Paho does not
     if 'MQTT_PASSWORD' in final_values and 'MQTT_USERNAME' not in final_values:
         raise ValueError('MQTT_USERNAME must be set if MQTT_PASSWORD is set')
 
