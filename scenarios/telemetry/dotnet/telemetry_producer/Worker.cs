@@ -42,6 +42,7 @@ public class Worker : BackgroundService
         await mqttClient!.StartAsync(new ManagedMqttClientOptionsBuilder()
             .WithClientOptions(new MqttClientOptionsBuilder()
                 .WithConnectionSettings(cs)
+                .WithProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion.V500)
                 .Build())
             .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
             .Build());

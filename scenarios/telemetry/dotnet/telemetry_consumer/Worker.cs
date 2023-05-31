@@ -30,11 +30,17 @@ public class Worker : BackgroundService
 
             PositionTelemetryConsumer positionTelemetry = new(mqttClient.InternalClient)
             {
-                OnTelemetryReceived = m => 
-                _logger.LogInformation("Received msg from {id}. Coordinates lat: {x}, lon: {y}",
+                OnTelemetryReceived = async m =>
+                { 
+                    await Task.Yield();
+                    
+                    _logger.LogInformation("Received msg from {id}. Coordinates lat: {x}, lon: {y}",
                         m.ClientIdFromTopic, 
                         m.Payload!.Coordinates.Latitude, 
-                        m.Payload.Coordinates.Longitude)
+                        m.Payload.Coordinates.Longitude);
+
+                    return false;
+                }
             };
             await positionTelemetry.StartAsync();
         };
@@ -42,6 +48,7 @@ public class Worker : BackgroundService
         await mqttClient.StartAsync(new ManagedMqttClientOptionsBuilder()
             .WithClientOptions(new MqttClientOptionsBuilder()
                 .WithConnectionSettings(cs)
+                .WithProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion.V500)
                 .Build())
              .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
             .Build());
