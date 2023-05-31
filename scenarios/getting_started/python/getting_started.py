@@ -4,10 +4,14 @@
 import sys
 from mqttclients import paho_client_wrapper as pc
 from argparse import ArgumentParser
+import logging
+import time
 
 parser = ArgumentParser()
 parser.add_argument("--env-file", help="path to the .env file to use")
 args = parser.parse_args()
+
+logging.basicConfig(level=logging.DEBUG)
 
 connection_settings = pc.connection_settings.get_connection_settings(args.env_file)
 if not connection_settings["MQTT_CLEAN_SESSION"]:
@@ -25,9 +29,17 @@ if not paho_client.connection_status.wait_for_connected(timeout=20):
     sys.exit(1)
 print("{}: Connected".format(paho_client.device_id))
 
+# SUBSCRIBE
+(rc, mid) = paho_client.subscribe("sample/+")
+print("{}: Subscribe returned rc={}: {}".format(paho_client.device_id, rc, paho_client.error_string(rc)))
+
+
 # PUBLISH
-(rc, mid) = paho_client.publish("sample/topic1", "hello world")
+(rc, mid) = paho_client.publish("sample/topic", "hello world")
 print("{}: Publish returned rc={}: {}".format(paho_client.device_id, rc, paho_client.error_string(rc)))
+
+# SLEEP FOR SOME TIME TO RECEIVE THE MESSAGE
+time.sleep(3)
 
 # DISCONNECT
 print("{}: Disconnecting".format(paho_client.device_id))
