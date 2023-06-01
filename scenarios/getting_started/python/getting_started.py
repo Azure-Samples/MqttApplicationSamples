@@ -34,13 +34,12 @@ print("{}: Connected".format(paho_client.device_id))
 (rc, mid) = paho_client.subscribe("sample/+")
 print("{}: Subscribe returned rc={}: {}".format(paho_client.device_id, rc, paho_client.error_string(rc)))
 
-
 # PUBLISH
 (rc, mid) = paho_client.publish("sample/topic", "hello world")
 print("{}: Publish returned rc={}: {}".format(paho_client.device_id, rc, paho_client.error_string(rc)))
 
 # SLEEP FOR SOME TIME TO RECEIVE THE MESSAGE
-time.sleep(3)
+time.sleep(4)
 
 # DISCONNECT
 print("{}: Disconnecting".format(paho_client.device_id))

@@ -11,7 +11,6 @@ from .connection_settings import ConnectionSettings, get_connection_settings
 from .mqtt_helpers import IncomingMessageList, IncomingAckList, ConnectionStatus
 from typing import Any, Tuple, List, TypeVar, Optional
 
-# from typing import type
 
 logger = logging.getLogger(__name__)
 
@@ -77,11 +76,11 @@ class PahoClientWrapper(object):
             #     raise
             # except OSError as e:
             #     raise ValueError("Invalid CA certificate file") from e
-            if connection_settings['MQTT_CA_FILE']:
+            if "MQTT_CA_FILE" in connection_settings:
                 context.load_verify_locations(
                     cafile=connection_settings['MQTT_CA_FILE'],
                 )
-            elif connection_settings['MQTT_CA_PATH']:
+            elif "MQTT_CA_PATH" in connection_settings:
                 context.load_verify_locations(
                     capath=connection_settings['MQTT_CA_PATH']
                 )
