@@ -210,8 +210,3 @@ Run the sample using settings from an envfile. This assumes the env file is plac
 # from folder scenarios/getting_started
 python python/getting_started.py --env-file <path to .env file>
 ```
-
-Run the sample using settings from a file containing environment variables.
-```bash
-python python/getting_started.py
-```

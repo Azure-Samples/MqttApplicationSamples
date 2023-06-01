@@ -71,9 +71,9 @@ def get_connection_settings(env_filename: Optional[str] = None) -> ConnectionSet
     env_file_dict = dotenv.dotenv_values(env_filename)
     # TODO: test envfile finding if filename is None
     envfile_values = {k: v for k, v in env_file_dict.items() if k in mqtt_setting_names}
-    # print(envfile_values)
+    print(envfile_values)
     envvar_values = {k: v for k, v in os.environ.items() if k in mqtt_setting_names}
-    # print(envvar_values)
+    print(envvar_values)
     default_values = {
         'MQTT_TCP_PORT': '8883',
         'MQTT_USE_TLS': 'true',
