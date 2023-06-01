@@ -2,7 +2,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 import sys
-from mqttclients import paho_client_wrapper as pc
+from pahoclientwrapper import connection_settings as cs
+from pahoclientwrapper import paho_client_wrapper as pc
 from argparse import ArgumentParser
 import logging
 import time
@@ -13,7 +14,7 @@ args = parser.parse_args()
 
 logging.basicConfig(level=logging.DEBUG)
 
-connection_settings = pc.connection_settings.get_connection_settings(args.env_file)
+connection_settings = cs.get_connection_settings(args.env_file)
 if not connection_settings["MQTT_CLEAN_SESSION"]:
     raise ValueError("This sample does not support connecting with existing sessions")
 
