@@ -1,33 +1,35 @@
-﻿using MQTTnet;
-using MQTTnet.Client;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace MQTTnet.Client.Extensions;
 
-public abstract class CommandConsumer<T, TResp>
+public abstract class CommandClient<T, TResp>
 {
     private readonly IMqttClient _mqttClient;
     private readonly string _commandName;
-    private string _remoteClientId = string.Empty;
     private TaskCompletionSource<TResp>? _tcs = new();
     private readonly IMessageSerializer _serializer;
     private Guid _correlationId;
+    private readonly string _requestTopicPattern;
+    private string _responseTopic = string.Empty;
 
-    public string? RequestTopicPattern { get; set; }
-    public string? ResponseTopicPattern { get; set; }
 
-    public CommandConsumer(IMqttClient mqttClient, string cmdName, IMessageSerializer serializer)
+    public CommandClient(IMqttClient mqttClient, string cmdName, IMessageSerializer serializer)
     {
         _mqttClient = mqttClient;
         _commandName = cmdName;
         _serializer = serializer;
+
+        var rta = GetType().GetCustomAttributes(true).OfType<RequestTopicAttribute>().FirstOrDefault();
+        ArgumentNullException.ThrowIfNull(rta, nameof(RequestTopicAttribute));
+
+        _requestTopicPattern = rta!.Topic;
+
         _mqttClient.ApplicationMessageReceivedAsync += async m =>
         {
             var topic = m.ApplicationMessage.Topic;
             Trace.WriteLine(topic);
             Trace.WriteLine(_tcs!.Task.Status.ToString());
-            var expectedTopic = ResponseTopicPattern!.Replace("{clientId}", _remoteClientId).Replace("{commandName}", cmdName);
-            if (topic.Equals(expectedTopic))
+            if (topic.Equals(_responseTopic))
             {
                 if (m.ApplicationMessage.ContentType != serializer.ContentType)
                 {
@@ -50,23 +52,22 @@ public abstract class CommandConsumer<T, TResp>
             await Task.Yield();
         };
     }
-    public Task<TResp> InvokeAsync(string clientId, T request, int timeoutInSeconds = 5, CancellationToken ct = default)
+    public async Task<TResp> InvokeAsync(string clientId, T request, int timeoutInSeconds = 5, CancellationToken ct = default)
     {
-        _remoteClientId = clientId;
+        string requestTopic = _requestTopicPattern.Replace("{clientId}", clientId).Replace("{commandName}", _commandName);
+        _responseTopic = requestTopic.Replace("request", "response") + "/for/" + _mqttClient.Options.ClientId;
         _correlationId = Guid.NewGuid();
-        string requestTopic = RequestTopicPattern!.Replace("{clientId}", clientId).Replace("{commandName}", _commandName);
-        string responseTopic = ResponseTopicPattern!.Replace("{clientId}", clientId).Replace("{commandName}", _commandName);
-        _ = _mqttClient.SubscribeAsync(responseTopic, MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
-        _ = _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+        await _mqttClient.SubscribeAsync(_responseTopic, Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
+        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
             .WithTopic(requestTopic)
             .WithContentType(_serializer.ContentType)
             .WithPayload(_serializer.ToBytes(request!))
             .WithCorrelationData(_correlationId.ToByteArray())
-            .WithQualityOfServiceLevel( MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
-            .WithResponseTopic(responseTopic)
+            .WithQualityOfServiceLevel(Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithResponseTopic(_responseTopic)
             .Build());
 
         _tcs = new TaskCompletionSource<TResp>();
-        return _tcs!.Task.TimeoutAfter(TimeSpan.FromSeconds(timeoutInSeconds));
+        return await _tcs!.Task.TimeoutAfter(TimeSpan.FromSeconds(timeoutInSeconds));
     }
 }

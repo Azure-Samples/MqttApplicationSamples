@@ -2,16 +2,16 @@
 
 import "google/protobuf/timestamp.proto";
 
-message unlockRequest {
+message UnlockRequest {
     google.protobuf.Timestamp when = 1;
     string requestedFrom = 2;
 }
 
-message unlockResponse {
+message UnlockResponse {
     bool succeed =1 ;
     string errorDetail = 2;
 }
 
 service Commands {
-	rpc unlock(unlockRequest) returns (unlockResponse);
+	rpc Unlock(UnlockRequest) returns (UnlockResponse);
 }

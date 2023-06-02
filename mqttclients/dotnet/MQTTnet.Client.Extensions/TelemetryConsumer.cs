@@ -2,9 +2,9 @@
 
 public class TelemetryConsumer<T>
 {
-    readonly IMqttClient _mqttClient;
-    readonly IMessageSerializer _serializer;
-    readonly string _topicPattern;
+    private readonly IMqttClient _mqttClient;
+    private readonly IMessageSerializer _serializer;
+    private readonly string _topicPattern;
     public Action<TelemetryMessage<T>>? OnTelemetryReceived { get; set; }
 
     public TelemetryConsumer(IMqttClient mqttClient, IMessageSerializer serializer, string topicPattern)

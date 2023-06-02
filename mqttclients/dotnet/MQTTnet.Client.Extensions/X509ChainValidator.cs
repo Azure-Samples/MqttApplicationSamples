@@ -28,6 +28,6 @@ namespace MQTTnet.Client.Extensions
             return res;
         }
 
-        
+
     }
 }

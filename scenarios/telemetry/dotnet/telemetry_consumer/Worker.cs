@@ -14,7 +14,7 @@ public class Worker : BackgroundService
     public Worker(ILogger<Worker> logger, IConfiguration configuration)
     {
         _logger = logger;
-        _configuration  = configuration;
+        _configuration = configuration;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -30,10 +30,10 @@ public class Worker : BackgroundService
 
             PositionTelemetryConsumer positionTelemetry = new(mqttClient.InternalClient)
             {
-                OnTelemetryReceived = m => 
+                OnTelemetryReceived = m =>
                 _logger.LogInformation("Received msg from {id}. Coordinates lat: {x}, lon: {y}",
-                        m.ClientIdFromTopic, 
-                        m.Payload!.Coordinates.Latitude, 
+                        m.ClientIdFromTopic,
+                        m.Payload!.Coordinates.Latitude,
                         m.Payload.Coordinates.Longitude)
             };
             await positionTelemetry.StartAsync();

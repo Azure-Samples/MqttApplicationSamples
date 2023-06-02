@@ -1,10 +1,10 @@
-using GeoJSON.Text.Geometry;
+using Google.Protobuf.WellKnownTypes;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
 using MQTTnet.Extensions.ManagedClient;
 
-namespace telemetry_producer;
+namespace command_client;
 
 public class Worker : BackgroundService
 {
@@ -18,31 +18,36 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+
         var cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile"));
         _logger.LogInformation("Connecting to {cs}", cs);
 
         var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
+        UnlockCommandClient commandClient = new(mqttClient.InternalClient);
 
         mqttClient.InternalClient.ConnectedAsync += async cea =>
         {
             _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
 
-            var telemetryPosition = new PositionTelemetryProducer(mqttClient.InternalClient);
-
             while (!stoppingToken.IsCancellationRequested)
             {
-                var pubAck = await telemetryPosition.SendTelemetryAsync(
-                    new Point(new Position(51.899523, -2.124156)), stoppingToken);
-                _logger.LogInformation("Message published with PUBACK {code}", pubAck.ReasonCode);
-                await Task.Delay(5000, stoppingToken);
+                _logger.LogInformation("Invoking Command: {time}", DateTimeOffset.Now);
+                UnlockResponse response = await commandClient.InvokeAsync("vehicle03",
+                    new UnlockRequest
+                    {
+                        When = DateTime.Now.ToUniversalTime().ToTimestamp(),
+                        RequestedFrom = mqttClient.InternalClient.Options.ClientId
+                    }, 2);
+                _logger.LogInformation("Command response: {res}", response.Succeed);
+                await Task.Delay(2000, stoppingToken);
             }
         };
 
         await mqttClient!.StartAsync(new ManagedMqttClientOptionsBuilder()
-            .WithClientOptions(new MqttClientOptionsBuilder()
-                .WithConnectionSettings(cs)
-                .Build())
-            .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
-            .Build());
+         .WithClientOptions(new MqttClientOptionsBuilder()
+             .WithConnectionSettings(cs)
+             .Build())
+         .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
+         .Build());
     }
 }

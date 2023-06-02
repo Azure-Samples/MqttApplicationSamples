@@ -62,7 +62,11 @@ public class MqttConnectionSettings
             foreach (var line in File.ReadAllLines(envFile))
             {
                 var parts = line.Split('=', StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length != 2) continue;
+                if (parts.Length != 2)
+                {
+                    continue;
+                }
+
                 Environment.SetEnvironmentVariable(parts[0], parts[1]);
             }
         }
@@ -123,7 +127,7 @@ public class MqttConnectionSettings
 
     private static MqttConnectionSettings ParseConnectionString(string connectionString)
     {
-        
+
         IDictionary<string, string> map = connectionString.ToDictionary(';', '=');
         string hostName = GetStringValue(map, nameof(HostName));
         ArgumentNullException.ThrowIfNull(hostName, nameof(hostName));

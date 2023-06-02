@@ -1,6 +1,5 @@
-﻿using MQTTnet.Client;
+﻿using System.Diagnostics;
 using System.Security;
-using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 
 namespace MQTTnet.Client.Extensions;
@@ -36,7 +35,11 @@ public static partial class MqttNetExtensions
                 X509Certificate2Collection caCerts = new();
                 caCerts.ImportFromPemFile(cs.CaFile);
                 certs.AddRange(caCerts);
-                foreach (var c in caCerts) Trace.WriteLine($"cert trust chain: {c.Subject}");
+                foreach (var c in caCerts)
+                {
+                    Trace.WriteLine($"cert trust chain: {c.Subject}");
+                }
+
                 tls.CertificateValidationHandler = ea => X509ChainValidator.ValidateChain(ea.Certificate, caCerts);
             }
             else

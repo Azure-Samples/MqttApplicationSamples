@@ -1,6 +1,4 @@
-﻿using Xunit.Sdk;
-
-namespace MQTTnet.Extensions.MultiCloud.UnitTests;
+﻿namespace MQTTnet.Extensions.MultiCloud.UnitTests;
 
 public class MqttConnectionSettingsFixture
 {
@@ -123,12 +121,16 @@ public class MqttConnectionSettingsFixture
         Assert.Empty(cs.KeyFilePassword!);
     }
 
-    void RemoveTestEnvVars(string envFile)
+    private void RemoveTestEnvVars(string envFile)
     {
         foreach (var line in File.ReadAllLines(envFile))
         {
             var parts = line.Split('=', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length != 2) continue;
+            if (parts.Length != 2)
+            {
+                continue;
+            }
+
             Environment.SetEnvironmentVariable(parts[0], null);
         }
     }

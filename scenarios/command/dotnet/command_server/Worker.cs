@@ -1,10 +1,9 @@
-using Google.Protobuf.WellKnownTypes;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
 using MQTTnet.Extensions.ManagedClient;
 
-namespace command_consumer;
+namespace command_server;
 
 public class Worker : BackgroundService
 {
@@ -18,36 +17,39 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-
         var cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile"));
         _logger.LogInformation("Connecting to {cs}", cs);
 
         var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
-        UnlockCommandConsumer commandClient = new(mqttClient.InternalClient);
 
         mqttClient.InternalClient.ConnectedAsync += async cea =>
         {
             _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
 
-            while (!stoppingToken.IsCancellationRequested)
+            UnlockCommandServer commandUnlock = new(mqttClient.InternalClient)
             {
-                _logger.LogInformation("Invoking Command: {time}", DateTimeOffset.Now);
-                unlockResponse response = await commandClient.InvokeAsync("vehicle03",
-                    new unlockRequest
-                    {
-                        When = DateTime.Now.ToUniversalTime().ToTimestamp(),
-                        RequestedFrom = mqttClient.InternalClient.Options.ClientId
-                    }, 2);
-                _logger.LogInformation("Command response: {res}", response.Succeed);
-                await Task.Delay(2000, stoppingToken);
-            }
+                OnCommandReceived = Unlock
+            };
+            await commandUnlock.StartAsync();
+
+            await Task.Yield();
         };
 
         await mqttClient!.StartAsync(new ManagedMqttClientOptionsBuilder()
-         .WithClientOptions(new MqttClientOptionsBuilder()
-             .WithConnectionSettings(cs)
-             .Build())
-         .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
-         .Build());
+           .WithClientOptions(new MqttClientOptionsBuilder()
+               .WithConnectionSettings(cs)
+               .Build())
+           .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
+           .Build());
+    }
+
+    private async Task<UnlockResponse> Unlock(UnlockRequest unlockRequest)
+    {
+        _logger.LogInformation("Received Unlock request from {from}", unlockRequest.RequestedFrom);
+
+        return await Task.FromResult(new UnlockResponse
+        {
+            Succeed = true
+        });
     }
 }
