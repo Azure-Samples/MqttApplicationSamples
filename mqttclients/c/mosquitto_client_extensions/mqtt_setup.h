@@ -13,7 +13,6 @@ extern volatile sig_atomic_t keep_running;
 typedef struct mqtt_client_connection_settings
 {
   char* ca_file;
-  char* ca_path;
   char* cert_file;
   char* client_id;
   char* hostname;

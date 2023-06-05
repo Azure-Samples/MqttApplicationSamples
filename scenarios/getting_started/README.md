@@ -101,7 +101,6 @@ echo "MQTT_USERNAME=sample_client" >> .env
 echo "MQTT_CLIENT_ID=sample_client" >> .env
 echo "MQTT_CERT_FILE=sample_client.pem" >> .env
 echo "MQTT_KEY_FILE=sample_client.key" >> .env
-echo "MQTT_CA_PATH=/etc/ssl/certs" >> .env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
 ## :fly: Configure Mosquitto

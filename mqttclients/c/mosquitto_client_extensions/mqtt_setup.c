@@ -10,6 +10,10 @@
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
 
+// A certificate path (any string) is required when configuring mosquitto to use OS certificates
+// when use_TLS is true and you're not using a ca file.
+#define REQUIRED_TLS_SET_CERT_PATH "L"
+
 volatile sig_atomic_t keep_running = 1;
 
 static void sig_handler(int _)
@@ -199,8 +203,6 @@ bool mqtt_client_set_connection_settings(mqtt_client_connection_settings* connec
   set_successfully = set_successfully
       && set_char_connection_setting(&connection_settings->ca_file, "MQTT_CA_FILE", false);
   set_successfully = set_successfully
-      && set_char_connection_setting(&connection_settings->ca_path, "MQTT_CA_PATH", false);
-  set_successfully = set_successfully
       && set_char_connection_setting(&connection_settings->cert_file, "MQTT_CERT_FILE", false);
   set_successfully = set_successfully
       && set_char_connection_setting(&connection_settings->key_file, "MQTT_KEY_FILE", false);
@@ -338,16 +340,21 @@ struct mosquitto* mqtt_client_init(
 
   if (connection_settings->use_TLS)
   {
-    /* Need ca_file for mosquitto broker, but ca_path for event grid - fine for the unneeded one to
-     * be null */
+    bool use_OS_certs = connection_settings->ca_file == NULL;
+    if (use_OS_certs)
+    {
+      MQTT_RETURN_IF_FAILED(mosquitto_int_option(mosq, MOSQ_OPT_TLS_USE_OS_CERTS, true));
+    }
     MQTT_RETURN_IF_FAILED(mosquitto_tls_set(
         mosq,
         connection_settings->ca_file,
-        connection_settings->ca_path,
+        use_OS_certs ? REQUIRED_TLS_SET_CERT_PATH : NULL,
         connection_settings->cert_file,
         connection_settings->key_file,
         NULL));
   }
+
+  free(connection_settings);
 
   return mosq;
 }

@@ -129,13 +129,11 @@ echo "MQTT_HOST_NAME=$host_name" > vehicle03.env
 echo "MQTT_USERNAME=vehicle03" >> vehicle03.env
 echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
 echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
-echo "MQTT_CA_PATH=/etc/ssl/certs" >> vehicle03.env # required by mosquitto_lib to validate EG Tls cert 
 
 echo "MQTT_HOST_NAME=$host_name" > mobile-app.env
 echo "MQTT_USERNAME=mobile-app" >> mobile-app.env
 echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
 echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
-echo "MQTT_CA_PATH=/etc/ssl/certs" >> mobile-app.env # required by mosquitto_lib to validate EG Tls cert 
 ```
 
 ## :fly: Configure Mosquitto
