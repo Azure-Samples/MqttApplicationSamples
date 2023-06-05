@@ -39,6 +39,15 @@ static void sig_handler(int _)
     }                                            \
   } while (0)
 
+#define RETURN_FALSE_IF_FAILED(rc) \
+  do                               \
+  {                                \
+    if (rc == false)               \
+    {                              \
+      return false;                \
+    }                              \
+  } while (0)
+
 void mqtt_client_read_env_file(char* file_path)
 {
   /* If there was no env file_path passed in, look for a .env file in the current directory. */
@@ -175,44 +184,36 @@ bool set_bool_connection_setting(bool* connection_setting, char* env_name, bool 
  */
 bool mqtt_client_set_connection_settings(mqtt_client_connection_settings* connection_settings)
 {
-  bool set_successfully = true;
+  RETURN_FALSE_IF_FAILED(
+      set_char_connection_setting(&connection_settings->hostname, "MQTT_HOST_NAME", true));
+  RETURN_FALSE_IF_FAILED(set_int_connection_setting(
+      &connection_settings->tcp_port, "MQTT_TCP_PORT", DEFAULT_TCP_PORT));
+  RETURN_FALSE_IF_FAILED(
+      set_bool_connection_setting(&connection_settings->use_TLS, "MQTT_USE_TLS", DEFAULT_USE_TLS));
+  RETURN_FALSE_IF_FAILED(set_bool_connection_setting(
+      &connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION));
+  RETURN_FALSE_IF_FAILED(set_int_connection_setting(
+      &connection_settings->keep_alive_in_seconds,
+      "MQTT_KEEP_ALIVE_IN_SECONDS",
+      DEFAULT_KEEP_ALIVE_IN_SECONDS));
+  RETURN_FALSE_IF_FAILED(
+      set_char_connection_setting(&connection_settings->client_id, "MQTT_CLIENT_ID", false));
+  RETURN_FALSE_IF_FAILED(
+      set_char_connection_setting(&connection_settings->username, "MQTT_USERNAME", false));
+  RETURN_FALSE_IF_FAILED(
+      set_char_connection_setting(&connection_settings->password, "MQTT_PASSWORD", false));
+  RETURN_FALSE_IF_FAILED(
+      set_char_connection_setting(&connection_settings->ca_file, "MQTT_CA_FILE", false));
+  RETURN_FALSE_IF_FAILED(
+      set_char_connection_setting(&connection_settings->ca_path, "MQTT_CA_PATH", false));
+  RETURN_FALSE_IF_FAILED(
+      set_char_connection_setting(&connection_settings->cert_file, "MQTT_CERT_FILE", false));
+  RETURN_FALSE_IF_FAILED(
+      set_char_connection_setting(&connection_settings->key_file, "MQTT_KEY_FILE", false));
+  RETURN_FALSE_IF_FAILED(set_char_connection_setting(
+      &connection_settings->key_file_password, "MQTT_KEY_FILE_PASSWORD", false));
 
-  set_successfully = set_successfully
-      && set_char_connection_setting(&connection_settings->hostname, "MQTT_HOST_NAME", true);
-  set_successfully = set_successfully
-      && set_int_connection_setting(
-                         &connection_settings->tcp_port, "MQTT_TCP_PORT", DEFAULT_TCP_PORT);
-  set_successfully = set_successfully
-      && set_bool_connection_setting(
-                         &connection_settings->use_TLS, "MQTT_USE_TLS", DEFAULT_USE_TLS);
-  set_successfully
-      = set_successfully
-      && set_bool_connection_setting(
-            &connection_settings->clean_session, "MQTT_CLEAN_SESSION", DEFAULT_CLEAN_SESSION);
-  set_successfully = set_successfully
-      && set_int_connection_setting(
-                         &connection_settings->keep_alive_in_seconds,
-                         "MQTT_KEEP_ALIVE_IN_SECONDS",
-                         DEFAULT_KEEP_ALIVE_IN_SECONDS);
-  set_successfully = set_successfully
-      && set_char_connection_setting(&connection_settings->client_id, "MQTT_CLIENT_ID", false);
-  set_successfully = set_successfully
-      && set_char_connection_setting(&connection_settings->username, "MQTT_USERNAME", false);
-  set_successfully = set_successfully
-      && set_char_connection_setting(&connection_settings->password, "MQTT_PASSWORD", false);
-  set_successfully = set_successfully
-      && set_char_connection_setting(&connection_settings->ca_file, "MQTT_CA_FILE", false);
-  set_successfully = set_successfully
-      && set_char_connection_setting(&connection_settings->ca_path, "MQTT_CA_PATH", false);
-  set_successfully = set_successfully
-      && set_char_connection_setting(&connection_settings->cert_file, "MQTT_CERT_FILE", false);
-  set_successfully = set_successfully
-      && set_char_connection_setting(&connection_settings->key_file, "MQTT_KEY_FILE", false);
-  set_successfully = set_successfully
-      && set_char_connection_setting(
-                         &connection_settings->key_file_password, "MQTT_KEY_FILE_PASSWORD", false);
-
-  return set_successfully;
+  return true;
 }
 
 static void _set_subscribe_callbacks(struct mosquitto* mosq)
