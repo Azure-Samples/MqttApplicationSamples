@@ -54,7 +54,7 @@ jobs:
       - name: Build telemetry Samples
         run: cmake --preset=telemetry;cmake --build --preset=telemetry
 
-      - name: Run Unit Tests
+      - name: Build & Run Unit Tests
         run: |
           cmake --preset=mqtt_client_extension_tests
           cmake --build mqttclients/c/tests/build
