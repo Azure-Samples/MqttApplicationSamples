@@ -1,5 +1,5 @@
 # Install mosquitto client
-sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
+sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa -y
 sudo apt-get update && sudo apt-get install mosquitto-clients mosquitto ninja-build libmosquitto-dev -y
 
 #Install step cli
