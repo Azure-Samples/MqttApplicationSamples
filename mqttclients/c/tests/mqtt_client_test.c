@@ -33,7 +33,6 @@ static const char* valid_client_id = "test_client_id";
 static const char* valid_username = "test_username";
 static const char* valid_password = "test_password";
 static const char* valid_ca_file = "test_ca_file";
-static const char* valid_ca_path = "test_ca_path";
 static const char* valid_cert_file = "test_cert_file";
 static const char* valid_key_file = "test_key_file";
 static const char* valid_key_file_password = "test_key_file_password";
@@ -174,7 +173,6 @@ static void test_mqtt_client_set_connection_settings_min_sucess(void** state)
   assert_null(connection_settings->username);
   assert_null(connection_settings->password);
   assert_null(connection_settings->ca_file);
-  assert_null(connection_settings->ca_path);
   assert_null(connection_settings->cert_file);
   assert_null(connection_settings->key_file);
   assert_null(connection_settings->key_file_password);
@@ -195,7 +193,6 @@ static void test_mqtt_client_set_connection_settings_max_sucess(void** state)
   setenv("MQTT_USERNAME", valid_username, 1);
   setenv("MQTT_PASSWORD", valid_password, 1);
   setenv("MQTT_CA_FILE", valid_ca_file, 1);
-  setenv("MQTT_CA_PATH", valid_ca_path, 1);
   setenv("MQTT_CERT_FILE", valid_cert_file, 1);
   setenv("MQTT_KEY_FILE", valid_key_file, 1);
   setenv("MQTT_KEY_FILE_PASSWORD", valid_key_file_password, 1);
@@ -211,7 +208,6 @@ static void test_mqtt_client_set_connection_settings_max_sucess(void** state)
   assert_string_equal(connection_settings->username, valid_username);
   assert_string_equal(connection_settings->password, valid_password);
   assert_string_equal(connection_settings->ca_file, valid_ca_file);
-  assert_string_equal(connection_settings->ca_path, valid_ca_path);
   assert_string_equal(connection_settings->cert_file, valid_cert_file);
   assert_string_equal(connection_settings->key_file, valid_key_file);
   assert_string_equal(connection_settings->key_file_password, valid_key_file_password);
