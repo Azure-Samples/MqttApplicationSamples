@@ -59,11 +59,17 @@ class PahoClientWrapper(object):
             # # load client cert 
             # # TODO: call only if provided the setting
             if connection_settings['MQTT_CERT_FILE']:
-                context.load_cert_chain(
+                if 'MQTT_KEY_FILE_PASSWORD' in connection_settings:
+                    context.load_cert_chain(
                     certfile=connection_settings['MQTT_CERT_FILE'],
                     keyfile=connection_settings['MQTT_KEY_FILE'],
                     password=connection_settings['MQTT_KEY_FILE_PASSWORD']
                 )
+                else:
+                    context.load_cert_chain(
+                        certfile=connection_settings['MQTT_CERT_FILE'],
+                        keyfile=connection_settings['MQTT_KEY_FILE'],
+                    )
 
             # # load trusted certs
             # # TODO: call only if user provided the setting
