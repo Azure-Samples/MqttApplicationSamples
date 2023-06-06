@@ -35,7 +35,7 @@ public class Worker : BackgroundService
                 UnlockResponse response = await commandClient.InvokeAsync("vehicle03",
                     new UnlockRequest
                     {
-                        When = DateTime.Now.ToUniversalTime().ToTimestamp(),
+                        When = DateTime.UtcNow.ToTimestamp(),
                         RequestedFrom = mqttClient.InternalClient.Options.ClientId
                     }, 2);
                 _logger.LogInformation("Command response: {res}", response.Succeed);
