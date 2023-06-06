@@ -38,7 +38,7 @@ public abstract class CommandClient<T, TResp>
 
                 if (_correlationId != new Guid(m.ApplicationMessage.CorrelationData))
                 {
-                    Trace.TraceWarning($"correlation does not match.Expected {_correlationId} actual s{new Guid(m.ApplicationMessage.CorrelationData)}");
+                    Trace.TraceWarning($"correlation does not match.Expected {_correlationId} actual {new Guid(m.ApplicationMessage.CorrelationData)}");
                 }
                 else
                 {
@@ -52,7 +52,7 @@ public abstract class CommandClient<T, TResp>
             await Task.Yield();
         };
     }
-    public async Task<TResp> InvokeAsync(string clientId, T request, int timeoutInSeconds = 5, CancellationToken ct = default)
+    public async Task<TResp> InvokeAsync(string clientId, T request, int timeoutInMilliSeconds = 5000, CancellationToken ct = default)
     {
         string requestTopic = _requestTopicPattern.Replace("{clientId}", clientId).Replace("{commandName}", _commandName);
         _responseTopic = requestTopic.Replace("request", "response") + "/for/" + _mqttClient.Options.ClientId;
@@ -68,6 +68,6 @@ public abstract class CommandClient<T, TResp>
             .Build());
 
         _tcs = new TaskCompletionSource<TResp>();
-        return await _tcs!.Task.TimeoutAfter(TimeSpan.FromSeconds(timeoutInSeconds));
+        return await _tcs!.Task.TimeoutAfter(TimeSpan.FromMilliseconds(timeoutInMilliSeconds));
     }
 }
