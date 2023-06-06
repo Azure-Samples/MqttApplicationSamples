@@ -9,6 +9,16 @@
         "MQTT_CLIENT_ID": "mobile-app",
         "MQTT_USERNAME": "sample_user"
       }
+    },
+    "mosq": {
+      "commandName": "Project",
+      "workingDirectory": "../../",
+      "commandLineArgs": "--envFile=map-app.mosq.env"
+    },
+    "eg": {
+      "commandName": "Project",
+      "workingDirectory": "../../",
+      "commandLineArgs": "--envFile=map-app.env"
     }
   }
 }

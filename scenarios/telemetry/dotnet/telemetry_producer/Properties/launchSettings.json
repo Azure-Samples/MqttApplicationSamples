@@ -9,6 +9,16 @@
         "MQTT_CLIENT_ID": "sample_client",
         "MQTT_USERNAME": "sample_user"
       }
-      }
+    },
+    "mosq": {
+      "commandName": "Project",
+      "workingDirectory": "../../",
+      "commandLineArgs": "--envFile=vehicle02.mosq.env"
+    },
+    "eg": {
+      "commandName": "Project",
+      "workingDirectory": "../../",
+      "commandLineArgs": "--envFile=vehicle02.env"
+    }
   }
 }

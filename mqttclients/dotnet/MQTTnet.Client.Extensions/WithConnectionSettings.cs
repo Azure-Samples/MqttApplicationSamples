@@ -15,7 +15,6 @@ public static partial class MqttNetExtensions
             .WithKeepAlivePeriod(TimeSpan.FromSeconds(cs.KeepAliveInSeconds))
             .WithCredentials(cs.Username, cs.Password)
             .WithCleanSession(cs.CleanSession)
-            .WithProtocolVersion(Formatter.MqttProtocolVersion.V500)
             .WithTlsSettings(cs);
 
         builder.WithClientId(cs.ClientId);
