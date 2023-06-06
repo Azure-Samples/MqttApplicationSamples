@@ -2,18 +2,26 @@
 
 ## Unique to C Samples/mosquitto Client Library
 
-- For connections to Event Grid, setting the CA_PATH environment variable is required. This is the path to a directory containing the PEM encoded trusted CA certificate files. For CA_PATH to work correctly, the certificate files must have ".crt" as the file ending and you must run `openssl rehash <path to capath>` each time you add/remove a certificate. On many Linux setups, this can be set to `/etc/ssl/certs`.
 - If you set KEEP_ALIVE_IN_SECONDS to `0`, no keepalive checks are made and the client will never be disconnected by the broker if no messages are received. The minimum value for mosquitto is `5`, and the max is `65535`. There is no default value for the mosquitto library, but if you haven't passed a value to the environment variable, we will set it to `30` to align with the other language samples.
 
 ## C Specific Prerequisites
 
 > Note: Some of these may be installed automatically if you use VS Code Extensions
-- [CMake](https://cmake.org/download/) version 3.20 or later to use cmake presets
-- Other requirements
-    ``` bash
-    sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
-    sudo apt-get install libjson-c-dev
-    ```
+- [CMake](https://cmake.org/download/) Version 3.20 or higher to use CMake presets
+- [Mosquitto](https://mosquitto.org/download/) Version 2.0.0 or higher
+- [Ninja build system](https://github.com/ninja-build/ninja/releases) Version 1.10 or higher
+- GNU C++ compiler
+- SSL
+- [JSON-C](https://github.com/json-c/json-c/tree/master) if running a sample that uses JSON - currently this is the Telemetry Samples
+
+An example of installing these tools (other than CMake) is shown below:
+
+``` bash
+sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
+sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
+# If running a sample that uses JSON
+sudo apt-get install libjson-c-dev
+```
 
 ## Using the Command Line
 
@@ -49,7 +57,6 @@ cmake --build scenarios/<sample name>/c/build
 
 - Install the VS Code extension `ms-vscode.cpptools-extension-pack`
 - sudo apt-get install build-essential gdb
-- sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
 - Generate .env file(s) and key/pem files as directed in main readmes
 - Go to the `Run and Debug` tab in VS Code and select one of the C samples from the dropdown
 - Click the Green Play button and you should be good to go!
@@ -59,7 +66,6 @@ cmake --build scenarios/<sample name>/c/build
 > Note: This is not a default supported configuration, but can be useful for testing. Configuration changes needed for this to work are listed below
 
 - Install the VS Code extension `ms-vscode.cpptools-extension-pack`
-- sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
 - Generate .env file(s) and key/pem files as directed in main readmes
 - The CMake extension doesn't allow us to dictate where the sample runs from, so modify your .env files to use absolute paths for the CA_FILE, CERT_FILE, and KEY_FILE if needed for your sample
 - The CMake extension has limited capabilities for passing in command line arguments, so rename your .env files to be the name of the sample executable so they can be properly passed in (ex. `telemetry_producer.env`), and add the following to your settings.json to have the .env file be passed in:
@@ -82,6 +88,23 @@ To fix any style errors, run this command from the root of the repo (if you used
 
 ``` bash
 clang-format-9 -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*")
+```
+
+## Running Tests
+The Unit Tests are using the [CMocka](https://cmocka.org/) framework.
+On Ubuntu, this can be installed by running:
+
+`sudo apt install libcmocka-dev libcmocka0`
+
+To configure and build the unit tests:
+
+```bash
+# from folder mqttclients/c/tests
+mkdir build
+cd build
+cmake ..
+cmake --build .
+ctest
 ```
 
 ## Additional Resources
