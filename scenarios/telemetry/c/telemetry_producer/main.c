@@ -6,12 +6,18 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "geo_json_handler.h"
 #include "mosquitto.h"
 #include "mqtt_setup.h"
 
-#define PAYLOAD "{\"type\":\"Point\",\"coordinates\":[-2.124156,51.899523]}"
 #define QOS 1
 #define MQTT_VERSION MQTT_PROTOCOL_V311
+
+double generate_random_coordinate()
+{
+  double scale = rand() / (double)RAND_MAX;
+  return (scale * (180)) - 90;
+}
 
 /*
  * This sample sends telemetry messages to the Broker. X509 authentication is used.
@@ -45,11 +51,22 @@ int main(int argc, char* argv[])
   {
     char topic[strlen(obj->client_id) + 17];
     sprintf(topic, "vehicles/%s/position", obj->client_id);
+    mosquitto_payload payload = mosquitto_payload_init(60);
+    geojson_point geojson_point = geojson_point_init();
 
     while (keep_running)
     {
-      result = mosquitto_publish_v5(
-          mosq, NULL, topic, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, NULL);
+      geojson_point_set_coordinates(
+          &geojson_point, generate_random_coordinate(), generate_random_coordinate());
+      if (geojson_point_to_mosquitto_payload(geojson_point, &payload) != 0)
+      {
+        result = MOSQ_ERR_UNKNOWN;
+      }
+      else
+      {
+        result = mosquitto_publish_v5(
+            mosq, NULL, topic, payload.payload_length, payload.payload, QOS, false, NULL);
+      }
 
       if (result != MOSQ_ERR_SUCCESS)
       {
@@ -58,6 +75,7 @@ int main(int argc, char* argv[])
 
       sleep(5);
     }
+    mosquitto_payload_destroy(&payload);
   }
 
   if (mosq != NULL)

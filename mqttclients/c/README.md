@@ -12,6 +12,7 @@
 - Other requirements
     ``` bash
     sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
+    sudo apt-get install libjson-c-dev
     ```
 
 ## Using the Command Line
@@ -47,6 +48,7 @@ cmake --build scenarios/<sample name>/c/build
 ## Using VS Code
 
 - Install the VS Code extension `ms-vscode.cpptools-extension-pack`
+- sudo apt-get install build-essential gdb
 - sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
 - Generate .env file(s) and key/pem files as directed in main readmes
 - Go to the `Run and Debug` tab in VS Code and select one of the C samples from the dropdown

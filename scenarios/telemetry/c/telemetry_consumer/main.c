@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "geo_json_handler.h"
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
@@ -13,13 +14,18 @@
 #define MQTT_VERSION MQTT_PROTOCOL_V311
 
 // Custom callback for when a message is received.
-void print_message(const struct mosquitto_message* message)
+void print_point_telemetry_message(const struct mosquitto_message* message)
 {
-  printf(
-      "on_message: Topic: %s; QOS: %d; JSON Payload: %s\n",
-      message->topic,
-      message->qos,
-      (char*)message->payload);
+  printf("on_message: Topic: %s; QOS: %d; mid: %d\n", message->topic, message->qos, message->mid);
+
+  geojson_point json_message = geojson_point_init();
+
+  int rc = mosquitto_payload_to_geojson_point(message, &json_message);
+  if (rc == 0)
+  {
+    printf("\ttype: %s\n", json_message.type);
+    printf("\tcoordinates: %f, %f\n", json_message.coordinates.x, json_message.coordinates.y);
+  }
 }
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to
@@ -60,7 +66,7 @@ int main(int argc, char* argv[])
   int result = MOSQ_ERR_SUCCESS;
 
   mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
-  obj->print_message = print_message;
+  obj->print_message = print_point_telemetry_message;
   obj->mqtt_version = MQTT_VERSION;
 
   if ((mosq = mqtt_client_init(false, argv[1], on_connect_with_subscribe, obj)) == NULL)

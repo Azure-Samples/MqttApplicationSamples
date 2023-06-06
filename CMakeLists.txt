@@ -42,8 +42,9 @@ link_libraries(
 )
 
 # Helper functions for all samples
-file(GLOB MOSQUITTO_CLIENT_EXTENSIONS ${CMAKE_CURRENT_LIST_DIR}/mqttclients/c/mosquitto_client_extensions/*.c)
-include_directories( ${CMAKE_CURRENT_LIST_DIR}/mqttclients/c/mosquitto_client_extensions)
+set(MOSQUITTO_CLIENT_EXTENSIONS_DIR ${CMAKE_CURRENT_LIST_DIR}/mqttclients/c/mosquitto_client_extensions)
+file(GLOB MOSQUITTO_CLIENT_EXTENSIONS ${MOSQUITTO_CLIENT_EXTENSIONS_DIR}/*.c)
+include_directories( ${MOSQUITTO_CLIENT_EXTENSIONS_DIR})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
