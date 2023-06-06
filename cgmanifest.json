@@ -1,0 +1,14 @@
+{
+    "Registrations": [
+        {
+            "Component": {
+                "type": "git",
+                "git": {
+                  "CommitHash": "b0277869d9806f6fab8e1bc11c4a4987c9a79ded",
+                  "RepositoryUrl": "https://github.com/eclipse/mosquitto.git"
+                }
+            },
+            "DevelopmentDependency": false
+        }
+    ]
+}
