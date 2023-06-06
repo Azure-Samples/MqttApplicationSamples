@@ -63,7 +63,6 @@ def get_connection_settings(env_filename: Optional[str] = None) -> ConnectionSet
     env_file_dict = dotenv.dotenv_values(env_filename)
     # TODO: test envfile finding if filename is None
     envfile_values = {k: v for k, v in env_file_dict.items() if k in mqtt_setting_names}
-    print(envfile_values)
     envvar_values = {k: v for k, v in os.environ.items() if k in mqtt_setting_names}
     default_values = {
         'MQTT_TCP_PORT': '8883',
@@ -74,19 +73,7 @@ def get_connection_settings(env_filename: Optional[str] = None) -> ConnectionSet
         'MQTT_KEY_FILE_PASSWORD': 'harrypotter'
     }
 
-    # default_values_2 = {
-    #     'MQTT_TCP_PORT': '8883',
-    #     'MQTT_USE_TLS': 'true',
-    #     'MQTT_CLEAN_SESSION': 'true',
-    #     'MQTT_KEEP_ALIVE_IN_SECONDS': '30',
-    #     'MQTT_CLIENT_ID': '',
-    #     'MQTT_KEY_FILE_PASSWORD': 'harrypotter'
-    # }
-    # final_values = {**default_values_2, **default_values}
-    # final_values_1 = {**default_values, **default_values_2}
     final_values = {**default_values, **envvar_values, **envfile_values}
-    # final_values = {**envfile_values, **envvar_values, **default_values}
-    print(final_values)
 
     if 'MQTT_HOST_NAME' not in final_values:
         raise ValueError('MQTT_HOST_NAME must be set')
