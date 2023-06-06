@@ -15,7 +15,6 @@ All samples in this repo can be configured by using the next environment variabl
 |`MQTT_USERNAME`|no|string|empty|MQTT Username to authenticate the connection|
 |`MQTT_PASSWORD`|no|string|empty|MQTT Password to authenticate the connection|
 |`MQTT_CA_FILE`|no|string|empty|Path to a PEM file with the chain required to trust the TLS endpoint certificate|
-|`MQTT_CA_PATH`|no|string|empty|Path to a folder with trusted certs, eg: `/etc/ssl/certs`|
 |`MQTT_CERT_FILE`|no|string|empty|Path to a PEM file to establish X509 client authentication|
 |`MQTT_KEY_FILE`|no|string|empty|Path to a KEY file to establish X509 client authentication|
 |`MQTT_KEY_FILE_PASSWORD`|no|string|empty|Password (aka pass-phrase) to protect the key file| 

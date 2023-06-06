@@ -8,12 +8,16 @@
 #include <signal.h>
 #include <stdbool.h>
 
+#define DEFAULT_TCP_PORT 8883
+#define DEFAULT_KEEP_ALIVE_IN_SECONDS 30
+#define DEFAULT_USE_TLS true
+#define DEFAULT_CLEAN_SESSION true
+
 extern volatile sig_atomic_t keep_running;
 
 typedef struct mqtt_client_connection_settings
 {
   char* ca_file;
-  char* ca_path;
   char* cert_file;
   char* client_id;
   char* hostname;
@@ -47,5 +51,16 @@ struct mosquitto* mqtt_client_init(
         int,
         const mosquitto_property* props),
     mqtt_client_obj* mqtt_client_obj);
+
+bool set_char_connection_setting(
+    char** connection_setting,
+    const char* env_name,
+    bool fail_not_defined);
+
+bool set_int_connection_setting(int* connection_setting, char* env_name, int default_value);
+
+bool set_bool_connection_setting(bool* connection_setting, char* env_name, bool default_value);
+
+bool mqtt_client_set_connection_settings(mqtt_client_connection_settings* connection_settings);
 
 #endif /* MQTT_SETUP_H */
