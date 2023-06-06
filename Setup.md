@@ -158,12 +158,15 @@ We are using standard C, and CMake to build. These are the required tools:
 - [Ninja build system](https://github.com/ninja-build/ninja/releases) Version 1.10 or higher
 - GNU C++ compiler
 - SSL
+- [JSON-C](https://github.com/json-c/json-c/tree/master) if running a sample that uses JSON - currently this is the Telemetry Samples
 
 An example of installing these tools (other than CMake) is shown below:
 
-```bash
+``` bash
 sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
-sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev
+sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
+# If running a sample that uses JSON
+sudo apt-get install libjson-c-dev
 ```
 
 See [c extensions](./mqttclients/c/README.md) for more details.
