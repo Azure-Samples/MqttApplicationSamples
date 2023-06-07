@@ -2,6 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 
 #include <json-c/json.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,7 +24,19 @@
   {                                                       \
     if ((x) != 0)                                         \
     {                                                     \
-      printf("JSON Parsing Error: %s is negative\n", #x); \
+      printf("JSON Parsing Error: %s\n", #x); \
+      return -1;                                          \
+    }                                                     \
+  } while (0)
+
+#define RETURN_IF_NAN(x)                             \
+  do                                                      \
+  {                                                       \
+    errno = 0; \
+    x; \
+    if (errno == EINVAL)                                         \
+    {                                                     \
+      printf("JSON Parsing Error: %s is not a number\n", #x); \
       return -1;                                          \
     }                                                     \
   } while (0)
@@ -67,10 +80,8 @@ int mosquitto_payload_to_geojson_point(
   }
   json_object* coordinates = json_object_object_get(jobj, "coordinates");
   RETURN_IF_NULL(output->type = (char*)json_object_get_string(type));
-  RETURN_IF_NON_ZERO(
-      output->coordinates.x = json_object_get_double(json_object_array_get_idx(coordinates, 0)));
-  RETURN_IF_NON_ZERO(
-      output->coordinates.y = json_object_get_double(json_object_array_get_idx(coordinates, 1)));
+  RETURN_IF_NAN(output->coordinates.x = json_object_get_double(json_object_array_get_idx(coordinates, 0)));
+  RETURN_IF_NAN(output->coordinates.y = json_object_get_double(json_object_array_get_idx(coordinates, 1)));
 
   // decrements the reference count of the object and frees it if it reaches zero.
   json_object_put(jobj);
@@ -82,6 +93,7 @@ int geojson_point_to_mosquitto_payload(
     const geojson_point geojson_point,
     mosquitto_payload* message)
 {
+  RETURN_IF_NULL(geojson_point.type);
   const char* payload;
   json_object* jobj = json_object_new_object();
   json_object* type = json_object_new_string(geojson_point.type);
