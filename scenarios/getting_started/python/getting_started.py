@@ -29,7 +29,7 @@ received_prop = False
 def on_connect(client, _userdata, _flags, rc):
     global connected_prop
     print("Connected to MQTT broker")
-    # # In Paho CB thread. 
+    # # In Paho CB thread.
     with connected_cond:
         if rc == mqtt.MQTT_ERR_SUCCESS:
             connected_prop = True
@@ -37,41 +37,41 @@ def on_connect(client, _userdata, _flags, rc):
             connection_error = Exception(mqtt.connack_string(rc))
         connected_cond.notify_all()
 
-def on_subscribe(client, _userdata, mid, _granted_qos): 
-    global subscribed_prop   
+def on_subscribe(client, _userdata, mid, _granted_qos):
+    global subscribed_prop
     print(f"Subscribe for message id {mid} acknowledged by MQTT broker")
-    # # In Paho CB thread. 
+    # # In Paho CB thread.
     with subscribed_cond:
         subscribed_prop = True
         subscribed_cond.notify_all()
 
 def on_publish(_client, _userdata, mid):
-    print(f"Sent publish with message id {mid}") 
-    global published_prop   
-    # # In Paho CB thread. 
+    print(f"Sent publish with message id {mid}")
+    global published_prop
+    # # In Paho CB thread.
     with published_cond:
         published_prop = True
         published_cond.notify_all()
-    
+
 def on_message(_client, _userdata, message):
     print(f"Received message on topic {message.topic} with payload {message.payload}")
-    global received_prop   
-    # # In Paho CB thread. 
+    global received_prop
+    # # In Paho CB thread.
     with received_cond:
         received_prop = True
         received_cond.notify_all()
 
 def on_disconnect(_client, _userdata, rc):
     print("Received disconnect with error='{}'".format(mqtt.error_string(rc)))
-    global connected_prop   
-    # # In Paho CB thread. 
+    global connected_prop
+    # # In Paho CB thread.
     with connected_cond:
         connected_prop = False
         connected_cond.notify_all()
 
 def wait_for_connected(timeout: float = None) -> bool:
     with connected_cond:
-        connected_cond.wait_for(lambda: connected_prop or connection_error,timeout=timeout,)
+        connected_cond.wait_for(lambda: connected_prop or connection_error, timeout=timeout, )
         if connection_error:
             raise connection_error
         return connected_prop
@@ -79,57 +79,53 @@ def wait_for_connected(timeout: float = None) -> bool:
 def wait_for_subscribed(timeout: float = None) -> bool:
     with subscribed_cond:
         subscribed_cond.wait_for(
-            lambda: subscribed_prop ,timeout=timeout,
+            lambda: subscribed_prop, timeout=timeout,
         )
         return subscribed_prop
 
 def wait_for_published(timeout: float = None) -> bool:
     with published_cond:
         published_cond.wait_for(
-            lambda: published_prop ,timeout=timeout,
+            lambda: published_prop, timeout=timeout,
         )
         return published_prop
 
 def wait_for_receive(timeout: float = None) -> bool:
     with received_cond:
         received_cond.wait_for(
-            lambda: received_prop ,timeout=timeout,
+            lambda: received_prop, timeout=timeout,
         )
         return received_prop
 
 def wait_for_disconnected(timeout: float = None):
     with connected_cond:
-        connected_cond.wait_for(lambda: not connected_prop,timeout=timeout,)
+        connected_cond.wait_for(lambda: not connected_prop, timeout=timeout, )
 
 def create_mqtt_client(client_id, connection_settings):
     mqtt_client = mqtt.Client(
-            client_id=client_id,
-            clean_session=connection_settings['MQTT_CLEAN_SESSION'],
-            protocol=mqtt.MQTTv311,
-            transport="tcp",
-        )
+        client_id=client_id,
+        clean_session=connection_settings['MQTT_CLEAN_SESSION'],
+        protocol=mqtt.MQTTv311,
+        transport="tcp",
+    )
     if 'MQTT_USERNAME' in connection_settings:
         mqtt_client.username_pw_set(
-                username=connection_settings['MQTT_USERNAME'],
-                password=connection_settings['MQTT_PASSWORD'] if 'MQTT_PASSWORD' in connection_settings else None
+            username=connection_settings['MQTT_USERNAME'],
+            password=connection_settings['MQTT_PASSWORD'] if 'MQTT_PASSWORD' in connection_settings else None
         )
     if connection_settings['MQTT_USE_TLS']:
         context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 
         if connection_settings['MQTT_CERT_FILE']:
             context.load_cert_chain(
-                    certfile=connection_settings['MQTT_CERT_FILE'],
-                    keyfile=connection_settings['MQTT_KEY_FILE'],
-                    password=connection_settings['MQTT_KEY_FILE_PASSWORD']
+                certfile=connection_settings['MQTT_CERT_FILE'],
+                keyfile=connection_settings['MQTT_KEY_FILE'],
+                password=connection_settings['MQTT_KEY_FILE_PASSWORD']
             )
 
         if "MQTT_CA_FILE" in connection_settings:
             context.load_verify_locations(
-                    cafile=connection_settings['MQTT_CA_FILE'],
-            )
-        elif "MQTT_CA_PATH" in connection_settings:
-                context.load_verify_locations(
-                    capath=connection_settings['MQTT_CA_PATH']
+                cafile=connection_settings['MQTT_CA_FILE'],
             )
         else:
             context.load_default_certs()

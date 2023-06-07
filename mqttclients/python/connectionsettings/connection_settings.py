@@ -18,7 +18,6 @@ class ConnectionSettings(TypedDict, total=False):
     MQTT_USERNAME: str
     MQTT_PASSWORD: str
     MQTT_CA_FILE: str
-    MQTT_CA_PATH: str
     MQTT_CERT_FILE: str
     MQTT_KEY_FILE: str
     MQTT_KEY_FILE_PASSWORD: str
@@ -34,7 +33,6 @@ mqtt_setting_names: Final[list[str]] = [
     'MQTT_USERNAME',
     'MQTT_PASSWORD',
     'MQTT_CA_FILE',
-    'MQTT_CA_PATH',
     'MQTT_CERT_FILE',
     'MQTT_KEY_FILE',
     'MQTT_KEY_FILE_PASSWORD',
