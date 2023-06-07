@@ -87,9 +87,9 @@ public class MqttConnectionSettings
             KeyFile = Env(nameof(KeyFile)),
             Username = Env(nameof(Username)),
             Password = Env(nameof(Password)),
-            KeepAliveInSeconds = int.TryParse(Env(nameof(KeepAliveInSeconds)), out int keepAliveInSeconds) ? keepAliveInSeconds : Default_KeepAliveInSeconds,
+            KeepAliveInSeconds = string.IsNullOrEmpty(Env(nameof(KeepAliveInSeconds))) ? Default_KeepAliveInSeconds : CheckForValidInput(nameof(KeepAliveInSeconds), Env(nameof(KeepAliveInSeconds))),
             CleanSession = Env(nameof(CleanSession)) == "true",
-            TcpPort = int.TryParse(Env(nameof(TcpPort)), out int tcpPort) ? tcpPort : Default_TcpPort,
+            TcpPort = string.IsNullOrEmpty(Env(nameof(TcpPort))) ? Default_TcpPort : CheckForValidInput(nameof(TcpPort), Env(nameof(TcpPort))),
             UseTls = string.IsNullOrEmpty(Env(nameof(UseTls))) || Env(nameof(UseTls)) == Default_UseTls,
             CaFile = Env(nameof(CaFile)),
             DisableCrl = Env(nameof(DisableCrl)) == "true",
@@ -143,6 +143,16 @@ public class MqttConnectionSettings
             DisableCrl = GetStringValue(map, nameof(DisableCrl), Default_DisableCrl) == "true"
         };
         return cs;
+    }
+
+    private static int CheckForValidInput(string envVarName, string envVarValue)
+    {
+        if (!int.TryParse(envVarName, out var input))
+        {
+            throw new ArgumentException($"An environment variable's type was specified incorrectly: {envVarName}={envVarValue}");
+        }
+
+        return input;
     }
 
     private static void AppendIfNotEmpty(StringBuilder sb, string name, string val)
