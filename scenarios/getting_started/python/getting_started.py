@@ -164,6 +164,7 @@ mqtt_client.connect(hostname, port, keepalive)
 print("Starting network loop")
 mqtt_client.loop_start()
 
+# WAIT FOR CONNECT
 if not wait_for_connected(timeout=10):
     print("{}: failed to connect.  exiting sample".format(client_id))
     sys.exit(1)
@@ -173,6 +174,7 @@ topic = "sample/+"
 (_subscribe_result, subscribe_mid) = mqtt_client.subscribe("sample/+")
 print(f"Sending subscribe requestor topic \"{topic}\" with message id {subscribe_mid}")
 
+# WAIT FOR SUBSCRIBE
 if not wait_for_subscribed(timeout=10):
     print("{}: failed to subscribe.  exiting sample without publishing".format(client_id))
     sys.exit(1)
@@ -183,16 +185,17 @@ payload = "hello world!"
 publish_result = mqtt_client.publish(topic, payload)
 print(f"Sending publish with payload \"{payload}\" on topic \"{topic}\" with message id {publish_result.mid}")
 
-
+# WAIT FOR PUBLISH
 if not wait_for_published(timeout=10):
     print("{}: failed to publish.  exiting sample".format(client_id))
     sys.exit(1)
 
-
+# WAIT FOR MESSAGE RECEIVED
 if not wait_for_receive(timeout=10):
     print("{}: failed to receive meessage.  exiting sample".format(client_id))
     sys.exit(1)
 
+# DISCONNECT
 print("{}: Disconnecting".format(client_id))
 mqtt_client.disconnect()
 wait_for_disconnected(5)
