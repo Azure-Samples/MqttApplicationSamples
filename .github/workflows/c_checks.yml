@@ -28,7 +28,7 @@ jobs:
         run: |
           sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
           sudo apt-get update && sudo apt-get install ninja-build libmosquitto-dev -y
-          sudo apt install -y clang-format-9
+          sudo apt install -y clang-format-9 libcmocka-dev libcmocka0
           cmake --version
 
       # Runs a set of commands using the runners shell
@@ -53,3 +53,9 @@ jobs:
         run: cmake --preset=getting_started;cmake --build --preset=getting_started
       - name: Build telemetry Samples
         run: cmake --preset=telemetry;cmake --build --preset=telemetry
+
+      - name: Build & Run Unit Tests
+        run: |
+          cmake --preset=mqtt_client_extension_tests
+          cmake --build mqttclients/c/tests/build
+          ctest --preset mqtt_client_extension_tests
