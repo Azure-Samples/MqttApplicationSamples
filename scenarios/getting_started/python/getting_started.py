@@ -3,11 +3,11 @@
 # license information.
 import sys
 from connectionsettings import connection_settings as cs
-from connectionsettings import mqtt_helpers as mh
 from argparse import ArgumentParser
 import logging
 import time
-
+import paho.mqtt.client as mqtt
+import ssl
 
 def on_connect(client, _userdata, _flags, rc):
     if rc != 0:
@@ -30,11 +30,45 @@ def on_subscribe(client, _userdata, mid, _granted_qos):
 
 def on_publish(_client, _userdata, mid):
     print(f"Sent publish with message id {mid}") 
-
     
 def on_message(_client, _userdata, message):
     print(f"Received message on topic {message.topic} with payload {message.payload}")
 
+def create_mqtt_client(client_id, connection_settings):
+    mqtt_client = mqtt.Client(
+            client_id=client_id,
+            clean_session=connection_settings['MQTT_CLEAN_SESSION'],
+            protocol=mqtt.MQTTv311,
+            transport="tcp",
+        )
+    if 'MQTT_USERNAME' in connection_settings:
+        mqtt_client.username_pw_set(
+                username=connection_settings['MQTT_USERNAME'],
+                password=connection_settings['MQTT_PASSWORD'] if 'MQTT_PASSWORD' in connection_settings else None
+        )
+    if connection_settings['MQTT_USE_TLS']:
+        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+
+        if connection_settings['MQTT_CERT_FILE']:
+            context.load_cert_chain(
+                    certfile=connection_settings['MQTT_CERT_FILE'],
+                    keyfile=connection_settings['MQTT_KEY_FILE'],
+                    password=connection_settings['MQTT_KEY_FILE_PASSWORD']
+            )
+
+        if "MQTT_CA_FILE" in connection_settings:
+            context.load_verify_locations(
+                    cafile=connection_settings['MQTT_CA_FILE'],
+            )
+        elif "MQTT_CA_PATH" in connection_settings:
+                context.load_verify_locations(
+                    capath=connection_settings['MQTT_CA_PATH']
+            )
+        else:
+            context.load_default_certs()
+
+        mqtt_client.tls_set_context(context)
+    return mqtt_client
 
 parser = ArgumentParser()
 parser.add_argument("--env-file", help="path to the .env file to use")
@@ -49,7 +83,7 @@ if not connection_settings["MQTT_CLEAN_SESSION"]:
 # INITIALIZE
 print("Initializing Paho MQTT client")
 client_id = connection_settings["MQTT_CLIENT_ID"]
-mqtt_client = mh.create_mqtt_client(client_id, connection_settings)
+mqtt_client = create_mqtt_client(client_id, connection_settings)
 
 # ATTACH HANDLERS
 mqtt_client.on_connect = on_connect
