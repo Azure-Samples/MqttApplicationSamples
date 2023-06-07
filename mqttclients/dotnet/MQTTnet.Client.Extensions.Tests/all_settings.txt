@@ -7,7 +7,6 @@ MQTT_CLIENT_ID=sample_client
 MQTT_USERNAME=sample_user
 MQTT_PASSWORD=foo
 MQTT_CA_FILE=ca.pem
-MQTT_CA_PATH=/etc/ssl/certs
 MQTT_CERT_FILE=cert.pem
 MQTT_KEY_FILE=cert.key
 MQTT_KEY_FILE_PASSWORD=bar

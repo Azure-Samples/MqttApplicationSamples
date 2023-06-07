@@ -4,6 +4,7 @@
 cmake_minimum_required (VERSION 3.10)
 
 option(LOG_ALL_MOSQUITTO "Print all mosquitto logs" OFF)
+option(ENABLE_UNIT_TESTS "Build unit tests" OFF)
 
 # make LOG_ALL_MOSQUITTO option enabled to be visible to code
 if(LOG_ALL_MOSQUITTO)
@@ -15,6 +16,10 @@ project (mqtt_samples LANGUAGES C)
 set(CMAKE_C_STANDARD 99)
 
 include(FetchContent)
+
+if(ENABLE_UNIT_TESTS)
+  include(CTest)
+endif()
 
 # Mosquitto library setup
 option( DOCUMENTATION OFF )
