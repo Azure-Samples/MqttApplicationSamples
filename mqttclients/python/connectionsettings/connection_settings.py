@@ -68,7 +68,7 @@ def get_connection_settings(env_filename: Optional[str] = None) -> ConnectionSet
         'MQTT_CLEAN_SESSION': 'true',
         'MQTT_KEEP_ALIVE_IN_SECONDS': '30',
         'MQTT_CLIENT_ID': '',
-        'MQTT_KEY_FILE_PASSWORD': 'harrypotter'
+        'MQTT_KEY_FILE_PASSWORD': ''
     }
 
     final_values = {**default_values, **envvar_values, **envfile_values}

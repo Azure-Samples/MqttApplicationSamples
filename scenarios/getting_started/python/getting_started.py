@@ -121,8 +121,7 @@ def create_mqtt_client(client_id, connection_settings):
                 certfile=connection_settings['MQTT_CERT_FILE'],
                 keyfile=connection_settings['MQTT_KEY_FILE'],
                 password=connection_settings['MQTT_KEY_FILE_PASSWORD']
-            )
-
+                )
         if "MQTT_CA_FILE" in connection_settings:
             context.load_verify_locations(
                 cafile=connection_settings['MQTT_CA_FILE'],
