@@ -27,14 +27,14 @@ public class TelemetryConsumer<T>
                 var segments = topic.Split('/');
                 var msg = new TelemetryMessage<T>()
                 {
+                    MessageId = m.PacketIdentifier,
                     ClientIdFromTopic = segments[1],
-                    Payload = _serializer.FromBytes<T>(m.ApplicationMessage.Payload)
+                    Payload = _serializer.FromBytes<T>(m.ApplicationMessage.PayloadSegment.ToArray())
                 };
                 bool accept = await OnTelemetryReceived?.Invoke(msg)!;
                 System.Diagnostics.Debug.WriteLine($" Msg {m.PacketIdentifier} accepted: {accept}");
                 if (accept)
                 {
-                    m.ProcessingFailed = false;
                     await m.AcknowledgeAsync(CancellationToken.None);
                 }
             }

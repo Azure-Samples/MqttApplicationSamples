@@ -40,7 +40,7 @@ public abstract class CommandConsumer<T, TResp>
                 }
                 else
                 {
-                    TResp response = _serializer.FromBytes<TResp>(m.ApplicationMessage.Payload);
+                    TResp response = _serializer.FromBytes<TResp>(m.ApplicationMessage.PayloadSegment.ToArray());
                     if (!_tcs!.TrySetResult(response))
                     {
                         Trace.TraceError("Cannot set callback");

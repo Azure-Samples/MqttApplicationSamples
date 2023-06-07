@@ -22,6 +22,13 @@ public class Worker : BackgroundService
         _logger.LogInformation("Connecting to {cs}", cs);
 
         var mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
+
+        mqttClient.DisconnectedAsync += async d =>
+        {
+            await Task.Yield();
+            _logger.LogWarning("Disconnected from server with reason {reason} {ex}", d.Reason, d.Exception?.Message);
+        };
+
         var connAck = await mqttClient.ConnectAsync(new MqttClientOptionsBuilder()
             .WithConnectionSettings(cs)
             .Build(), stoppingToken);
@@ -34,12 +41,14 @@ public class Worker : BackgroundService
             {
                 await Task.Yield();
 
-                _logger.LogInformation("Received msg from {id}. Coordinates lat: {x}, lon: {y}",
+                _logger.LogInformation("Received msg '{mid}' from {client}. Coordinates lat: {x}, lon: {y}",
+                    m.MessageId,
                     m.ClientIdFromTopic,
                     m.Payload!.Coordinates.Latitude,
                     m.Payload.Coordinates.Longitude);
-
-                return false;
+                
+                bool accept = m.Payload.Coordinates.Altitude % 2 == 0;
+                return accept;
             }
         };
         await positionTelemetry.StartAsync();

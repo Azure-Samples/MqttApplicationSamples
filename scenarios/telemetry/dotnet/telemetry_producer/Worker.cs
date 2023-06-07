@@ -3,13 +3,13 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
 
-
 namespace telemetry_producer;
 
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly IConfiguration _configuration;
+
     public Worker(ILogger<Worker> logger, IConfiguration configuration)
     {
         _logger = logger;
@@ -22,22 +22,26 @@ public class Worker : BackgroundService
         _logger.LogInformation("Connecting to {cs}", cs);
 
         var mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
+        
+        mqttClient.DisconnectedAsync += async d =>
+        {
+            await Task.Yield();
+            _logger.LogWarning("Disconnected from server with reason {reason} {ex}", d.Reason, d.Exception?.Message);
+        };
         var connAck = await mqttClient.ConnectAsync(new MqttClientOptionsBuilder().WithConnectionSettings(cs).Build(), stoppingToken);
-
 
         _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.Options.ClientId, connAck.ResultCode);
 
         var telemetryPosition = new PositionTelemetryProducer(mqttClient);
 
+        double counter = 1;
         while (!stoppingToken.IsCancellationRequested)
         {
             var pubAck = await telemetryPosition.SendTelemetryAsync(
-                new Point(new Position(51.899523, -2.124156)), stoppingToken);
+                new Point(new Position(51.899523, -2.124156, counter++)), stoppingToken);
 
-            _logger.LogInformation("Message published with PUBACK {code}", pubAck.ReasonCode);
-            await Task.Delay(5000, stoppingToken);
-
-
+            _logger.LogInformation("Message '{mid}' published with PubAck '{code}'", pubAck.PacketIdentifier, pubAck.ReasonCode);
+            await Task.Delay(2000, stoppingToken);
         }
     }
 }
