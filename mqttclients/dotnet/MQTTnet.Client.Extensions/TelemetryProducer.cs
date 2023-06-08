@@ -18,14 +18,14 @@ public class TelemetryProducer<T>
 
     public Task<MqttClientPublishResult> SendTelemetryAsync(
         T message,
-        CancellationToken ct = default) => 
+        CancellationToken ct = default) =>
             SendTelemetryAsync(message, MqttQualityOfServiceLevel.AtLeastOnce, false, ct);
 
     public Task<MqttClientPublishResult> SendTelemetryAsync(
         T message,
         MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtLeastOnce,
         bool retain = false,
-        CancellationToken ct = default) => 
+        CancellationToken ct = default) =>
             _mqttClient.PublishBinaryAsync(
                 _telemetryTopic,
                 _serializer.ToBytes(message),
