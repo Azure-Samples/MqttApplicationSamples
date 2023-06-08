@@ -15,6 +15,9 @@ parser.add_argument("--env-file", help="path to the .env file to use")
 args = parser.parse_args()
 
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+logging.getLogger("paho").setLevel(level=logging.DEBUG)
+messages=[]
 
 connected_cond = threading.Condition()
 connected_prop = False
@@ -62,8 +65,9 @@ def on_message(_client, _userdata, message):
     #     received_cond.notify_all()
 
     msg = str(message.payload.decode("utf-8"))
-    print('RECV Topic = ', message.topic)
-    print('RECV MSG =', msg)
+    messages.append(msg)
+    # print('RECV Topic = ', message.topic)
+    # print('RECV MSG =', msg)
 
 def on_disconnect(_client, _userdata, rc):
     print("Received disconnect with error='{}'".format(mqtt.error_string(rc)))
@@ -94,12 +98,12 @@ def wait_for_subscribed(timeout: float = None) -> bool:
 #         )
 #         return published_prop
 
-def wait_for_receive(timeout: float = None) -> bool:
-    with received_cond:
-        received_cond.wait_for(
-            lambda: received_prop, timeout=timeout,
-        )
-        return received_prop
+# def wait_for_receive(timeout: float = None) -> bool:
+#     with received_cond:
+#         received_cond.wait_for(
+#             lambda: received_prop, timeout=timeout,
+#         )
+#         return received_prop
 
 def wait_for_disconnected(timeout: float = None):
     with connected_cond:
@@ -136,17 +140,17 @@ def create_mqtt_client(client_id, connection_settings):
         mqtt_client.tls_set_context(context)
     return mqtt_client
 
-class Point:
-    def __init__(self,x_init,y_init):
-        self.x = x_init
-        self.y = y_init
+# class Point:
+#     def __init__(self,x_init,y_init):
+#         self.x = x_init
+#         self.y = y_init
 
-    def shift(self, x, y):
-        self.x += x
-        self.y += y
+#     def shift(self, x, y):
+#         self.x += x
+#         self.y += y
 
-    def __repr__(self):
-        return "".join(["Point(", str(self.x), ",", str(self.y), ")"])
+#     def __repr__(self):
+#         return "".join(["Point(", str(self.x), ",", str(self.y), ")"])
 
 
 def main():
@@ -197,7 +201,7 @@ def main():
             sys.exit(1)
         # SUBSCRIBE
         topic = "vehicles/+/position"
-        (_subscribe_result, subscribe_mid) = mqtt_client.subscribe("sample/+")
+        (_subscribe_result, subscribe_mid) = mqtt_client.subscribe(topic)
         print(f"Sending subscribe requestor topic \"{topic}\" with message id {subscribe_mid}")
 
         # WAIT FOR SUBSCRIBE
@@ -218,20 +222,22 @@ def main():
 
         # WAIT FOR MESSAGE RECEIVED
         while True:
-        if not wait_for_receive(timeout=10):
-            print("{}: failed to receive meessage.  exiting sample".format(client_id))
-            sys.exit(1)
-
-
+            # if not wait_for_receive(timeout=10):
+            #     print("{}: failed to receive meessage.  exiting sample".format(client_id))
+            #     sys.exit(1)
+            print("Waiting to receive message indefintely....")
+            selection = input("Press any key to quit")
+            raise KeyboardInterrupt
     except KeyboardInterrupt:
         print("User initiated exit")
     except Exception:
         print("Unexpected exception!")
         raise
     finally:
-        print("Shutting down....")
+        num = len(messages)
+        print("Number of message received is {}".format(num))
         # DISCONNECT
-        print("{}: Disconnecting".format(client_id))
+        print("{}: Disconnecting....".format(client_id))
         mqtt_client.disconnect()
         wait_for_disconnected(5)
 

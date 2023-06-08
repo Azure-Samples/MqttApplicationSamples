@@ -142,7 +142,8 @@ class Point:
         self.y += y
 
     def __repr__(self):
-        return "".join(["Point(", str(self.x), ",", str(self.y), ")"])
+        # 
+        return "{\"type\": \"Point\", \"coordinates\": [{},{}]}".format(str(self.x, str(self.y)))
 
 
 def main():
@@ -207,16 +208,18 @@ def main():
         topic = "vehicles/{client_id}/position".format(client_id=client_id)
         while True:
             p1 = Point(51.899523, -2.124156)
+            payload = str(p1)
             publish_result = mqtt_client.publish(topic, str(p1))
             print(f"Sending publish with payload \"{payload}\" on topic \"{topic}\" with message id {publish_result.mid}")
-
+            time.sleep(10)
             # WAIT FOR PUBLISH
             # DO WE CARE FOR EACH PUBLISH AND HENCE RAISE ERROR OR EXIT SAMPLE?
             # OR DO WE JUST SLEEP BEFORE THE NEXT PUBLISH ?
-            if not wait_for_published(timeout=10):
-                print("{}: failed to publish.  exiting sample".format(client_id))
-                sys.exit(1)
+            # if not wait_for_published(timeout=10):
+            #     print("{}: failed to publish.  exiting sample".format(client_id))
+            #     sys.exit(1)
 
+            # TODO do a random selction from latitude and longitude
             p1.shift(1,1)
 
         # # WAIT FOR MESSAGE RECEIVED
