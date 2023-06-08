@@ -24,10 +24,6 @@ connected_prop = False
 connection_error = None
 subscribed_cond = threading.Condition()
 subscribed_prop = False
-# published_cond = threading.Condition()
-# published_prop = False
-received_cond = threading.Condition()
-received_prop = False
 
 def on_connect(client, _userdata, _flags, rc):
     global connected_prop
@@ -48,26 +44,11 @@ def on_subscribe(client, _userdata, mid, _granted_qos):
         subscribed_prop = True
         subscribed_cond.notify_all()
 
-# def on_publish(_client, _userdata, mid):
-#     print(f"Sent publish with message id {mid}")
-#     global published_prop
-#     # # In Paho CB thread.
-#     with published_cond:
-#         published_prop = True
-#         published_cond.notify_all()
-
 def on_message(_client, _userdata, message):
-    print(f"Received message on topic {message.topic} with payload {message.payload}")
-    # global received_prop
     # # In Paho CB thread.
-    # with received_cond:
-    #     received_prop = True
-    #     received_cond.notify_all()
-
+    print(f"Received message on topic {message.topic} with payload {message.payload}")
     msg = str(message.payload.decode("utf-8"))
     messages.append(msg)
-    # print('RECV Topic = ', message.topic)
-    # print('RECV MSG =', msg)
 
 def on_disconnect(_client, _userdata, rc):
     print("Received disconnect with error='{}'".format(mqtt.error_string(rc)))
@@ -90,20 +71,6 @@ def wait_for_subscribed(timeout: float = None) -> bool:
             lambda: subscribed_prop, timeout=timeout,
         )
         return subscribed_prop
-
-# def wait_for_published(timeout: float = None) -> bool:
-#     with published_cond:
-#         published_cond.wait_for(
-#             lambda: published_prop, timeout=timeout,
-#         )
-#         return published_prop
-
-# def wait_for_receive(timeout: float = None) -> bool:
-#     with received_cond:
-#         received_cond.wait_for(
-#             lambda: received_prop, timeout=timeout,
-#         )
-#         return received_prop
 
 def wait_for_disconnected(timeout: float = None):
     with connected_cond:
@@ -140,19 +107,6 @@ def create_mqtt_client(client_id, connection_settings):
         mqtt_client.tls_set_context(context)
     return mqtt_client
 
-# class Point:
-#     def __init__(self,x_init,y_init):
-#         self.x = x_init
-#         self.y = y_init
-
-#     def shift(self, x, y):
-#         self.x += x
-#         self.y += y
-
-#     def __repr__(self):
-#         return "".join(["Point(", str(self.x), ",", str(self.y), ")"])
-
-
 def main():
     connection_settings = cs.get_connection_settings(args.env_file)
     if not connection_settings["MQTT_CLEAN_SESSION"]:
@@ -166,25 +120,9 @@ def main():
     # ATTACH HANDLERS
     mqtt_client.on_connect = on_connect
     mqtt_client.on_message = on_message
-    # mqtt_client.on_publish = on_publish
     mqtt_client.on_subscribe = on_subscribe
     mqtt_client.on_disconnect = on_disconnect
     mqtt_client.enable_logger()
-
-    
-    # CONNECT
-    # print("{}: Starting connection".format(client_id))
-    # hostname = connection_settings['MQTT_HOST_NAME']
-    # port = connection_settings['MQTT_TCP_PORT']
-    # keepalive = connection_settings["MQTT_KEEP_ALIVE_IN_SECONDS"]
-    # mqtt_client.connect(hostname, port, keepalive)
-    # print("Starting network loop")
-    # mqtt_client.loop_start()
-
-    # # WAIT FOR CONNECT
-    # if not wait_for_connected(timeout=10):
-    #     print("{}: failed to connect.  exiting sample".format(client_id))
-    #     sys.exit(1)
 
     try:
         print("{}: Starting connection".format(client_id))
@@ -198,7 +136,7 @@ def main():
         # WAIT FOR CONNECT
         if not wait_for_connected(timeout=10):
             print("{}: failed to connect.  exiting sample".format(client_id))
-            sys.exit(1)
+            raise Error("Timeout out trying to connect")
         # SUBSCRIBE
         topic = "vehicles/+/position"
         (_subscribe_result, subscribe_mid) = mqtt_client.subscribe(topic)
@@ -207,24 +145,10 @@ def main():
         # WAIT FOR SUBSCRIBE
         if not wait_for_subscribed(timeout=10):
             print("{}: failed to subscribe.  exiting sample without publishing".format(client_id))
-            sys.exit(1)
-
-        # # PUBLISH
-        # topic = "vehicles/{client_id}/position".format(client_id=client_id)
-        # payload = Point(51.899523, -2.124156)
-        # publish_result = mqtt_client.publish(topic, payload)
-        # print(f"Sending publish with payload \"{payload}\" on topic \"{topic}\" with message id {publish_result.mid}")
-
-        # # WAIT FOR PUBLISH
-        # if not wait_for_published(timeout=10):
-        #     print("{}: failed to publish.  exiting sample".format(client_id))
-        #     sys.exit(1)
+            raise Error("Timeout out trying to subscribe")
 
         # WAIT FOR MESSAGE RECEIVED
         while True:
-            # if not wait_for_receive(timeout=10):
-            #     print("{}: failed to receive meessage.  exiting sample".format(client_id))
-            #     sys.exit(1)
             print("Waiting to receive message indefintely....")
             selection = input("Press any key to quit")
             raise KeyboardInterrupt

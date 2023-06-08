@@ -253,3 +253,24 @@ c/build/telemetry_consumer map-app.env
 ```
 
 For alternate building/running methods and more information, see the [C documentation](../../mqttclients/c/README.md).
+
+
+### python
+
+To run the python sample go to `scenarios/telemetry` folder assuming the necessary environment files are in that fodler.
+
+
+Then execute each line below in a different shell/terminal.
+
+```bash
+# from folder scenarios/telemetry
+python python/telemetry_producer.py --env-file="vehicle01.env"
+```
+```bash
+# from folder scenarios/telemetry
+python python/telemetry_producer.py --env-file="vehicle02.env"
+```
+```bash
+# from folder scenarios/telemetry
+python python/telemetry_consumer.py --env-file=map-app.env
+```

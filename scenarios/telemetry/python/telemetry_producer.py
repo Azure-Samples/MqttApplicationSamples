@@ -9,6 +9,7 @@ import time
 import paho.mqtt.client as mqtt
 import ssl
 import threading
+import random
 
 parser = ArgumentParser()
 parser.add_argument("--env-file", help="path to the .env file to use")
@@ -19,12 +20,14 @@ logging.basicConfig(level=logging.DEBUG)
 connected_cond = threading.Condition()
 connected_prop = False
 connection_error = None
-# subscribed_cond = threading.Condition()
-# subscribed_prop = False
-published_cond = threading.Condition()
-published_prop = False
-# received_cond = threading.Condition()
-# received_prop = False
+
+class Point:
+    def __init__(self,x_init,y_init):
+        self.x = x_init
+        self.y = y_init
+
+    def __repr__(self):
+        return "\"type\":\"Point\", \"coordinates\":[{x},{y}]".format(x=str(self.x), y=str(self.y))
 
 def on_connect(client, _userdata, _flags, rc):
     global connected_prop
@@ -37,29 +40,9 @@ def on_connect(client, _userdata, _flags, rc):
             connection_error = Exception(mqtt.connack_string(rc))
         connected_cond.notify_all()
 
-# def on_subscribe(client, _userdata, mid, _granted_qos):
-#     global subscribed_prop
-#     print(f"Subscribe for message id {mid} acknowledged by MQTT broker")
-#     # # In Paho CB thread.
-#     with subscribed_cond:
-#         subscribed_prop = True
-#         subscribed_cond.notify_all()
-
 def on_publish(_client, _userdata, mid):
-    print(f"Sent publish with message id {mid}")
-    global published_prop
     # # In Paho CB thread.
-    with published_cond:
-        published_prop = True
-        published_cond.notify_all()
-
-# def on_message(_client, _userdata, message):
-#     print(f"Received message on topic {message.topic} with payload {message.payload}")
-#     global received_prop
-#     # # In Paho CB thread.
-#     with received_cond:
-#         received_prop = True
-#         received_cond.notify_all()
+    print(f"Sent publish with message id {mid}")
 
 def on_disconnect(_client, _userdata, rc):
     print("Received disconnect with error='{}'".format(mqtt.error_string(rc)))
@@ -75,27 +58,6 @@ def wait_for_connected(timeout: float = None) -> bool:
         if connection_error:
             raise connection_error
         return connected_prop
-
-# def wait_for_subscribed(timeout: float = None) -> bool:
-#     with subscribed_cond:
-#         subscribed_cond.wait_for(
-#             lambda: subscribed_prop, timeout=timeout,
-#         )
-#         return subscribed_prop
-
-def wait_for_published(timeout: float = None) -> bool:
-    with published_cond:
-        published_cond.wait_for(
-            lambda: published_prop, timeout=timeout,
-        )
-        return published_prop
-
-# def wait_for_receive(timeout: float = None) -> bool:
-#     with received_cond:
-#         received_cond.wait_for(
-#             lambda: received_prop, timeout=timeout,
-#         )
-#         return received_prop
 
 def wait_for_disconnected(timeout: float = None):
     with connected_cond:
@@ -132,20 +94,6 @@ def create_mqtt_client(client_id, connection_settings):
         mqtt_client.tls_set_context(context)
     return mqtt_client
 
-class Point:
-    def __init__(self,x_init,y_init):
-        self.x = x_init
-        self.y = y_init
-
-    def shift(self, x, y):
-        self.x += x
-        self.y += y
-
-    def __repr__(self):
-        # 
-        return "{\"type\": \"Point\", \"coordinates\": [{},{}]}".format(str(self.x, str(self.y)))
-
-
 def main():
     connection_settings = cs.get_connection_settings(args.env_file)
     if not connection_settings["MQTT_CLEAN_SESSION"]:
@@ -158,37 +106,11 @@ def main():
 
     # ATTACH HANDLERS
     mqtt_client.on_connect = on_connect
-    # mqtt_client.on_message = on_message
     mqtt_client.on_publish = on_publish
-    # mqtt_client.on_subscribe = on_subscribe
     mqtt_client.on_disconnect = on_disconnect
     mqtt_client.enable_logger()
 
-    # CONNECT
-    # print("{}: Starting connection".format(client_id))
-    # hostname = connection_settings['MQTT_HOST_NAME']
-    # port = connection_settings['MQTT_TCP_PORT']
-    # keepalive = connection_settings["MQTT_KEEP_ALIVE_IN_SECONDS"]
-    # mqtt_client.connect(hostname, port, keepalive)
-    # print("Starting network loop")
-    # mqtt_client.loop_start()
-
-    # # WAIT FOR CONNECT
-    # if not wait_for_connected(timeout=10):
-    #     print("{}: failed to connect.  exiting sample".format(client_id))
-    #     sys.exit(1)
-
     try:
-        # # SUBSCRIBE
-        # topic = "sample/+"
-        # (_subscribe_result, subscribe_mid) = mqtt_client.subscribe("sample/+")
-        # print(f"Sending subscribe requestor topic \"{topic}\" with message id {subscribe_mid}")
-
-        # # WAIT FOR SUBSCRIBE
-        # if not wait_for_subscribed(timeout=10):
-        #     print("{}: failed to subscribe.  exiting sample without publishing".format(client_id))
-        #     sys.exit(1)
-
         # CONNECT
         print("{}: Starting connection".format(client_id))
         hostname = connection_settings['MQTT_HOST_NAME']
@@ -199,34 +121,21 @@ def main():
         mqtt_client.loop_start()
 
         # WAIT FOR CONNECT
-        # DOES THIS RAISE AND CATCH ?
         if not wait_for_connected(timeout=10):
             print("{}: failed to connect.  exiting sample".format(client_id))
-            sys.exit(1)
+            raise Error("Timeout out trying to connect")
 
         # PUBLISH
         topic = "vehicles/{client_id}/position".format(client_id=client_id)
         while True:
-            p1 = Point(51.899523, -2.124156)
+            lat = round(random.uniform(-90,90),6)
+            lon = round(random.uniform(-180,180),6)
+            # do a random selction from latitude and longitude
+            p1 = Point(lat, lon)
             payload = str(p1)
             publish_result = mqtt_client.publish(topic, str(p1))
             print(f"Sending publish with payload \"{payload}\" on topic \"{topic}\" with message id {publish_result.mid}")
             time.sleep(10)
-            # WAIT FOR PUBLISH
-            # DO WE CARE FOR EACH PUBLISH AND HENCE RAISE ERROR OR EXIT SAMPLE?
-            # OR DO WE JUST SLEEP BEFORE THE NEXT PUBLISH ?
-            # if not wait_for_published(timeout=10):
-            #     print("{}: failed to publish.  exiting sample".format(client_id))
-            #     sys.exit(1)
-
-            # TODO do a random selction from latitude and longitude
-            p1.shift(1,1)
-
-        # # WAIT FOR MESSAGE RECEIVED
-        # if not wait_for_receive(timeout=10):
-        #     print("{}: failed to receive meessage.  exiting sample".format(client_id))
-        #     sys.exit(1)
-
 
     except KeyboardInterrupt:
         print("User initiated exit")
