@@ -136,7 +136,7 @@ def main():
         # WAIT FOR CONNECT
         if not wait_for_connected(timeout=10):
             print("{}: failed to connect.  exiting sample".format(client_id))
-            raise Error("Timeout out trying to connect")
+            raise Exception("Timeout out trying to connect")
         # SUBSCRIBE
         topic = "vehicles/+/position"
         (_subscribe_result, subscribe_mid) = mqtt_client.subscribe(topic)
@@ -145,7 +145,7 @@ def main():
         # WAIT FOR SUBSCRIBE
         if not wait_for_subscribed(timeout=10):
             print("{}: failed to subscribe.  exiting sample without publishing".format(client_id))
-            raise Error("Timeout out trying to subscribe")
+            raise Exception("Timeout out trying to subscribe")
 
         # WAIT FOR MESSAGE RECEIVED
         while True:

@@ -123,7 +123,7 @@ def main():
         # WAIT FOR CONNECT
         if not wait_for_connected(timeout=10):
             print("{}: failed to connect.  exiting sample".format(client_id))
-            raise Error("Timeout out trying to connect")
+            raise Exception("Timeout out trying to connect")
 
         # PUBLISH
         topic = "vehicles/{client_id}/position".format(client_id=client_id)
