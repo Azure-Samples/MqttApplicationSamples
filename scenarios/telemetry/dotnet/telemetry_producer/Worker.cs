@@ -19,7 +19,7 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile"));
+        MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile"));
         _logger.LogInformation("Connecting to {cs}", cs);
 
         var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
@@ -32,7 +32,7 @@ public class Worker : BackgroundService
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var pubAck = await telemetryPosition.SendTelemetryAsync(
+                MqttClientPublishResult pubAck = await telemetryPosition.SendTelemetryAsync(
                     new Point(new Position(51.899523, -2.124156)), stoppingToken);
                 _logger.LogInformation("Message published with PUBACK {code}", pubAck.ReasonCode);
                 await Task.Delay(5000, stoppingToken);
