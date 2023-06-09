@@ -44,6 +44,7 @@ res_id="/subscriptions/${sub_id}/resourceGroups/${rg}/providers/Microsoft.EventG
 To run the `az` cli:
 - Install [AZ CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
 - Authenticate using  `az login`.
+- If the above does not work use `az login --use-device-code`
 
 ```bash
 source az.env
@@ -59,7 +60,7 @@ az resource create --id $res_id --is-full-object --properties '{
       "state": "Enabled"
     }
   },
-  "location": "eastus2euap"
+  "location": "westus2"
 }'
 ```
 
