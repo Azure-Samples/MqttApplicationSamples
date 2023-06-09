@@ -148,7 +148,7 @@ def main():
             raise TimeoutError("Timeout out trying to subscribe")
 
         # WAIT FOR MESSAGE RECEIVED
-        print("Waiting to receive message indefintely....")
+        print("Waiting to receive message indefinitely....")
         while True:
             time.sleep(60)
     except KeyboardInterrupt:
