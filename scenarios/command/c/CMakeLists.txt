@@ -8,14 +8,14 @@ link_libraries(
 )
 
 # MQTT Samples Executables
-# command_consumer
-add_executable (command_consumer
+# command_server
+add_executable (command_server
   ${MOSQUITTO_CLIENT_EXTENSIONS}
-  ${CMAKE_CURRENT_LIST_DIR}/command_consumer/main.c
+  ${CMAKE_CURRENT_LIST_DIR}/command_server/main.c
 )
 
-# command_producer
-add_executable (command_producer
+# command_client
+add_executable (command_client
   ${MOSQUITTO_CLIENT_EXTENSIONS}
-  ${CMAKE_CURRENT_LIST_DIR}/command_producer/main.c
+  ${CMAKE_CURRENT_LIST_DIR}/command_client/main.c
 )

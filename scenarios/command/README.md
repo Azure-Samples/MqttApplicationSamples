@@ -213,10 +213,10 @@ To run the C sample execute each line below in a different shell/terminal.
 
 ```bash
 # from folder scenarios/command
-c/build/command_producer vehicle03.env
+c/build/command_server vehicle03.env
 ```
 ```bash
-c/build/command_consumer mobile-app.env
+c/build/command_client mobile-app.env
 ```
 
 For alternate building/running methods and more information, see the [C documentation](../../mqttclients/c/README.md).

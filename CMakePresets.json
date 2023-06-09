@@ -71,8 +71,8 @@
             "displayName": "C Command",
             "configurePreset": "command",
             "targets": [
-                "command_consumer",
-                "command_producer"
+                "command_server",
+                "command_client"
             ]
         }
     ],

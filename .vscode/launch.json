@@ -138,10 +138,10 @@
             }
         },
         {
-            "name": "C Command Producer",
+            "name": "C Command Client",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/scenarios/command/c/build/command_producer",
+            "program": "${workspaceFolder}/scenarios/command/c/build/command_client",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/scenarios/command",
             "args": ["${workspaceFolder}/scenarios/command/mobile-app.env"],
@@ -159,10 +159,10 @@
             }
         },
         {
-            "name": "C Command Consumer",
+            "name": "C Command Server",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/scenarios/command/c/build/command_consumer",
+            "program": "${workspaceFolder}/scenarios/command/c/build/command_server",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/scenarios/command",
             "args": ["${workspaceFolder}/scenarios/command/vehicle03.env"],
@@ -206,7 +206,7 @@
         },
         {
             "name": "C Command",
-            "configurations": ["C Command Consumer", "C Command Producer" ],
+            "configurations": ["C Command Server", "C Command Client" ],
             "stopAll": true,
             "presentation": {
                 "order": 3,
