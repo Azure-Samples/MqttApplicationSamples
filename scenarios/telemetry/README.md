@@ -257,8 +257,17 @@ For alternate building/running methods and more information, see the [C document
 
 ### python
 
-To run the python sample have the necessary environment files in `scenarios/telemetry` folder.
+Install the paho client for python:
+```bash
+pip install paho-mqtt
+```
 
+Install internal sample package:
+```bash
+pip install ../../mqttclients/python
+```
+
+To run the python sample have the necessary environment files are in `scenarios/telemetry` folder.
 
 Then execute each line below in a different shell/terminal.
 
