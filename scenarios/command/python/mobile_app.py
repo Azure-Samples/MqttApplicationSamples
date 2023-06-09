@@ -32,7 +32,7 @@ subscribed_prop = False
 
 request_ledger = request_ledger.RequestLedger()
 
-def on_connect(client, _userdata, _flags, rc):
+def on_connect(client, _userdata, _flags, rc, _properties):
     global connected_prop
     global connection_error
     print("Connected to MQTT broker")
@@ -44,11 +44,12 @@ def on_connect(client, _userdata, _flags, rc):
             connection_error = Exception(mqtt.connack_string(rc))
         connected_cond.notify_all()
 
-def on_subscribe(client, _userdata, mid, _granted_qos):
+def on_subscribe(client, _userdata, mid, _reason_codes, _properties):
     global subscribed_prop
     print(f"Subscribe for message id {mid} acknowledged by MQTT broker")
     # # In Paho CB thread.
     with subscribed_cond:
+        print("cb cond")
         subscribed_prop = True
         subscribed_cond.notify_all()
 
@@ -59,7 +60,7 @@ def on_response(_client, _userdata, message):
     # because the lock used in the ledger shouldn't ever block in practice of this sample
     request_ledger.respond_to_request(message.CorrelationData, message)
 
-def on_disconnect(_client, _userdata, rc):
+def on_disconnect(_client, _userdata, rc, _properties):
     print("Received disconnect with error='{}'".format(mqtt.error_string(rc)))
     global connected_prop
     # # In Paho CB thread.
@@ -75,10 +76,13 @@ def wait_for_connected(timeout: float = None) -> bool:
         return connected_prop
 
 def wait_for_subscribed(timeout: float = None) -> bool:
+    print("trying to wait for sub")
     with subscribed_cond:
+        print("waiting for sub in cond")
         subscribed_cond.wait_for(
             lambda: subscribed_prop, timeout=timeout,
         )
+        print("done waiting for sub")
         return subscribed_prop
 
 def wait_for_disconnected(timeout: float = None):
@@ -89,7 +93,7 @@ def create_mqtt_client(client_id, connection_settings):
     mqtt_client = mqtt.Client(
         client_id=client_id,
         clean_session=connection_settings['MQTT_CLEAN_SESSION'],
-        protocol=mqtt.MQTTv311,
+        protocol=mqtt.MQTTv5,
         transport="tcp",
     )
     if 'MQTT_USERNAME' in connection_settings:
@@ -156,7 +160,7 @@ def main():
     hostname = connection_settings['MQTT_HOST_NAME']
     port = connection_settings['MQTT_TCP_PORT']
     keepalive = connection_settings["MQTT_KEEP_ALIVE_IN_SECONDS"]
-    mqtt_client.connect(hostname, port, keepalive)
+    mqtt_client.connect(hostname, port, keepalive, cl)
     print("Starting network loop")
     mqtt_client.loop_start()
 
@@ -167,8 +171,9 @@ def main():
 
     try:
         # SUBSCRIBE TO COMMAND RESPONSES
-        (_subscribe_result, subscribe_mid) = mqtt_client.subscribe(response_topic)
+        (_subscribe_result, subscribe_mid) = mqtt_client.subscribe(response_topic, qos=1)
         print(f"Sending subscribe requestor topic \"{response_topic}\" with message id {subscribe_mid}")
+        print(f"Result of SUB")
 
         # WAIT FOR SUBSCRIBE
         if not wait_for_subscribed(timeout=10):
@@ -176,8 +181,10 @@ def main():
             raise TimeoutError("Timed out waiting for subscribe")
 
         # PUBLISH COMMAND REQUESTS
+        print("Beginning commands")
         while True:
-            send_unlock_command(mqtt_client, client_id)
+            print("inside")
+            # send_unlock_command(mqtt_client, client_id)
             time.sleep(2)
     except KeyboardInterrupt:
         print("User exit")
