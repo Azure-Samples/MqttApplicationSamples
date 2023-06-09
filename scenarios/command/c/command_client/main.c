@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
 
       mosquitto_property_free_all(&proplist);
 
-      sleep(5);
+      sleep(2);
     }
   }
 
