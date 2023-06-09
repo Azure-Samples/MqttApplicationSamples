@@ -61,7 +61,7 @@ Follow the instructions in the [Prerequisites](#magic_wand-prerequisites) to con
 | Scenario | Description | dotnet | C | python |
 | -------- | ------------|--------|---|------- |
 | [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| :white_check_mark:|:white_check_mark:|:white_check_mark:|
-| [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | :white_check_mark:|:white_check_mark:|:soon:|
+| [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | :white_check_mark:|:white_check_mark:|:white_check_mark:|
 | [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | :white_check_mark:|:soon:|:soon:|
 | [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  | :soon:|:soon:|:soon:|
 
