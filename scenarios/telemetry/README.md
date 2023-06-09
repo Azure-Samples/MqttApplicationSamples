@@ -257,7 +257,7 @@ For alternate building/running methods and more information, see the [C document
 
 ### python
 
-To run the python sample go to `scenarios/telemetry` folder assuming the necessary environment files are in that fodler.
+To run the python sample have the necessary environment files in `scenarios/telemetry` folder.
 
 
 Then execute each line below in a different shell/terminal.

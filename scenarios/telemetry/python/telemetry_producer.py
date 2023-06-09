@@ -123,7 +123,7 @@ def main():
         # WAIT FOR CONNECT
         if not wait_for_connected(timeout=10):
             print("{}: failed to connect.  exiting sample".format(client_id))
-            raise Exception("Timeout out trying to connect")
+            raise TimeoutError("Timeout out trying to connect")
 
         # PUBLISH
         topic = "vehicles/{client_id}/position".format(client_id=client_id)
@@ -133,7 +133,7 @@ def main():
             # do a random selction from latitude and longitude
             p1 = Point(lat, lon)
             payload = str(p1)
-            publish_result = mqtt_client.publish(topic, str(p1))
+            publish_result = mqtt_client.publish(topic, payload)
             print(f"Sending publish with payload \"{payload}\" on topic \"{topic}\" with message id {publish_result.mid}")
             time.sleep(10)
 
