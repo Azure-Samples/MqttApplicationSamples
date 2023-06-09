@@ -197,3 +197,27 @@ To run the dotnet sample execute each line below in a different shell/terminal.
 ```bash
  dotnet/command_consumer/bin/Debug/net7.0/command_consumer --envFile=mobile-app.env
 ```
+
+### C
+
+To build the C sample, run from the root folder:
+
+```bash
+cmake --preset=command
+cmake --build --preset=command
+```
+
+The build script will copy the produced binary to `c/build/command`
+
+To run the C sample execute each line below in a different shell/terminal.
+
+```bash
+# from folder scenarios/command
+c/build/command_producer vehicle03.env
+```
+```bash
+c/build/command_consumer mobile-app.env
+```
+
+For alternate building/running methods and more information, see the [C documentation](../../mqttclients/c/README.md).
+

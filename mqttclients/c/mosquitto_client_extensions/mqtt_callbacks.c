@@ -38,7 +38,7 @@ void on_connect(
      * retrying in this example, so disconnect. Without this, the client
      * will attempt to reconnect. */
     int rc;
-    if ((rc = mosquitto_disconnect_v5(mosq, reason_code, props)) != MOSQ_ERR_SUCCESS)
+    if ((rc = mosquitto_disconnect_v5(mosq, reason_code, NULL)) != MOSQ_ERR_SUCCESS)
     {
       printf("Error disconnecting: %s\n", mosquitto_strerror(rc));
     }
@@ -81,9 +81,9 @@ void on_message(
 {
   mqtt_client_obj* client_obj = (mqtt_client_obj*)obj;
 
-  if (client_obj != NULL && client_obj->print_message != NULL)
+  if (client_obj != NULL && client_obj->handle_message != NULL)
   {
-    client_obj->print_message(msg);
+    client_obj->handle_message(mosq, msg, props);
   }
   else
   {

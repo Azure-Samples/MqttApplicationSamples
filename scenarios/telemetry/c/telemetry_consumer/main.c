@@ -13,7 +13,7 @@
 #define MQTT_VERSION MQTT_PROTOCOL_V311
 
 // Custom callback for when a message is received.
-void print_message(const struct mosquitto_message* message)
+void handle_message(const struct mosquitto_message* message)
 {
   printf(
       "on_message: Topic: %s; QOS: %d; JSON Payload: %s\n",
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
   int result = MOSQ_ERR_SUCCESS;
 
   mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
-  obj->print_message = print_message;
+  obj->handle_message = handle_message;
   obj->mqtt_version = MQTT_VERSION;
 
   if ((mosq = mqtt_client_init(false, argv[1], on_connect_with_subscribe, obj)) == NULL)

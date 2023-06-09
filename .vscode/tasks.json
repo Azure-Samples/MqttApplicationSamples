@@ -54,6 +54,11 @@
             "label": "Build C Getting Started",
             "type": "shell",
             "command": "cmake --preset=getting_started;cmake --build --preset=getting_started"
+        },
+        {
+            "label": "Build C Command",
+            "type": "shell",
+            "command": "cmake --preset=command;cmake --build --preset=command"
         }
     ]
 }

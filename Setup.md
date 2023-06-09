@@ -158,12 +158,13 @@ We are using standard C, and CMake to build. These are the required tools:
 - [Ninja build system](https://github.com/ninja-build/ninja/releases) Version 1.10 or higher
 - GNU C++ compiler
 - SSL
+- UUID Library
 
 An example of installing these tools (other than CMake) is shown below:
 
 ```bash
 sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
-sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev
+sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev uuid-dev
 ```
 
 See [c extensions](./mqttclients/c/README.md) for more details.
