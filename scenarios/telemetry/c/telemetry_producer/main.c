@@ -14,7 +14,7 @@
 #define MQTT_VERSION MQTT_PROTOCOL_V311
 
 /*
- * This sample sends telemetry messages to the Broker. X509 authentication is used.
+ * This sample sends telemetry messages to the Broker.
  */
 int main(int argc, char* argv[])
 {
