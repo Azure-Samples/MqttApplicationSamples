@@ -66,8 +66,9 @@ void handle_message(
   {
     uuid_unparse(current_correlation_id, readable_correlation_data);
     printf("\t[ERROR] Correlation data does not match, expected: %s\n", readable_correlation_data);
-    return;
   }
+
+  free(correlation_data);
 }
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to

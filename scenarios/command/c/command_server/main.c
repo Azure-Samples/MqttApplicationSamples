@@ -25,6 +25,7 @@
       printf("Error sending response: %s\n", mosquitto_strerror(rc)); \
       free(response_topic);                                           \
       free(correlation_data);                                         \
+      mosquitto_property_free_all(&response_props);                   \
       return;                                                         \
     }                                                                 \
   } while (0)
@@ -78,6 +79,7 @@ void handle_message(
 
   free(response_topic);
   free(correlation_data);
+  mosquitto_property_free_all(&response_props);
 }
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to
