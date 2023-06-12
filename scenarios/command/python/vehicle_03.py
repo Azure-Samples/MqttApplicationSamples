@@ -64,7 +64,7 @@ def send_unlock_response(mqtt_client, correlation_id):
     topic = RESPONSE_TOPIC_PATTERN.format(targetClientId="vehicle03", commandName="unlock")
     payload = "placeholder"
     msg_prop = Properties(PacketTypes.PUBLISH)
-    msg_prop.UserProperty = ("Succeed", True)
+    msg_prop.UserProperty = ("Succeed", "True")
     msg_prop.CorrelationData = correlation_id
     print("Sending Unlock Response")
     message_info = mqtt_client.publish(topic, payload, qos=1, properties=msg_prop)
@@ -75,10 +75,8 @@ def on_unlock_command(_client, _userdata, message):
     print(f"Received unlock command")
     properties = message.properties
     correlation_id = properties.CorrelationData
+    # Respond to the Unlock on a different thread so as not to block network loop
     tpe.submit(send_unlock_response, _client, correlation_id)
-    # print(f"Received message on topic {message.topic} with payload {message.payload}")
-    # # # In Paho CB thread.
-    # request_ledger.respond_to_request(message.CorrelationData, message)
 
 def wait_for_connected(timeout: float = None) -> bool:
     with connected_cond:

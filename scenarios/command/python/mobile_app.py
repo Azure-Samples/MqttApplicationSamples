@@ -53,14 +53,12 @@ def on_subscribe(client, _userdata, mid, _reason_codes, _properties):
         subscribed_cond.notify_all()
 
 def on_unlock_response(_client, _userdata, message):
-    print("RESPONSE???")
-    # print("ON RESPONSE???")
-    # #print(f"Received message on topic {message.topic} with payload {message.payload}")
-    # properties = message.properties
-    # # # In Paho CB thread.
-    # # NOTE: probably should marshall this to another thread for safety, but it should be fine
-    # # because the lock used in the ledger shouldn't ever block in practice of this sample
-    # request_ledger.respond_to_request(properties.CorrelationData, message)
+    #print(f"Received message on topic {message.topic} with payload {message.payload}")
+    properties = message.properties
+    # # In Paho CB thread.
+    # NOTE: probably should marshall this to another thread for safety, but it should be fine
+    # because the lock used in the ledger shouldn't ever block in practice of this sample
+    request_ledger.respond_to_request(properties.CorrelationData, message)
 
 def on_disconnect(_client, _userdata, rc, _properties):
     print("Received disconnect with error='{}'".format(mqtt.error_string(rc)))
@@ -132,7 +130,7 @@ def send_unlock_command(mqtt_client, client_id):
     response_future = request_ledger.get_response_future(correlation_id)
     print("Waiting for Unlock Response")
     response_msg = response_future.result(timeout=10)
-    print("Response: {}".format(response_msg.Succeed))
+    print("Response: {}".format(response_msg.properties.UserProperty[0]))
 
 
 def main():
@@ -146,7 +144,7 @@ def main():
     client_id = connection_settings["MQTT_CLIENT_ID"]
     mqtt_client = create_mqtt_client(client_id, connection_settings)
 
-    # ATTACH HANDLERS
+    # ATTACH CONN/SUB HANDLERS
     mqtt_client.on_connect = on_connect
     mqtt_client.on_subscribe = on_subscribe
     mqtt_client.on_disconnect = on_disconnect
@@ -167,13 +165,9 @@ def main():
         raise TimeoutError("Timed out waiting for connect")
 
     try:
-        # ATTACH COMMAND RESPONSE HANDLER
-        mqtt_client.on_message = on_unlock_response
-
         # SUBSCRIBE TO COMMAND RESPONSES
         (_subscribe_result, subscribe_mid) = mqtt_client.subscribe(response_topic, qos=1)
         print(f"Sending subscribe requestor topic \"{response_topic}\" with message id {subscribe_mid}")
-        print(f"SUB RESULT: {_subscribe_result}")
 
         # WAIT FOR SUBSCRIBE
         if not wait_for_subscribed(timeout=10):
@@ -181,8 +175,7 @@ def main():
             raise TimeoutError("Timed out waiting for subscribe")
 
         # # ATTACH COMMAND RESPONSE HANDLER
-        # mqtt_client.on_message = on_unlock_response
-        # mqtt_client.message_callback_add(response_topic, on_unlock_response)
+        mqtt_client.message_callback_add(response_topic, on_unlock_response)
 
         # PUBLISH COMMAND REQUESTS
         print("Beginning commands")
