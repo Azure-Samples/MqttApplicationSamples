@@ -7,8 +7,8 @@
     },
     "configurePresets": [
         {
-            "name": "telemetry",
-            "displayName": "C Telemetry",
+            "name": "getting_started",
+            "displayName": "C Getting Started",
             "binaryDir": "${sourceDir}/scenarios/${presetName}/c/build",
             "generator": "Ninja",
             "cacheVariables": {
@@ -17,8 +17,8 @@
             }
         },
         {
-            "name": "getting_started",
-            "displayName": "C Getting Started",
+            "name": "telemetry",
+            "displayName": "C Telemetry",
             "binaryDir": "${sourceDir}/scenarios/${presetName}/c/build",
             "generator": "Ninja",
             "cacheVariables": {
@@ -40,20 +40,20 @@
     ],
     "buildPresets": [
         {
+            "name": "getting_started",
+            "displayName": "C Getting Started",
+            "configurePreset": "getting_started",
+            "targets": [
+                "getting_started"
+            ]
+        },
+        {
             "name": "telemetry",
             "displayName": "C Telemetry",
             "configurePreset": "telemetry",
             "targets": [
                 "telemetry_consumer",
                 "telemetry_producer"
-            ]
-        },
-        {
-            "name": "getting_started",
-            "displayName": "C Getting Started",
-            "configurePreset": "getting_started",
-            "targets": [
-                "getting_started"
             ]
         }
     ],
