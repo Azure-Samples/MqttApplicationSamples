@@ -10,7 +10,7 @@ products:
 - azure
 - azure-event-grid
 ---
-# :dart: MQTT Application Samples
+# MQTT Application Samples
 
 | [Setup](./Setup.md) | [Getting Started](./scenarios/getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |
 
@@ -22,7 +22,7 @@ The instructions are provided for the following MQTT Brokers:
 
 > Note: These samples can also be leveraged for any MQTT Broker that supports X509 certificates authentication
 
-## :magic_wand: Prerequisites
+## Prerequisites
 
 - You can test the samples locally on your machine or in [Github Codespaces](https://docs.github.com/en/codespaces):
     - To test in Github Codespaces:
@@ -37,7 +37,7 @@ The instructions are provided for the following MQTT Brokers:
 - Navigate to each of the scenario folders and follow its README.md instructions to run the scenario.
     - To configure the MQTT connection, the samples use `.env` files, with variables to specify the host name, port, certificates, etc. The `.env` files must be located in the scenario folder, e.g. `scenarios/getting_started`, and can be reused across samples/languages, including the client certificates.
 
-## :book: Language specific instructions
+## Language specific instructions
 
 Each language requires developer tools, such as compilers and SDKs to build and run the samples:
 
@@ -45,7 +45,7 @@ Each language requires developer tools, such as compilers and SDKs to build and 
 - [C](./mqttclients/c/README.md)
 - Python (TBD)
 
-# :pencil2: Scenarios
+# Scenarios
 
 These samples implement PubSub patterns used in MQTT Applications.
 
@@ -60,9 +60,9 @@ Follow the instructions in the [Prerequisites](#magic_wand-prerequisites) to con
 
 | Scenario | Description | dotnet | C | python |
 | -------- | ------------|--------|---|------- |
-| [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| :white_check_mark:|:white_check_mark:|:white_check_mark:|
-| [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | :white_check_mark:|:white_check_mark:|:soon:|
-| [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | :white_check_mark:|:soon:|:soon:|
-| [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  | :soon:|:soon:|:soon:|
+| [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| &check;| &check;| &check;|
+| [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | &check;| &check;| &check;|
+| [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | &check;| soon| soon|
+| [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  | soon| soon| soon|
 
->note: :soon: in progress and will be added soon
+>note: soon: in progress and will be added soon

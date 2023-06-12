@@ -46,14 +46,14 @@
             "group": "build"
         },
         {
-            "label": "Build C Telemetry",
-            "type": "shell",
-            "command": "cmake --preset=telemetry;cmake --build --preset=telemetry"
-        },
-        {
             "label": "Build C Getting Started",
             "type": "shell",
             "command": "cmake --preset=getting_started;cmake --build --preset=getting_started"
+        },
+        {
+            "label": "Build C Telemetry",
+            "type": "shell",
+            "command": "cmake --preset=telemetry;cmake --build --preset=telemetry"
         },
         {
             "label": "Build C Command",

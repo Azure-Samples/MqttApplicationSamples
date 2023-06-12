@@ -76,6 +76,26 @@
             }
         },
         {
+            "name": "C Getting Started",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/scenarios/getting_started/c/build/getting_started",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/scenarios/getting_started",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build C Getting Started",
+            "presentation": {
+                "order": 1,
+                "group": "C"
+            }
+        },
+        {
             "name": "C Telemetry Producer",
             "type": "cppdbg",
             "request": "launch",
@@ -114,26 +134,6 @@
             "preLaunchTask": "Build C Telemetry",
             "presentation": {
                 "order": 5,
-                "group": "C"
-            }
-        },
-        {
-            "name": "C Getting Started",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/scenarios/getting_started/c/build/getting_started",
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/scenarios/getting_started",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "Build C Getting Started",
-            "presentation": {
-                "order": 1,
                 "group": "C"
             }
         },
