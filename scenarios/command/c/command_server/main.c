@@ -13,6 +13,7 @@
 
 #define QOS 1
 #define MQTT_VERSION MQTT_PROTOCOL_V5
+
 #define PAYLOAD "\b\001"
 #define COMMAND_CONTENT_TYPE "application/protobuf"
 
@@ -29,6 +30,7 @@
   } while (0)
 
 // Custom callback for when a message is received.
+// Prints the command request information and sends the response.
 void handle_message(
     struct mosquitto* mosq,
     const struct mosquitto_message* message,
@@ -52,7 +54,7 @@ void handle_message(
     return;
   }
 
-  printf("response_topic: %s\n", response_topic);
+  printf("\tresponse_topic: %s\n", response_topic);
 
   if (mosquitto_property_read_binary(
           props, MQTT_PROP_CORRELATION_DATA, &correlation_data, &correlation_data_len, false)

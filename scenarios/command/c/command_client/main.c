@@ -19,9 +19,8 @@
 
 #define QOS 1
 #define MQTT_VERSION MQTT_PROTOCOL_V5
-#define UUID_LENGTH 16
 
-static uuid_t last_correlation_id;
+#define UUID_LENGTH 16
 
 #define CONTINUE_IF_ERROR(rc)                                   \
   do                                                            \
@@ -34,7 +33,10 @@ static uuid_t last_correlation_id;
     }                                                           \
   } while (0)
 
+static uuid_t current_correlation_id;
+
 // Custom callback for when a message is received.
+// prints the message information from the command response and validates that the correlation data matches.
 void handle_message(
     struct mosquitto* mosq,
     const struct mosquitto_message* message,
@@ -59,9 +61,9 @@ void handle_message(
   char readable_correlation_data[correlation_data_len];
   uuid_unparse(correlation_data, readable_correlation_data);
   printf("\tcorr_data: %s\n", readable_correlation_data);
-  if (uuid_compare(last_correlation_id, correlation_data) != 0)
+  if (uuid_compare(current_correlation_id, correlation_data) != 0)
   {
-    uuid_unparse(last_correlation_id, readable_correlation_data);
+    uuid_unparse(current_correlation_id, readable_correlation_data);
     printf("\t[ERROR] Correlation data does not match, expected: %s\n", readable_correlation_data);
     return;
   }
@@ -81,7 +83,7 @@ void on_connect_with_subscribe(
   int result;
   //   mqtt_client_obj* client_obj = (mqtt_client_obj*)obj;
   //   char sub_topic[strlen(client_obj->client_id) + 33];
-  //     sprintf(sub_topic, "vehicles/vehicle01/commands/unlock/response", client_obj->client_id);
+  //     sprintf(sub_topic, "vehicles/%s/command/unlock/response", client_obj->client_id);
 
   /* Making subscriptions in the on_connect() callback means that if the
    * connection drops and is automatically resumed by the client, then the
@@ -132,10 +134,10 @@ int main(int argc, char* argv[])
   else
   {
     // char topic[strlen(obj->client_id) + 33];
-    // sprintf(topic, "vehicles/vehicle03/commands/unlock/request", obj->client_id);
+    // sprintf(topic, "vehicles/%s/command/unlock/request", obj->client_id);
 
     // char response_topic[strlen(obj->client_id) + 33];
-    // sprintf(response_topic, "vehicles/vehicle03/commands/unlock/response", obj->client_id);
+    // sprintf(response_topic, "vehicles/%s/command/unlock/response", obj->client_id);
 
     mosquitto_property* proplist = NULL;
 
@@ -145,10 +147,10 @@ int main(int argc, char* argv[])
           mosquitto_property_add_string(&proplist, MQTT_PROP_RESPONSE_TOPIC, RESPONSE_TOPIC));
       CONTINUE_IF_ERROR(
           mosquitto_property_add_string(&proplist, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
-      uuid_generate(last_correlation_id);
+      uuid_generate(current_correlation_id);
 
       CONTINUE_IF_ERROR(mosquitto_property_add_binary(
-          &proplist, MQTT_PROP_CORRELATION_DATA, last_correlation_id, UUID_LENGTH));
+          &proplist, MQTT_PROP_CORRELATION_DATA, current_correlation_id, UUID_LENGTH));
 
       CONTINUE_IF_ERROR(mosquitto_publish_v5(
           mosq, NULL, PUB_TOPIC, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, proplist));
