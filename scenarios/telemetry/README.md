@@ -8,8 +8,8 @@ Consider a use case where a backend solution needs to identify the location of v
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
-|vehicle1|producer|pub|vehicles/vehicle1/position|
-|vehicle2|producer|pub|vehicles/vehicle2/position|
+|vehicle01|producer|pub|vehicles/vehicle01/position|
+|vehicle02|producer|pub|vehicles/vehicle02/position|
 |map-app|consumer|sub|vehicles/+/position|
 
 Messages will use [GeoJSON](https://geojson.org) to represent the coordinates.
@@ -182,7 +182,7 @@ echo "MQTT_CA_FILE=chain.pem" >> map-app.env
 
 ```
 
-To use mosquitto without certificates: change the port to 1883, disable TLS and set the CA_FILE
+To use mosquitto without certificates: change the port to 1883 and disable TLS
 
 ```bash
 # from folder scenarios/telemetry
