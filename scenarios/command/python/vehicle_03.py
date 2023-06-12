@@ -16,8 +16,6 @@ from paho.mqtt.packettypes import PacketTypes
 from concurrent.futures import ThreadPoolExecutor
 
 REQUEST_TOPIC_PATTERN = "vehicles/{targetClientId}/command/{commandName}/request"
-RESPONSE_TOPIC_PATTERN = "vehicles/{targetClientId}/command/{commandName}/response"
-
 parser = ArgumentParser()
 parser.add_argument("--env-file", help="path to the .env file to use")
 args = parser.parse_args()
@@ -60,14 +58,15 @@ def on_disconnect(_client, _userdata, rc, _properties):
         connected_prop = False
         connected_cond.notify_all()
 
-def send_unlock_response(mqtt_client, correlation_id):
-    topic = RESPONSE_TOPIC_PATTERN.format(targetClientId="vehicle03", commandName="unlock")
+def send_unlock_response(mqtt_client, correlation_id, response_topic):
+    # NOTE: Pending investigation of Protobuf in Python, we are using MQTT Properties
+    # Revisit this later.
     payload = "placeholder"
     msg_prop = Properties(PacketTypes.PUBLISH)
     msg_prop.UserProperty = ("Succeed", "True")
     msg_prop.CorrelationData = correlation_id
     print("Sending Unlock Response")
-    message_info = mqtt_client.publish(topic, payload, qos=1, properties=msg_prop)
+    message_info = mqtt_client.publish(response_topic, payload, qos=1, properties=msg_prop)
     message_info.wait_for_publish(timeout=10)
 
 
@@ -75,8 +74,9 @@ def on_unlock_command(_client, _userdata, message):
     print(f"Received unlock command")
     properties = message.properties
     correlation_id = properties.CorrelationData
+    response_topic = properties.ResponseTopic
     # Respond to the Unlock on a different thread so as not to block network loop
-    tpe.submit(send_unlock_response, _client, correlation_id)
+    tpe.submit(send_unlock_response, _client, correlation_id, response_topic)
 
 def wait_for_connected(timeout: float = None) -> bool:
     with connected_cond:
