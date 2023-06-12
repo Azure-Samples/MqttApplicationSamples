@@ -116,16 +116,19 @@ def create_mqtt_client(client_id, connection_settings):
         mqtt_client.tls_set_context(context)
     return mqtt_client
 
-def send_unlock_command(mqtt_client, client_id):
-    topic = REQUEST_TOPIC_PATTERN.format(targetClientId="vehicle03", commandName="unlock")
+def send_unlock_command(mqtt_client, client_id, response_topic):
+    request_topic = REQUEST_TOPIC_PATTERN.format(targetClientId="vehicle03", commandName="unlock")
     payload = "placeholder"
     correlation_id = str(uuid.uuid4()).encode()
     msg_prop = Properties(PacketTypes.PUBLISH)
+    # NOTE: Pending investigation of Protobuf in Python, we are using MQTT Properties
+    # Revisit this later.
     msg_prop.UserProperty = ("When", str(datetime.datetime.utcnow()))
     msg_prop.UserProperty = ("RequestedFrom", client_id)
     msg_prop.CorrelationData = correlation_id
+    msg_prop.ResponseTopic = response_topic
     print("Sending Unlock Request")
-    message_info = mqtt_client.publish(topic, payload, qos=1, properties=msg_prop)
+    message_info = mqtt_client.publish(request_topic, payload, qos=1, properties=msg_prop)
     message_info.wait_for_publish(timeout=10)
     response_future = request_ledger.get_response_future(correlation_id)
     print("Waiting for Unlock Response")
@@ -180,7 +183,7 @@ def main():
         # PUBLISH COMMAND REQUESTS
         print("Beginning commands")
         while True:
-            send_unlock_command(mqtt_client, client_id)
+            send_unlock_command(mqtt_client, client_id, response_topic)
             time.sleep(2)
     except KeyboardInterrupt:
         print("User exit")
