@@ -21,6 +21,8 @@
 #define MQTT_VERSION MQTT_PROTOCOL_V5
 #define UUID_LENGTH 16
 
+static uuid_t last_correlation_id;
+
 #define CONTINUE_IF_ERROR(rc)                                   \
   do                                                            \
   {                                                             \
@@ -57,6 +59,12 @@ void handle_message(
   char readable_correlation_data[correlation_data_len];
   uuid_unparse(correlation_data, readable_correlation_data);
   printf("\tcorr_data: %s\n", readable_correlation_data);
+  if (uuid_compare(last_correlation_id, correlation_data) != 0)
+  {
+    uuid_unparse(last_correlation_id, readable_correlation_data);
+    printf("\t[ERROR] Correlation data does not match, expected: %s\n", readable_correlation_data);
+    return;
+  }
 }
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to
@@ -130,7 +138,6 @@ int main(int argc, char* argv[])
     // sprintf(response_topic, "vehicles/vehicle03/commands/unlock/response", obj->client_id);
 
     mosquitto_property* proplist = NULL;
-    uuid_t corr_data;
 
     while (keep_running)
     {
@@ -138,9 +145,10 @@ int main(int argc, char* argv[])
           mosquitto_property_add_string(&proplist, MQTT_PROP_RESPONSE_TOPIC, RESPONSE_TOPIC));
       CONTINUE_IF_ERROR(
           mosquitto_property_add_string(&proplist, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
-      uuid_generate(corr_data);
+      uuid_generate(last_correlation_id);
+
       CONTINUE_IF_ERROR(mosquitto_property_add_binary(
-          &proplist, MQTT_PROP_CORRELATION_DATA, corr_data, UUID_LENGTH));
+          &proplist, MQTT_PROP_CORRELATION_DATA, last_correlation_id, UUID_LENGTH));
 
       CONTINUE_IF_ERROR(mosquitto_publish_v5(
           mosq, NULL, PUB_TOPIC, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, proplist));
