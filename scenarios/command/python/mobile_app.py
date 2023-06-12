@@ -53,7 +53,7 @@ def on_subscribe(client, _userdata, mid, _reason_codes, _properties):
         subscribed_cond.notify_all()
 
 def on_unlock_response(_client, _userdata, message):
-    #print(f"Received message on topic {message.topic} with payload {message.payload}")
+    print(f"Received message on topic {message.topic} with payload {message.payload}")
     properties = message.properties
     # # In Paho CB thread.
     # NOTE: probably should marshall this to another thread for safety, but it should be fine
