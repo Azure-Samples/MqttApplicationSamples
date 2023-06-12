@@ -201,3 +201,14 @@ To run the dotnet sample execute each line below in a different shell/terminal.
 ```bash
  dotnet/command_consumer/bin/Debug/net7.0/command_consumer --envFile=mobile-app.env
 ```
+
+### python
+
+To run the python sample, execute each line below in a different shell/terminal:
+
+```bash
+python python/command_receiver.py --env-file=vehicle03.env
+```
+```bash
+python python/command_invoker.py --env-file=mobile-app.env
+```
