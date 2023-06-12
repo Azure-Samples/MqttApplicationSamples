@@ -36,7 +36,8 @@
 static uuid_t current_correlation_id;
 
 // Custom callback for when a message is received.
-// prints the message information from the command response and validates that the correlation data matches.
+// prints the message information from the command response and validates that the correlation data
+// matches.
 void handle_message(
     struct mosquitto* mosq,
     const struct mosquitto_message* message,
