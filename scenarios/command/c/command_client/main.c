@@ -11,8 +11,8 @@
 #include "mqtt_callbacks.h"
 #include "mqtt_protocol.h"
 #include "mqtt_setup.h"
+#include "unlock_command.pb-c.h"
 
-#define PAYLOAD "\n\v\b\261Í\244\006\020\364\254\265d\022\nmobile-app"
 #define RESPONSE_TOPIC "vehicles/vehicle03/command/unlock/response"
 #define PUB_TOPIC "vehicles/vehicle03/command/unlock/request"
 #define COMMAND_CONTENT_TYPE "application/protobuf"
@@ -153,9 +153,22 @@ int main(int argc, char* argv[])
 
       CONTINUE_IF_ERROR(mosquitto_property_add_binary(
           &proplist, MQTT_PROP_CORRELATION_DATA, current_correlation_id, UUID_LENGTH));
+      
+      UnlockRequest unlock_request = UNLOCK_REQUEST__INIT;
+      void * buf;
+      unsigned len;
+      unlock_request.requestedfrom = obj->client_id;
+      Google__Protobuf__Timestamp timestamp = GOOGLE__PROTOBUF__TIMESTAMP__INIT;
+      timestamp.seconds = time(NULL);
+      timestamp.nanos = 0;
+      unlock_request.when = &timestamp;
+      len = unlock_request__get_packed_size(&unlock_request);
+      buf = malloc(len);
+      unlock_request__pack(&unlock_request, buf);
+      printf("unlock payload: %s\n", (char*)buf);
 
       CONTINUE_IF_ERROR(mosquitto_publish_v5(
-          mosq, NULL, PUB_TOPIC, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, proplist));
+          mosq, NULL, PUB_TOPIC, len, buf, QOS, false, proplist));
 
       mosquitto_property_free_all(&proplist);
 

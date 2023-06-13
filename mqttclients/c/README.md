@@ -13,6 +13,7 @@
 - GNU C++ compiler
 - SSL
 - UUID Library (if running a sample that uses correlation IDs - currently this is the Command Samples)
+- [protobuf-c](https://github.com/protobuf-c/protobuf-c) If running a sample that uses protobuf - currently this is the Command Samples
 
 An example of installing these tools (other than CMake) is shown below:
 
@@ -21,6 +22,9 @@ sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
 sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
 # If running a sample that uses Correlation IDs
 sudo apt-get install uuid-dev
+# If running a sample that uses protobuf
+sudo apt-get install libprotobuf-c-dev
+ maybe protobuf-c-compiler? maybe libprotobuf-dev
 ```
 
 ## Using the Command Line
