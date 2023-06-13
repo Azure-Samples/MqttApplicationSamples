@@ -10,7 +10,7 @@
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
 
-#define PUB_TOPIC "sample/1"
+#define PUB_TOPIC "sample/topic1"
 #define PAYLOAD "Hello World!"
 #define SUB_TOPIC "sample/+"
 #define QOS 1
@@ -46,7 +46,7 @@ void on_connect_with_subscribe(
 }
 
 /*
- * This sample sends and receives messages to/from the Broker. X509 authentication is used.
+ * This sample sends and receives messages to/from the Broker.
  * @return MOSQ_ERR_SUCCESS (0) on success, other enum mosq_err_t on failure
  */
 int main(int argc, char* argv[])
