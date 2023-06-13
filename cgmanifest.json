@@ -1,0 +1,83 @@
+{
+    "$schema": "https://json.schemastore.org/component-detection-manifest.json",
+    "Registrations": [
+        {
+            "Component": {
+                "type": "git",
+                "git": {
+                  "CommitHash": "b0277869d9806f6fab8e1bc11c4a4987c9a79ded",
+                  "RepositoryUrl": "https://github.com/eclipse/mosquitto.git"
+                }
+            },
+            "DevelopmentDependency": false
+        },
+        {
+            "Component": {
+                "type": "git",
+                "git": {
+                  "CommitHash": "a1f879b29c9aafe6a2bc0ba885701f8f4f19f772",
+                  "RepositoryUrl": "https://github.com/ninja-build/ninja.git"
+                }
+            },
+            "DevelopmentDependency": true
+        },
+        {
+            "Component": {
+                "type": "git",
+                "git": {
+                    "CommitHash": "aa6a33fe54918967f6ffcad30773e01664e8a2b2",
+                    "RepositoryUrl": "https://github.com/Kitware/CMake.git"
+                }
+            },
+            "DevelopmentDependency": true
+        },
+        {
+            "Component": {
+                "type": "git",
+                "git": {
+                    "CommitHash": "1bf649b5998ac98511203f54ce954eccfaf75467",
+                    "RepositoryUrl": "https://github.com/openssl/openssl.git"
+                }
+            },
+            "DevelopmentDependency": false
+        },
+        {
+            "Component": {
+                "Type": "git",
+                "git": {
+                    "RepositoryUrl": "https://gitlab.com/cmocka/cmocka",
+                    "CommitHash": "f5e2cd77c88d9f792562888d2b70c5a396bfbf7a"
+                }
+            },
+            "DevelopmentDependency": true
+        },
+        {
+            "Component": {
+                "Type": "linux",
+                "linux": {
+                    "Name": "clang-format",
+                    "Version": "9.0.0-2",
+                    "Distribution": "Ubuntu",
+                    "Release": "18.04",
+                    "Pool-URL": "http://archive.ubuntu.com/ubuntu",
+                    "Key-URL": "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg"
+                }
+            },
+            "DevelopmentDependency": true
+        },
+        {
+            "Component": {
+                "Type": "linux",
+                "linux": {
+                    "Name": "g++-multilib",
+                    "Version": "4:11.2.0-1ubuntu1",
+                    "Distribution": "Ubuntu",
+                    "Release": "18.04",
+                    "Pool-URL": "http://archive.ubuntu.com/ubuntu",
+                    "Key-URL": "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg"
+                }
+            },
+            "DevelopmentDependency": true
+          }
+    ]
+}
