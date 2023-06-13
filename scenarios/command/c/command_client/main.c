@@ -169,16 +169,17 @@ int main(int argc, char* argv[])
           uuid_clear(current_correlation_id);
         }
       }
-      // If the command timed out (didn't `continue` in the last if statement) or there is no pending command, send a new command if it's been more than 2 seconds since the last command
+      // If the command timed out (didn't `continue` in the last if statement) or there is no
+      // pending command, send a new command if it's been more than 2 seconds since the last command
       if (current_time > last_command_time + 2)
       {
         last_command_time = current_time;
 
         CONTINUE_IF_ERROR(
-          mosquitto_property_add_string(&proplist, MQTT_PROP_RESPONSE_TOPIC, RESPONSE_TOPIC));
+            mosquitto_property_add_string(&proplist, MQTT_PROP_RESPONSE_TOPIC, RESPONSE_TOPIC));
         CONTINUE_IF_ERROR(
             mosquitto_property_add_string(&proplist, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
-        
+
         uuid_generate(current_correlation_id);
 
         CONTINUE_IF_ERROR(mosquitto_property_add_binary(
