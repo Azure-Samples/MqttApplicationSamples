@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
-          sudo apt-get update && sudo apt-get install ninja-build libmosquitto-dev -y
+          sudo apt-get update && sudo apt-get install ninja-build libmosquitto-dev uuid-dev -y
           sudo apt install -y clang-format-9 libcmocka-dev libcmocka0
           cmake --version
 
