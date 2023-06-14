@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <uuid/uuid.h>
 
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
@@ -64,10 +63,6 @@ void handle_message(
     printf("Error reading correlation data\n");
     return;
   }
-
-  char readable_correlation_data[correlation_data_len];
-  uuid_unparse(correlation_data, readable_correlation_data);
-  printf("\tcorr_data: %s\n", readable_correlation_data);
 
   RETURN_IF_ERROR(mosquitto_property_add_binary(
       &response_props, MQTT_PROP_CORRELATION_DATA, correlation_data, correlation_data_len));

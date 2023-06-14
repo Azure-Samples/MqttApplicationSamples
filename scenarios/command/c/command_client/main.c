@@ -21,7 +21,7 @@
 #define QOS 1
 #define MQTT_VERSION MQTT_PROTOCOL_V5
 
-#define UUID_LENGTH 16
+#define UUID_LENGTH 37
 
 #define CONTINUE_IF_ERROR(rc)                                   \
   do                                                            \
@@ -61,7 +61,7 @@ void handle_message(
     return;
   }
 
-  char readable_correlation_data[correlation_data_len];
+  char readable_correlation_data[UUID_LENGTH];
   uuid_unparse(correlation_data, readable_correlation_data);
   printf("\tcorr_data: %s\n", readable_correlation_data);
   if (uuid_compare(current_correlation_id, correlation_data) != 0)
