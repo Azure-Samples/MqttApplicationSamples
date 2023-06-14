@@ -44,10 +44,7 @@ void handle_message(
   uint16_t correlation_data_len;
   mosquitto_property* response_props = NULL;
 
-  printf(
-      "on_message: Topic: %s; QOS: %d\n",
-      message->topic,
-      message->qos);
+  printf("on_message: Topic: %s; QOS: %d\n", message->topic, message->qos);
 
   if (mosquitto_property_read_string(props, MQTT_PROP_RESPONSE_TOPIC, &response_topic, false)
       == NULL)
@@ -102,7 +99,8 @@ void on_connect_with_subscribe(
    * connection drops and is automatically resumed by the client, then the
    * subscriptions will be recreated when the client reconnects. */
   if (keep_running
-      && (result = mosquitto_subscribe_v5(mosq, NULL, sub_topic, QOS_LEVEL, 0, NULL)) != MOSQ_ERR_SUCCESS)
+      && (result = mosquitto_subscribe_v5(mosq, NULL, sub_topic, QOS_LEVEL, 0, NULL))
+          != MOSQ_ERR_SUCCESS)
   {
     printf("Error subscribing: %s\n", mosquitto_strerror(result));
     keep_running = 0;

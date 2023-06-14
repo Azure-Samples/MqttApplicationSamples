@@ -24,7 +24,7 @@
 #define UUID_LENGTH 37
 
 #define CONTINUE_IF_ERROR(rc)                                   \
-  if(true)                                                      \
+  if (true)                                                     \
   {                                                             \
     if (rc != MOSQ_ERR_SUCCESS)                                 \
     {                                                           \
@@ -46,10 +46,7 @@ void handle_message(
     const struct mosquitto_message* message,
     const mosquitto_property* props)
 {
-  printf(
-      "on_message: Topic: %s; QOS: %d\n",
-      message->topic,
-      message->qos);
+  printf("on_message: Topic: %s; QOS: %d\n", message->topic, message->qos);
 
   void* correlation_data;
   uint16_t correlation_data_len;
