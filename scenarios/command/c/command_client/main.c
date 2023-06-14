@@ -34,7 +34,7 @@
     }                                                           \
   } while (0)
 
-static uuid_t current_correlation_id;
+static uuid_t pending_correlation_id;
 static time_t last_command_time;
 
 // Custom callback for when a message is received.
@@ -64,14 +64,14 @@ void handle_message(
   char readable_correlation_data[UUID_LENGTH];
   uuid_unparse(correlation_data, readable_correlation_data);
   printf("\tcorr_data: %s\n", readable_correlation_data);
-  if (uuid_compare(current_correlation_id, correlation_data) != 0)
+  if (uuid_compare(pending_correlation_id, correlation_data) != 0)
   {
-    uuid_unparse(current_correlation_id, readable_correlation_data);
+    uuid_unparse(pending_correlation_id, readable_correlation_data);
     printf("\t[ERROR] Correlation data does not match, expected: %s\n", readable_correlation_data);
   }
   else
   {
-    uuid_clear(current_correlation_id);
+    uuid_clear(pending_correlation_id);
   }
 
   free(correlation_data);
@@ -150,13 +150,13 @@ int main(int argc, char* argv[])
     mosquitto_property* proplist = NULL;
     time_t current_time;
     last_command_time = time(0);
-    uuid_clear(current_correlation_id);
+    uuid_clear(pending_correlation_id);
 
     while (keep_running)
     {
       current_time = time(NULL);
       // if there's a pending command
-      if (!uuid_is_null(current_correlation_id))
+      if (!uuid_is_null(pending_correlation_id))
       {
         // wait until the command times out
         if (current_time < last_command_time + COMMAND_TIMEOUT_SEC)
@@ -166,23 +166,24 @@ int main(int argc, char* argv[])
         else
         {
           printf("[ERROR] Command timed out without a response.\n");
-          uuid_clear(current_correlation_id);
+          uuid_clear(pending_correlation_id);
         }
       }
-      // If the command timed out (didn't `continue` in the last if statement) or there is no pending command, send a new command if it's been more than 2 seconds since the last command
+      // If the command timed out (didn't `continue` in the last if statement) or there is no
+      // pending command, send a new command if it's been more than 2 seconds since the last command
       if (current_time > last_command_time + 2)
       {
         last_command_time = current_time;
 
         CONTINUE_IF_ERROR(
-          mosquitto_property_add_string(&proplist, MQTT_PROP_RESPONSE_TOPIC, RESPONSE_TOPIC));
+            mosquitto_property_add_string(&proplist, MQTT_PROP_RESPONSE_TOPIC, RESPONSE_TOPIC));
         CONTINUE_IF_ERROR(
             mosquitto_property_add_string(&proplist, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
-        
-        uuid_generate(current_correlation_id);
+
+        uuid_generate(pending_correlation_id);
 
         CONTINUE_IF_ERROR(mosquitto_property_add_binary(
-            &proplist, MQTT_PROP_CORRELATION_DATA, current_correlation_id, UUID_LENGTH));
+            &proplist, MQTT_PROP_CORRELATION_DATA, pending_correlation_id, UUID_LENGTH));
 
         CONTINUE_IF_ERROR(mosquitto_publish_v5(
             mosq, NULL, PUB_TOPIC, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, proplist));
