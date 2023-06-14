@@ -213,7 +213,7 @@ cmake --build --preset=command
 
 The build script will copy the produced binary to `c/build/command`
 
-To run the C sample execute each line below in a different shell/terminal.
+To run the C sample, execute each line below in a different shell/terminal.
 
 ```bash
 # from folder scenarios/command

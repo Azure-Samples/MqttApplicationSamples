@@ -10,7 +10,7 @@
 #include "mqtt_protocol.h"
 #include "mqtt_setup.h"
 
-#define QOS 1
+#define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V5
 
 #define PAYLOAD "\b\001"
@@ -23,8 +23,11 @@
     {                                                                 \
       printf("Error sending response: %s\n", mosquitto_strerror(rc)); \
       free(response_topic);                                           \
+      response_topic = NULL;                                          \
       free(correlation_data);                                         \
+      correlation_data = NULL;                                        \
       mosquitto_property_free_all(&response_props);                   \
+      response_props = NULL;                                          \
       return;                                                         \
     }                                                                 \
   } while (0)
@@ -50,7 +53,7 @@ void handle_message(
   if (mosquitto_property_read_string(props, MQTT_PROP_RESPONSE_TOPIC, &response_topic, false)
       == NULL)
   {
-    printf("Error reading response topic\n");
+    printf("Message does not have a response topic property\n");
     return;
   }
 
@@ -60,7 +63,7 @@ void handle_message(
           props, MQTT_PROP_CORRELATION_DATA, &correlation_data, &correlation_data_len, false)
       == NULL)
   {
-    printf("Error reading correlation data\n");
+    printf("Message does not have a correlation data property\n");
     return;
   }
 
@@ -70,11 +73,14 @@ void handle_message(
       mosquitto_property_add_string(&response_props, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
 
   RETURN_IF_ERROR(mosquitto_publish_v5(
-      mosq, NULL, response_topic, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, response_props));
+      mosq, NULL, response_topic, (int)strlen(PAYLOAD), PAYLOAD, QOS_LEVEL, false, response_props));
 
   free(response_topic);
+  response_topic = NULL;
   free(correlation_data);
+  correlation_data = NULL;
   mosquitto_property_free_all(&response_props);
+  response_props = NULL;
 }
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to
@@ -97,7 +103,7 @@ void on_connect_with_subscribe(
    * connection drops and is automatically resumed by the client, then the
    * subscriptions will be recreated when the client reconnects. */
   if (keep_running
-      && (result = mosquitto_subscribe_v5(mosq, NULL, sub_topic, QOS, 0, NULL)) != MOSQ_ERR_SUCCESS)
+      && (result = mosquitto_subscribe_v5(mosq, NULL, sub_topic, QOS_LEVEL, 0, NULL)) != MOSQ_ERR_SUCCESS)
   {
     printf("Error subscribing: %s\n", mosquitto_strerror(result));
     keep_running = 0;

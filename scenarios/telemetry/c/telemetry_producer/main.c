@@ -10,7 +10,7 @@
 #include "mqtt_setup.h"
 
 #define PAYLOAD "{\"type\":\"Point\",\"coordinates\":[-2.124156,51.899523]}"
-#define QOS 1
+#define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V311
 
 /*
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     while (keep_running)
     {
       result = mosquitto_publish_v5(
-          mosq, NULL, topic, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, NULL);
+          mosq, NULL, topic, (int)strlen(PAYLOAD), PAYLOAD, QOS_LEVEL, false, NULL);
 
       if (result != MOSQ_ERR_SUCCESS)
       {
