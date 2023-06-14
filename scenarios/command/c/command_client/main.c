@@ -47,10 +47,9 @@ void handle_message(
     const mosquitto_property* props)
 {
   printf(
-      "on_message: Topic: %s; QOS: %d; protobuf Payload: %s\n",
+      "on_message: Topic: %s; QOS: %d\n",
       message->topic,
-      message->qos,
-      (char*)message->payload);
+      message->qos);
 
   void* correlation_data;
   uint16_t correlation_data_len;

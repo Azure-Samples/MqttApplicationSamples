@@ -45,10 +45,9 @@ void handle_message(
   mosquitto_property* response_props = NULL;
 
   printf(
-      "on_message: Topic: %s; QOS: %d; protobuf Payload: %s\n",
+      "on_message: Topic: %s; QOS: %d\n",
       message->topic,
-      message->qos,
-      (char*)message->payload);
+      message->qos);
 
   if (mosquitto_property_read_string(props, MQTT_PROP_RESPONSE_TOPIC, &response_topic, false)
       == NULL)
