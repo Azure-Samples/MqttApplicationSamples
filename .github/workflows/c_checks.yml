@@ -53,6 +53,8 @@ jobs:
         run: cmake --preset=getting_started;cmake --build --preset=getting_started
       - name: Build telemetry Samples
         run: cmake --preset=telemetry;cmake --build --preset=telemetry
+      - name: Build command Samples
+        run: cmake --preset=command;cmake --build --preset=command
 
       - name: Build & Run Unit Tests
         run: |
