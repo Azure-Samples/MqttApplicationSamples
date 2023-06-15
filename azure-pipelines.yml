@@ -14,8 +14,7 @@ steps:
 
 - script: |
     dotnet restore --interactive
-    cd scenarios/getting_started
-    dotnet build dotnet/getting_started.sln
+    dotnet build Samples.sln
   displayName: 'build dotnet'
 
 - task: ComponentGovernanceComponentDetection@0
