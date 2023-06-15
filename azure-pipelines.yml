@@ -24,14 +24,7 @@ steps:
     version: 6.x
     performMultiLevelLookup: true
     installationPath: $(Agent.ToolsDirectory)/dotnet
-
-- task: ComponentGovernanceComponentDetection@0
-  inputs:
-    scanType: 'Register'
-    verbosity: 'Verbose'
-    sourceScanPath: 'scenarios/telemetry/dotnet/telemetry_consumer'
-    alertWarningLevel: 'High'
-    
+  
 - task: ComponentGovernanceComponentDetection@0
   inputs:
     scanType: 'Register'
