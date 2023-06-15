@@ -4,14 +4,14 @@
 
 This scenario simulates the request-response messaging pattern. Request-response uses two topics, one for the request and one for the response.
 
-Consider a use case where a user can unlock their car from a mobile app. The request to unlock is published on `vehicles/<vehicleId>/commands/unlock` and the response of unlock operation is published on `vehicles/<vehicleId>/commands/unlock/response`.
+Consider a use case where a user can unlock their car from a mobile app. The request to unlock is published on `vehicles/<vehicleId>/command/unlock/request` and the response of unlock operation is published on `vehicles/<vehicleId>/command/unlock/response`.
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
-|vehicle03|producer|sub|vehicles/vehicle1/commands/unlock|
-|vehicle03|producer|pub|vehicles/vehicle1/commands/unlock/response|
-|mobile-app|consumer|pub|vehicles/vehicle1/commands/unlock|
-|mobile-app|consumer|sub|vehicles/vehicle1/commands/unlock/response|
+|vehicle03|server|sub|vehicles/vehicle03/command/unlock/request|
+|vehicle03|server|pub|vehicles/vehicle03/command/unlock/response|
+|mobile-app|client|pub|vehicles/vehicle03/command/unlock/request|
+|mobile-app|client|sub|vehicles/vehicle03/command/unlock/response|
 
 Messages will be encoded using Protobuf with the following payload.
 
@@ -127,11 +127,13 @@ host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfig
 
 echo "MQTT_HOST_NAME=$host_name" > vehicle03.env
 echo "MQTT_USERNAME=vehicle03" >> vehicle03.env
+echo "MQTT_CLIENT_ID=vehicle03" >> vehicle03.env
 echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
 echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
 
 echo "MQTT_HOST_NAME=$host_name" > mobile-app.env
 echo "MQTT_USERNAME=mobile-app" >> mobile-app.env
+echo "MQTT_CLIENT_ID=mobile-app" >> mobile-app.env
 echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
 echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
 ```
@@ -150,18 +152,20 @@ The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X
 ```bash
 # from folder scenarios/command
 echo "MQTT_HOST_NAME=localhost" > vehicle03.env
+echo "MQTT_CLIENT_ID=vehicle03" >> vehicle03.env
 echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
 echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
 echo "MQTT_CA_FILE=chain.pem" >> vehicle03.env
 
 echo "MQTT_HOST_NAME=localhost" > mobile-app.env
+echo "MQTT_CLIENT_ID=mobile-app" >> mobile-app.env
 echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
 echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
 echo "MQTT_CA_FILE=chain.pem" >> mobile-app.env
 
 ```
 
-To use mosquitto without certificates: change the port to 1883, disable TLS and set the CA_FILE
+To use mosquitto without certificates: change the port to 1883 and disable TLS
 
 ```bash
 # from folder scenarios/command
@@ -197,3 +201,27 @@ To run the dotnet sample execute each line below in a different shell/terminal.
 ```bash
  dotnet/command_consumer/bin/Debug/net7.0/command_consumer --envFile=mobile-app.env
 ```
+
+### C
+
+To build the C sample, run from the root folder:
+
+```bash
+cmake --preset=command
+cmake --build --preset=command
+```
+
+The build script will copy the produced binary to `c/build/command`
+
+To run the C sample, execute each line below in a different shell/terminal.
+
+```bash
+# from folder scenarios/command
+c/build/command_server vehicle03.env
+```
+```bash
+c/build/command_client mobile-app.env
+```
+
+For alternate building/running methods and more information, see the [C documentation](../../mqttclients/c/README.md).
+

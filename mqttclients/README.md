@@ -9,7 +9,7 @@ All samples in this repo can be configured by using the next environment variabl
 |`MQTT_HOST_NAME`|yes|string|n/a|FQDN to the endpoint, eg: mybroker.mydomain.com|
 |`MQTT_TCP_PORT`|no|int|8883|TCP port to access the endpoint eg: 8883|
 |`MQTT_USE_TLS`|no|bool|true|Disable TLS negotiation (not recommended for production)|
-|`MQTT_CLEAN_SESSION`|no|bool|true|MQTT Clean Session, might require to set the ClientId|
+|`MQTT_CLEAN_SESSION`|no|bool|true|MQTT Clean Session, might require to set the ClientId **[existing sessions are not supported now]**|
 |`MQTT_KEEP_ALIVE_IN_SECONDS`|no|int|30(*)|Seconds to send the ping to keep the connection open|
 |`MQTT_CLIENT_ID`|no|string|empty(**)|MQTT Client Id|
 |`MQTT_USERNAME`|no|string|empty|MQTT Username to authenticate the connection|

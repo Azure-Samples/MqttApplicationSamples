@@ -10,10 +10,10 @@
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
 
-#define PUB_TOPIC "sample/1"
+#define PUB_TOPIC "sample/topic1"
 #define PAYLOAD "Hello World!"
 #define SUB_TOPIC "sample/+"
-#define QOS 1
+#define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V311
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to
@@ -33,7 +33,8 @@ void on_connect_with_subscribe(
    * connection drops and is automatically resumed by the client, then the
    * subscriptions will be recreated when the client reconnects. */
   if (keep_running
-      && (result = mosquitto_subscribe_v5(mosq, NULL, SUB_TOPIC, QOS, 0, NULL)) != MOSQ_ERR_SUCCESS)
+      && (result = mosquitto_subscribe_v5(mosq, NULL, SUB_TOPIC, QOS_LEVEL, 0, NULL))
+          != MOSQ_ERR_SUCCESS)
   {
     printf("Error subscribing: %s\n", mosquitto_strerror(result));
     keep_running = 0;
@@ -46,7 +47,7 @@ void on_connect_with_subscribe(
 }
 
 /*
- * This sample sends and receives messages to/from the Broker. X509 authentication is used.
+ * This sample sends and receives messages to/from the Broker.
  * @return MOSQ_ERR_SUCCESS (0) on success, other enum mosq_err_t on failure
  */
 int main(int argc, char* argv[])
@@ -54,16 +55,16 @@ int main(int argc, char* argv[])
   struct mosquitto* mosq;
   int result = MOSQ_ERR_SUCCESS;
 
-  mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
-  obj->mqtt_version = MQTT_VERSION;
+  mqtt_client_obj obj;
+  obj.mqtt_version = MQTT_VERSION;
 
-  if ((mosq = mqtt_client_init(true, argv[1], on_connect_with_subscribe, obj)) == NULL)
+  if ((mosq = mqtt_client_init(true, argv[1], on_connect_with_subscribe, &obj)) == NULL)
   {
     result = MOSQ_ERR_UNKNOWN;
   }
   else if (
       (result = mosquitto_connect_bind_v5(
-           mosq, obj->hostname, obj->tcp_port, obj->keep_alive_in_seconds, NULL, NULL))
+           mosq, obj.hostname, obj.tcp_port, obj.keep_alive_in_seconds, NULL, NULL))
       != MOSQ_ERR_SUCCESS)
   {
     printf("Connection Error: %s\n", mosquitto_strerror(result));
@@ -79,7 +80,7 @@ int main(int argc, char* argv[])
     while (keep_running)
     {
       result = mosquitto_publish_v5(
-          mosq, NULL, PUB_TOPIC, (int)strlen(PAYLOAD), PAYLOAD, QOS, false, NULL);
+          mosq, NULL, PUB_TOPIC, (int)strlen(PAYLOAD), PAYLOAD, QOS_LEVEL, false, NULL);
 
       if (result != MOSQ_ERR_SUCCESS)
       {
@@ -97,6 +98,5 @@ int main(int argc, char* argv[])
     mosquitto_destroy(mosq);
   }
   mosquitto_lib_cleanup();
-  free(obj);
   return result;
 }
