@@ -8,7 +8,7 @@ trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: windows-2022
 
 steps:
 
@@ -23,12 +23,26 @@ steps:
     verbosity: 'Verbose'
     sourceScanPath: 'scenarios/telemetry/dotnet/telemetry_consumer'
     alertWarningLevel: 'High'
-    defaultBranch: refs/azure-pipelines
     
 - task: ComponentGovernanceComponentDetection@0
   inputs:
     scanType: 'Register'
     verbosity: 'Verbose'
     alertWarningLevel: 'High'
-    defaultBranch: refs/heads/azure-pipelines
 
+- task: ComponentGovernanceComponentDetection@0
+  inputs:
+    scanType: 'Register'
+    useDefaultDetectors: false
+    detectorsToRun: 'NuGet'
+    verbosity: 'Verbose'
+    alertWarningLevel: 'High'
+
+- task: ComponentGovernanceComponentDetection@0
+  inputs:
+    scanType: 'Register'
+    useDefaultDetectors: false
+    detectorsToRun: 'NuGet'
+    verbosity: 'Verbose'
+    sourceScanPath: 'scenarios/telemetry/dotnet/telemetry_consumer'
+    alertWarningLevel: 'High'
