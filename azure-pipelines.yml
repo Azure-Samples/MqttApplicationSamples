@@ -29,6 +29,7 @@ steps:
   inputs:
     scanType: 'Register'
     verbosity: 'Verbose'
+    sourceScanPath: 's'
     alertWarningLevel: 'High'
 
 - task: ComponentGovernanceComponentDetection@0
