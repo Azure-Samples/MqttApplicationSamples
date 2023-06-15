@@ -239,7 +239,7 @@ cmake --build --preset=telemetry
 
 The build script will copy the produced binary to `c/build/telemetry`
 
-To run the C sample execute each line below in a different shell/terminal.
+To run the C sample, execute each line below in a different shell/terminal.
 
 ```bash
 # from folder scenarios/telemetry

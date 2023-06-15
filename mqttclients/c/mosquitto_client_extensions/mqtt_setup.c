@@ -28,7 +28,6 @@ static void sig_handler(int _)
     enum mosq_err_t const mosq_result = (rc);    \
     if (mosq_result != MOSQ_ERR_SUCCESS)         \
     {                                            \
-      free(connection_settings);                 \
       if (mosq != NULL)                          \
       {                                          \
         mosquitto_destroy(mosq);                 \
@@ -279,22 +278,21 @@ struct mosquitto* mqtt_client_init(
   signal(SIGINT, sig_handler);
 
   struct mosquitto* mosq = NULL;
-  mqtt_client_connection_settings* connection_settings
-      = calloc(1, sizeof(mqtt_client_connection_settings));
+  mqtt_client_connection_settings connection_settings;
   bool subscribe = on_connect_with_subscribe != NULL;
 
   /* Get environment variables for connection settings */
   mqtt_client_read_env_file(env_file);
-  if (!mqtt_client_set_connection_settings(connection_settings))
+  if (!mqtt_client_set_connection_settings(&connection_settings))
   {
     printf("Error: Failed to set connection settings.\n");
     return NULL;
   }
 
-  obj->hostname = connection_settings->hostname;
-  obj->keep_alive_in_seconds = connection_settings->keep_alive_in_seconds;
-  obj->tcp_port = connection_settings->tcp_port;
-  obj->client_id = connection_settings->client_id;
+  obj->hostname = connection_settings.hostname;
+  obj->keep_alive_in_seconds = connection_settings.keep_alive_in_seconds;
+  obj->tcp_port = connection_settings.tcp_port;
+  obj->client_id = connection_settings.client_id;
 
   /* Required before calling other mosquitto functions */
   MQTT_RETURN_IF_FAILED(mosquitto_lib_init());
@@ -304,7 +302,7 @@ struct mosquitto* mqtt_client_init(
    * clean session = true -> the broker should remove old sessions when we connect
    * obj = NULL -> we aren't passing any of our private data for callbacks
    */
-  mosq = mosquitto_new(connection_settings->client_id, connection_settings->clean_session, obj);
+  mosq = mosquitto_new(connection_settings.client_id, connection_settings.clean_session, obj);
 
   if (mosq == NULL)
   {
@@ -337,29 +335,27 @@ struct mosquitto* mqtt_client_init(
 
   int result;
 
-  if (connection_settings->username)
+  if (connection_settings.username)
   {
     MQTT_RETURN_IF_FAILED(mosquitto_username_pw_set(
-        mosq, connection_settings->username, connection_settings->password));
+        mosq, connection_settings.username, connection_settings.password));
   }
 
-  if (connection_settings->use_TLS)
+  if (connection_settings.use_TLS)
   {
-    bool use_OS_certs = connection_settings->ca_file == NULL;
+    bool use_OS_certs = connection_settings.ca_file == NULL;
     if (use_OS_certs)
     {
       MQTT_RETURN_IF_FAILED(mosquitto_int_option(mosq, MOSQ_OPT_TLS_USE_OS_CERTS, true));
     }
     MQTT_RETURN_IF_FAILED(mosquitto_tls_set(
         mosq,
-        connection_settings->ca_file,
+        connection_settings.ca_file,
         use_OS_certs ? REQUIRED_TLS_SET_CERT_PATH : NULL,
-        connection_settings->cert_file,
-        connection_settings->key_file,
+        connection_settings.cert_file,
+        connection_settings.key_file,
         NULL));
   }
-
-  free(connection_settings);
 
   return mosq;
 }

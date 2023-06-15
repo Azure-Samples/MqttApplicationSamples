@@ -27,6 +27,16 @@
             }
         },
         {
+            "name": "command",
+            "displayName": "C Command",
+            "binaryDir": "${sourceDir}/scenarios/${presetName}/c/build",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "PRESET_PATH": "${sourceDir}/scenarios/${presetName}/c"
+            }
+        },
+        {
             "name": "mqtt_client_extension_tests",
             "displayName": "MQTT Client Extension Tests",
             "binaryDir": "${sourceDir}/mqttclients/c/tests/build",
@@ -54,6 +64,15 @@
             "targets": [
                 "telemetry_consumer",
                 "telemetry_producer"
+            ]
+        },
+        {
+            "name": "command",
+            "displayName": "C Command",
+            "configurePreset": "command",
+            "targets": [
+                "command_server",
+                "command_client"
             ]
         }
     ],

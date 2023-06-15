@@ -112,7 +112,7 @@
             ],
             "preLaunchTask": "Build C Telemetry",
             "presentation": {
-                "order": 3,
+                "order": 4,
                 "group": "C"
             }
         },
@@ -133,7 +133,49 @@
             ],
             "preLaunchTask": "Build C Telemetry",
             "presentation": {
-                "order": 4,
+                "order": 5,
+                "group": "C"
+            }
+        },
+        {
+            "name": "C Command Client",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/scenarios/command/c/build/command_client",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/scenarios/command",
+            "args": ["${workspaceFolder}/scenarios/command/mobile-app.env"],
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build C Command",
+            "presentation": {
+                "order": 6,
+                "group": "C"
+            }
+        },
+        {
+            "name": "C Command Server",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/scenarios/command/c/build/command_server",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/scenarios/command",
+            "args": ["${workspaceFolder}/scenarios/command/vehicle03.env"],
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build C Command",
+            "presentation": {
+                "order": 7,
                 "group": "C"
             }
         }
@@ -159,6 +201,15 @@
             "stopAll": true,
             "presentation": {
                 "order": 2,
+                "group": "C"
+            }
+        },
+        {
+            "name": "C Command",
+            "configurations": ["C Command Server", "C Command Client" ],
+            "stopAll": true,
+            "presentation": {
+                "order": 3,
                 "group": "C"
             }
         }
