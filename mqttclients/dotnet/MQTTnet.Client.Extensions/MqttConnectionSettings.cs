@@ -152,7 +152,7 @@ public class MqttConnectionSettings
             return result;
         }
 
-        throw new ArgumentException($"An environment variable's type was specified incorrectly: {envVarName}={envVarValue}");
+        throw new ArgumentException($"An environment variable's type was specified incorrectly: {envVarName}={envVarValue}. Expecting an integer value.");
     }
 
     private static bool CheckForValidBooleanInput(string envVarName, string envVarValue)
@@ -162,7 +162,7 @@ public class MqttConnectionSettings
             return result;
         }
 
-        throw new ArgumentException($"An environment variable's type was specified incorrectly: {envVarName}={envVarValue}");
+        throw new ArgumentException($"An environment variable's type was specified incorrectly: {envVarName}={envVarValue}. Expecting a boolean value.");
     }
 
     private static void AppendIfNotEmpty(StringBuilder sb, string name, string val)
