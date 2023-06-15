@@ -12,11 +12,6 @@ pool:
 
 steps:
 
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '7.x'
-
 - script: |
     dotnet restore --interactive
     ls
