@@ -21,4 +21,11 @@ steps:
   inputs:
     scanType: 'Register'
     verbosity: 'Verbose'
+    sourceScanPath: 'scenarios/telemetry/dotnet/telemetry_consumer'
+    alertWarningLevel: 'High'
+    
+- task: ComponentGovernanceComponentDetection@0
+  inputs:
+    scanType: 'Register'
+    verbosity: 'Verbose'
     alertWarningLevel: 'High'
