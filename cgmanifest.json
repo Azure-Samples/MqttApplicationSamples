@@ -78,6 +78,20 @@
                 }
             },
             "DevelopmentDependency": true
+          },
+          {
+            "Component": {
+                "Type": "linux",
+                "linux": {
+                    "Name": "uuid-dev",
+                    "Version": "2.37.2-4ubuntu3",
+                    "Distribution": "Ubuntu",
+                    "Release": "18.04",
+                    "Pool-URL": "http://archive.ubuntu.com/ubuntu",
+                    "Key-URL": "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg"
+                }
+            },
+            "DevelopmentDependency": false
           }
     ]
 }
