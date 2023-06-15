@@ -8,13 +8,12 @@ trigger:
 - main
 
 pool:
-  vmImage: windows-2022
+  vmImage: ubuntu-latest
 
 steps:
 
 - script: |
     dotnet restore --interactive
-    ls
     cd scenarios/getting_started
     dotnet build dotnet/getting_started.sln
   displayName: 'build dotnet'
