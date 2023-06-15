@@ -12,16 +12,18 @@ pool:
 
 steps:
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
     version: '7.x'
-  
+
+- script: |
+    dotnet restore --interactive
+    ls
+    cd scenarios/getting_started
+    dotnet build dotnet/getting_started.sln
+  displayName: 'setup dotnet'
+
 - task: ComponentGovernanceComponentDetection@0
   inputs:
     scanType: 'Register'
