@@ -18,10 +18,10 @@ steps:
   displayName: 'Run a multi-line script'
 
 - task: UseDotNet@2
-  displayName: 'Use .NET SDK 6.0'
+  displayName: 'Use .NET SDK 7.0'
   inputs:
     packageType: sdk
-    version: 6.x
+    version: 7.x
     performMultiLevelLookup: true
     installationPath: $(Agent.ToolsDirectory)/dotnet
   
@@ -29,7 +29,6 @@ steps:
   inputs:
     scanType: 'Register'
     verbosity: 'Verbose'
-    sourceScanPath: 's'
     alertWarningLevel: 'High'
 
 - task: ComponentGovernanceComponentDetection@0
