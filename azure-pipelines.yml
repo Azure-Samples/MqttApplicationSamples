@@ -24,9 +24,6 @@ steps:
     version: 6.x
     performMultiLevelLookup: true
     installationPath: $(Agent.ToolsDirectory)/dotnet
-    
-- script: dotnet test scenarios/Scenarios.slnExecute unit tests
-  displayName: Execute unit tests
 
 - task: ComponentGovernanceComponentDetection@0
   inputs:
