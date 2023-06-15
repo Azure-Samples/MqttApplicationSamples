@@ -22,20 +22,10 @@ steps:
     ls
     cd scenarios/getting_started
     dotnet build dotnet/getting_started.sln
-  displayName: 'setup dotnet'
+  displayName: 'build dotnet'
 
 - task: ComponentGovernanceComponentDetection@0
   inputs:
     scanType: 'Register'
     verbosity: 'Verbose'
-    alertWarningLevel: 'High'
-
-
-- task: ComponentGovernanceComponentDetection@0
-  inputs:
-    scanType: 'Register'
-    useDefaultDetectors: false
-    detectorsToRun: 'NuGet'
-    verbosity: 'Verbose'
-    sourceScanPath: 'scenarios/telemetry/dotnet/telemetry_consumer'
     alertWarningLevel: 'High'
