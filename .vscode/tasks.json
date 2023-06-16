@@ -54,6 +54,11 @@
             "label": "Build C Telemetry",
             "type": "shell",
             "command": "cmake --preset=telemetry;cmake --build --preset=telemetry"
+        },
+        {
+            "label": "Build C Command",
+            "type": "shell",
+            "command": "cmake --preset=command;cmake --build --preset=command"
         }
     ]
 }
