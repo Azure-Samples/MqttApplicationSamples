@@ -16,6 +16,8 @@ steps:
     dotnet build Samples.sln
   displayName: 'build dotnet'
 
+- task: nuget-security-analysis@0
+
 - task: ComponentGovernanceComponentDetection@0
   inputs:
     scanType: 'Register'
