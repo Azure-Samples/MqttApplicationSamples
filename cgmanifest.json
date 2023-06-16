@@ -66,9 +66,9 @@
                 "Type": "linux",
                 "linux": {
                     "Name": "clang-format-9",
-                    "Version": "1:9-2",
+                    "Version": "1:9.0.1-12",
                     "Distribution": "Ubuntu",
-                    "Release": "18.04",
+                    "Release": "20.04",
                     "Pool-URL": "http://archive.ubuntu.com/ubuntu",
                     "Key-URL": "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg"
                 }
