@@ -53,6 +53,15 @@
         },
         {
             "Component": {
+                "Type": "git",
+                "git": {
+                    "RepositoryUrl": "https://github.com/json-c/json-c.git",
+                    "CommitHash": "9021cdcdd01fc9dbcbe1f06391848c2ac915212f"
+                }
+            }
+        },
+        {
+            "Component": {
                 "Type": "linux",
                 "linux": {
                     "Name": "clang-format-9",
@@ -85,20 +94,6 @@
                 "linux": {
                     "Name": "uuid-dev",
                     "Version": "2.31.1-0.4ubuntu3.7",
-                    "Distribution": "Ubuntu",
-                    "Release": "18.04",
-                    "Pool-URL": "http://archive.ubuntu.com/ubuntu",
-                    "Key-URL": "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg"
-                }
-            },
-            "DevelopmentDependency": false
-          },
-          {
-            "Component": {
-                "Type": "linux",
-                "linux": {
-                    "Name": "libjson-c-dev",
-                    "Version": "0.12.1",
                     "Distribution": "Ubuntu",
                     "Release": "18.04",
                     "Pool-URL": "http://archive.ubuntu.com/ubuntu",
