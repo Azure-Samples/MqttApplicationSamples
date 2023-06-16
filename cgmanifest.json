@@ -55,8 +55,8 @@
             "Component": {
                 "Type": "linux",
                 "linux": {
-                    "Name": "clang-format",
-                    "Version": "9.0.0-2",
+                    "Name": "clang-format-9",
+                    "Version": "1:9-2",
                     "Distribution": "Ubuntu",
                     "Release": "18.04",
                     "Pool-URL": "http://archive.ubuntu.com/ubuntu",
@@ -84,7 +84,21 @@
                 "Type": "linux",
                 "linux": {
                     "Name": "uuid-dev",
-                    "Version": "2.37.2-4ubuntu3",
+                    "Version": "2.31.1-0.4ubuntu3.7",
+                    "Distribution": "Ubuntu",
+                    "Release": "18.04",
+                    "Pool-URL": "http://archive.ubuntu.com/ubuntu",
+                    "Key-URL": "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg"
+                }
+            },
+            "DevelopmentDependency": false
+          },
+          {
+            "Component": {
+                "Type": "linux",
+                "linux": {
+                    "Name": "libjson-c-dev",
+                    "Version": "0.12.1",
                     "Distribution": "Ubuntu",
                     "Release": "18.04",
                     "Pool-URL": "http://archive.ubuntu.com/ubuntu",
