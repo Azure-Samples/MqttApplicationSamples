@@ -4731,7 +4731,7 @@ License: MIT
 
 ---------------------------------------------------------
 
-libjson-c-dev 0.12.1
+libjson-c-dev 0.12.1 - MIT License
 
 
 Copyright (c) 2009-2012 Eric Haszlakiewicz
