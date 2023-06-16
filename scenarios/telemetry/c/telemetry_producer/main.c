@@ -13,7 +13,10 @@
 #define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V311
 
-// We format the doubles to 6 decimal points, and the format is fixed, so the max length is when both coordinates are negative, ex {"type":"Point","coordinates":[-83.551071,-36.169784]} which is 54
+/* We format the doubles to 6 decimal points, and the format is fixed, so the max length is when
+ * both coordinates are negative, ex {"type":"Point","coordinates":[-83.551071,-36.169784]} which is
+ * 54
+ */
 #define MAX_PAYLOAD_LENGTH 60
 
 double generate_random_coordinate()
