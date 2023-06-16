@@ -12,7 +12,7 @@
 - [Ninja build system](https://github.com/ninja-build/ninja/releases) Version 1.10 or higher
 - GNU C++ compiler
 - SSL
-- [JSON-C](https://github.com/json-c/json-c/tree/master) if running a sample that uses JSON - currently this is the Telemetry Samples
+- [JSON-C](https://github.com/json-c/json-c) if running a sample that uses JSON - currently this is the Telemetry Samples
 - UUID Library (if running a sample that uses correlation IDs - currently this is the Command Samples)
 
 An example of installing these tools (other than CMake) is shown below:
