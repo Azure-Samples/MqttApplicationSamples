@@ -58,7 +58,8 @@
                     "RepositoryUrl": "https://github.com/json-c/json-c.git",
                     "CommitHash": "9021cdcdd01fc9dbcbe1f06391848c2ac915212f"
                 }
-            }
+            },
+            "DevelopmentDependency": false
         },
         {
             "Component": {
