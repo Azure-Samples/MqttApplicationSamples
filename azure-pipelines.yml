@@ -13,7 +13,6 @@ pool:
 steps:
 
 - script: |
-    dotnet restore --interactive
     dotnet build Samples.sln
   displayName: 'build dotnet'
 
