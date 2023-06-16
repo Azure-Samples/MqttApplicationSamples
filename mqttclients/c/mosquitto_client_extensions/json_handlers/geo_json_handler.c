@@ -1,8 +1,8 @@
 /* Copyright (c) Microsoft Corporation. All rights reserved. */
 /* SPDX-License-Identifier: MIT */
 
-#include <json-c/json.h>
 #include <errno.h>
+#include <json-c/json.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,26 +19,26 @@
     }                                                 \
   } while (0)
 
-#define RETURN_IF_NON_ZERO(x)                             \
-  do                                                      \
-  {                                                       \
-    if ((x) != 0)                                         \
-    {                                                     \
+#define RETURN_IF_NON_ZERO(x)                 \
+  do                                          \
+  {                                           \
+    if ((x) != 0)                             \
+    {                                         \
       printf("JSON Parsing Error: %s\n", #x); \
-      return -1;                                          \
-    }                                                     \
+      return -1;                              \
+    }                                         \
   } while (0)
 
-#define RETURN_IF_NAN(x)                             \
-  do                                                      \
-  {                                                       \
-    errno = 0; \
-    x; \
-    if (errno == EINVAL)                                         \
-    {                                                     \
+#define RETURN_IF_NAN(x)                                      \
+  do                                                          \
+  {                                                           \
+    errno = 0;                                                \
+    x;                                                        \
+    if (errno == EINVAL)                                      \
+    {                                                         \
       printf("JSON Parsing Error: %s is not a number\n", #x); \
-      return -1;                                          \
-    }                                                     \
+      return -1;                                              \
+    }                                                         \
   } while (0)
 
 geojson_point geojson_point_init()
@@ -80,8 +80,10 @@ int mosquitto_payload_to_geojson_point(
   }
   json_object* coordinates = json_object_object_get(jobj, "coordinates");
   RETURN_IF_NULL(output->type = (char*)json_object_get_string(type));
-  RETURN_IF_NAN(output->coordinates.x = json_object_get_double(json_object_array_get_idx(coordinates, 0)));
-  RETURN_IF_NAN(output->coordinates.y = json_object_get_double(json_object_array_get_idx(coordinates, 1)));
+  RETURN_IF_NAN(
+      output->coordinates.x = json_object_get_double(json_object_array_get_idx(coordinates, 0)));
+  RETURN_IF_NAN(
+      output->coordinates.y = json_object_get_double(json_object_array_get_idx(coordinates, 1)));
 
   // decrements the reference count of the object and frees it if it reaches zero.
   json_object_put(jobj);

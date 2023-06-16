@@ -31,7 +31,7 @@ void print_point_telemetry_message(
   }
   else
   {
-    printf("Error parsing JSON: %s\n", (char *)message->payload);
+    printf("Error parsing JSON: %s\n", (char*)message->payload);
   }
 }
 
