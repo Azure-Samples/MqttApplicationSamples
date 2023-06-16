@@ -13,6 +13,7 @@
 - GNU C++ compiler
 - SSL
 - [JSON-C](https://github.com/json-c/json-c/tree/master) if running a sample that uses JSON - currently this is the Telemetry Samples
+- UUID Library (if running a sample that uses correlation IDs - currently this is the Command Samples)
 
 An example of installing these tools (other than CMake) is shown below:
 
@@ -21,6 +22,8 @@ sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
 sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
 # If running a sample that uses JSON
 sudo apt-get install libjson-c-dev
+# If running a sample that uses Correlation IDs
+sudo apt-get install uuid-dev
 ```
 
 ## Using the Command Line

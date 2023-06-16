@@ -10,7 +10,7 @@
 #include "mosquitto.h"
 #include "mqtt_setup.h"
 
-#define QOS 1
+#define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V311
 
 double generate_random_coordinate()
@@ -20,23 +20,23 @@ double generate_random_coordinate()
 }
 
 /*
- * This sample sends telemetry messages to the Broker. X509 authentication is used.
+ * This sample sends telemetry messages to the Broker.
  */
 int main(int argc, char* argv[])
 {
   struct mosquitto* mosq;
   int result = MOSQ_ERR_SUCCESS;
 
-  mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
-  obj->mqtt_version = MQTT_VERSION;
+  mqtt_client_obj obj;
+  obj.mqtt_version = MQTT_VERSION;
 
-  if ((mosq = mqtt_client_init(true, argv[1], NULL, obj)) == NULL)
+  if ((mosq = mqtt_client_init(true, argv[1], NULL, &obj)) == NULL)
   {
     result = MOSQ_ERR_UNKNOWN;
   }
   else if (
       (result = mosquitto_connect_bind_v5(
-           mosq, obj->hostname, obj->tcp_port, obj->keep_alive_in_seconds, NULL, NULL))
+           mosq, obj.hostname, obj.tcp_port, obj.keep_alive_in_seconds, NULL, NULL))
       != MOSQ_ERR_SUCCESS)
   {
     printf("Connection Error: %s\n", mosquitto_strerror(result));
@@ -49,8 +49,8 @@ int main(int argc, char* argv[])
   }
   else
   {
-    char topic[strlen(obj->client_id) + 17];
-    sprintf(topic, "vehicles/%s/position", obj->client_id);
+    char topic[strlen(obj.client_id) + 17];
+    sprintf(topic, "vehicles/%s/position", obj.client_id);
     mosquitto_payload payload = mosquitto_payload_init(60);
     geojson_point geojson_point = geojson_point_init();
 
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
       else
       {
         result = mosquitto_publish_v5(
-            mosq, NULL, topic, payload.payload_length, payload.payload, QOS, false, NULL);
+            mosq, NULL, topic, payload.payload_length, payload.payload, QOS_LEVEL, false, NULL);
       }
 
       if (result != MOSQ_ERR_SUCCESS)
@@ -85,6 +85,5 @@ int main(int argc, char* argv[])
     mosquitto_destroy(mosq);
   }
   mosquitto_lib_cleanup();
-  free(obj);
   return result;
 }

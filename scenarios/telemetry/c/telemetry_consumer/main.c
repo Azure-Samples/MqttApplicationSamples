@@ -10,11 +10,14 @@
 #include "mqtt_setup.h"
 
 #define SUB_TOPIC "vehicles/+/position"
-#define QOS 1
+#define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V311
 
 // Custom callback for when a message is received.
-void print_point_telemetry_message(const struct mosquitto_message* message)
+void print_point_telemetry_message(
+    struct mosquitto* mosq,
+    const struct mosquitto_message* message,
+    const mosquitto_property* props)
 {
   printf("on_message: Topic: %s; QOS: %d; mid: %d\n", message->topic, message->qos, message->mid);
 
@@ -49,7 +52,8 @@ void on_connect_with_subscribe(
    * connection drops and is automatically resumed by the client, then the
    * subscriptions will be recreated when the client reconnects. */
   if (keep_running
-      && (result = mosquitto_subscribe_v5(mosq, NULL, SUB_TOPIC, QOS, 0, NULL)) != MOSQ_ERR_SUCCESS)
+      && (result = mosquitto_subscribe_v5(mosq, NULL, SUB_TOPIC, QOS_LEVEL, 0, NULL))
+          != MOSQ_ERR_SUCCESS)
   {
     printf("Error subscribing: %s\n", mosquitto_strerror(result));
     keep_running = 0;
@@ -62,24 +66,24 @@ void on_connect_with_subscribe(
 }
 
 /*
- * This sample receives telemetry messages from the broker. X509 authentication is used.
+ * This sample receives telemetry messages from the broker.
  */
 int main(int argc, char* argv[])
 {
   struct mosquitto* mosq;
   int result = MOSQ_ERR_SUCCESS;
 
-  mqtt_client_obj* obj = calloc(1, sizeof(mqtt_client_obj));
-  obj->print_message = print_point_telemetry_message;
-  obj->mqtt_version = MQTT_VERSION;
+  mqtt_client_obj obj;
+  obj.handle_message = print_point_telemetry_message;
+  obj.mqtt_version = MQTT_VERSION;
 
-  if ((mosq = mqtt_client_init(false, argv[1], on_connect_with_subscribe, obj)) == NULL)
+  if ((mosq = mqtt_client_init(false, argv[1], on_connect_with_subscribe, &obj)) == NULL)
   {
     result = MOSQ_ERR_UNKNOWN;
   }
   else if (
       (result = mosquitto_connect_bind_v5(
-           mosq, obj->hostname, obj->tcp_port, obj->keep_alive_in_seconds, NULL, NULL))
+           mosq, obj.hostname, obj.tcp_port, obj.keep_alive_in_seconds, NULL, NULL))
       != MOSQ_ERR_SUCCESS)
   {
     printf("Connection Error: %s\n", mosquitto_strerror(result));
@@ -104,6 +108,5 @@ int main(int argc, char* argv[])
     mosquitto_destroy(mosq);
   }
   mosquitto_lib_cleanup();
-  free(obj);
   return result;
 }

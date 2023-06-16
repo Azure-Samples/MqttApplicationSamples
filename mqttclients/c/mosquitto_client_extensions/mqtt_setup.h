@@ -33,7 +33,10 @@ typedef struct mqtt_client_connection_settings
 
 typedef struct mqtt_client_obj
 {
-  void (*print_message)(const struct mosquitto_message* message);
+  void (*handle_message)(
+      struct mosquitto*,
+      const struct mosquitto_message*,
+      const mosquitto_property*);
   char* client_id;
   char* hostname;
   int keep_alive_in_seconds;
