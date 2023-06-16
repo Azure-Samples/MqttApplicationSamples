@@ -12,11 +12,8 @@ pool:
 
 steps:
 
-- script: |
-    dotnet build Samples.sln
+- script: dotnet build Samples.sln
   displayName: 'build dotnet'
-
-- task: nuget-security-analysis@0
 
 - task: ComponentGovernanceComponentDetection@0
   inputs:
