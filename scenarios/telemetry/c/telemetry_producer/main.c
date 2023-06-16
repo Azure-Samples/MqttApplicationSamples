@@ -13,6 +13,9 @@
 #define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V311
 
+// We format the doubles to 6 decimal points, and the format is fixed, so the max length is when both coordinates are negative, ex {"type":"Point","coordinates":[-83.551071,-36.169784]} which is 54
+#define MAX_PAYLOAD_LENGTH 60
+
 double generate_random_coordinate()
 {
   double scale = rand() / (double)RAND_MAX;
@@ -51,7 +54,7 @@ int main(int argc, char* argv[])
   {
     char topic[strlen(obj.client_id) + 17];
     sprintf(topic, "vehicles/%s/position", obj.client_id);
-    mosquitto_payload payload = mosquitto_payload_init(60);
+    mosquitto_payload payload = mosquitto_payload_init(MAX_PAYLOAD_LENGTH);
     geojson_point geojson_point = geojson_point_init();
 
     while (keep_running)
