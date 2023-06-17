@@ -4,11 +4,11 @@
 set(CMAKE_CACHEFILE_DIR ${CMAKE_CURRENT_LIST_DIR}/build)
 include_directories( ${CMAKE_CURRENT_LIST_DIR} ${MOSQUITTO_CLIENT_EXTENSIONS_DIR}/json_handlers)
 
-find_package(json-c REQUIRED)
+find_package(json-c CONFIG)
 
 # External deps
 link_libraries(
-    json-c::json-c
+    json-c
 )
 
 # MQTT Samples Executables
