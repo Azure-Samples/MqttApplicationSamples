@@ -11,6 +11,11 @@ link_libraries(
     json-c
 )
 
+message("json-c_CONFIG set to ${json-c_CONFIG}")
+message("json-c_DIR set to ${json-c_DIR}")
+message("json-c_CONSIDERED_CONFIGS set to ${json-c_CONSIDERED_CONFIGS}")
+message("json-c_CONSIDERED_VERSIONS set to ${json-c_CONSIDERED_VERSIONS}")
+
 # MQTT Samples Executables
 # telemetry_consumer
 add_executable (telemetry_consumer
