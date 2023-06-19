@@ -11,7 +11,7 @@ public class MqttNetTraceLogger
         var logger = new MqttNetEventLogger();
         logger.LogMessagePublished += (s, e) =>
         {
-            var trace = $">> [{e.LogMessage.ThreadId}]: {e.LogMessage.Message}";
+            string trace = $">> [{e.LogMessage.ThreadId}]: {e.LogMessage.Message}";
             if (e.LogMessage.Exception != null)
             {
                 trace += Environment.NewLine + e.LogMessage.Exception.ToString();

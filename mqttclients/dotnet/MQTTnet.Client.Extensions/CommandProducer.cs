@@ -23,7 +23,7 @@ public abstract class CommandProducer<T, TResp>
 
         mqttClient.ApplicationMessageReceivedAsync += async m =>
         {
-            var topic = m.ApplicationMessage.Topic;
+            string topic = m.ApplicationMessage.Topic;
             if (topic.Equals(_requestTopic))
             {
                 if (m.ApplicationMessage.ContentType != serializer.ContentType)
@@ -37,13 +37,18 @@ public abstract class CommandProducer<T, TResp>
 
                 byte[] respBytes = _serializer.ToBytes(response);
 
-                var pubAck = await mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                MqttClientPublishResult pubAck = await mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
                     .WithTopic(m.ApplicationMessage.ResponseTopic)
                     .WithContentType(_serializer.ContentType)
                     .WithPayload(respBytes)
                     .WithUserProperty("status", 200.ToString())
                     .WithCorrelationData(m.ApplicationMessage.CorrelationData)
                     .Build());
+
+                if (!pubAck.IsSuccess)
+                {
+                    throw new ApplicationException("MQTT Client publish operation failure.");
+                }
             }
         };
     }

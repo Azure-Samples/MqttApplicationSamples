@@ -6,7 +6,7 @@ public static class TaskTimeoutExtension
 {
     public static async Task<T> TimeoutAfter<T>(this Task<T> source, TimeSpan timeout)
     {
-        var actualTimeout = timeout;
+        TimeSpan actualTimeout = timeout;
         if (Debugger.IsAttached)
         {
             actualTimeout = timeout.Add(TimeSpan.FromSeconds(300));

@@ -106,6 +106,13 @@ public class MqttConnectionSettingsFixture
     }
 
     [Fact]
+    public void CreateFromEnvFile_WithInvalidTypes()
+    {
+        Action act = () => MqttConnectionSettings.CreateFromEnvVars("invalid_type_settings.txt");
+        Assert.Throws<ArgumentException>(act);
+    }
+
+    [Fact]
     public void CreateFromEnvFile_Defaults()
     {
         var cs = MqttConnectionSettings.CreateFromEnvVars("min_settings.txt");
