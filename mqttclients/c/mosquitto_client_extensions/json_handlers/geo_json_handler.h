@@ -11,6 +11,7 @@ typedef struct mosquitto_payload
 {
   char* payload;
   size_t payload_length;
+  size_t max_payload_length;
 } mosquitto_payload;
 
 // Reference generic geojson struct if another type is needed in the future
