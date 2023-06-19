@@ -44,6 +44,11 @@ public abstract class CommandProducer<T, TResp>
                     .WithUserProperty("status", 200.ToString())
                     .WithCorrelationData(m.ApplicationMessage.CorrelationData)
                     .Build());
+
+                if (!pubAck.IsSuccess)
+                {
+                    throw new ApplicationException("MQTT Client publish operation failure.");
+                }
             }
         };
     }
