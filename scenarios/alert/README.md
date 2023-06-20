@@ -71,7 +71,7 @@ az resource create --id "$res_id/clients/vehicle04" --properties '{
     "attributes": {
             "type": "vehicle"
     },
-    "description": "This is a test publisher client"
+    "description": "This is a test client"
 }'
 
 az resource create --id "$res_id/clients/vehicle05" --properties '{
@@ -83,7 +83,7 @@ az resource create --id "$res_id/clients/vehicle05" --properties '{
     "attributes": {
             "type": "vehicle"
     },
-    "description": "This is a test subscriber client"
+    "description": "This is a test client"
 }'
 
 az resource create --id "$res_id/clients/control-tower" --properties '{
@@ -95,7 +95,7 @@ az resource create --id "$res_id/clients/control-tower" --properties '{
     "attributes": {
             "type": "control-tower"
     },
-    "description": "This is a test publisher client"
+    "description": "This is a test client"
 }'
 
 ```
