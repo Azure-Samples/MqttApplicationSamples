@@ -107,6 +107,7 @@ static void test_geojson_point_to_mosquitto_payload_output_null_fail(void** stat
 {
 
   mosquitto_payload mosq_payload;
+  mosq_payload.payload = NULL;
   geojson_point json_point = geojson_point_init();
   assert_int_equal(-1, geojson_point_to_mosquitto_payload(json_point, &mosq_payload));
 }
