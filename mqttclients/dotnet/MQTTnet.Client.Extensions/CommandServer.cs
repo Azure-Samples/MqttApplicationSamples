@@ -33,7 +33,7 @@ public abstract class CommandServer<T, TResp>
                     throw new ApplicationException($"Invalid content type. Expected :{_serializer.ContentType} Actual :{m.ApplicationMessage.ContentType}");
                 }
 
-                T request = _serializer.FromBytes<T>(m.ApplicationMessage.Payload);
+                T request = _serializer.FromBytes<T>(m.ApplicationMessage.PayloadSegment.Array!);
 
                 try
                 {

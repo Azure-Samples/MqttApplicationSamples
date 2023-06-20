@@ -28,7 +28,7 @@ public class TelemetryConsumer<T>
                 TelemetryMessage<T> msg = new()
                 {
                     ClientIdFromTopic = segments[1],
-                    Payload = _serializer.FromBytes<T>(m.ApplicationMessage.Payload)
+                    Payload = _serializer.FromBytes<T>(m.ApplicationMessage.PayloadSegment.Array!)
                 };
                 OnTelemetryReceived?.Invoke(msg);
             }

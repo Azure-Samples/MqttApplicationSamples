@@ -44,7 +44,7 @@ public abstract class CommandClient<T, TResp>
                 }
                 else
                 {
-                    TResp response = _serializer.FromBytes<TResp>(m.ApplicationMessage.Payload);
+                    TResp response = _serializer.FromBytes<TResp>(m.ApplicationMessage.PayloadSegment.Array!);
                     if (!_tcs!.TrySetResult(response))
                     {
                         Trace.TraceError("Cannot set callback");

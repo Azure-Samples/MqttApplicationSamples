@@ -1,7 +1,6 @@
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
-using MQTTnet.Extensions.ManagedClient;
 
 namespace telemetry_consumer;
 
@@ -9,7 +8,6 @@ public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly IConfiguration _configuration;
-
 
     public Worker(ILogger<Worker> logger, IConfiguration configuration)
     {
@@ -19,31 +17,28 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile")!);
+        MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile")!);
         _logger.LogInformation("Connecting to {cs}", cs);
 
-        var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
 
-        mqttClient.InternalClient.ConnectedAsync += async cea =>
+        IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
+        mqttClient.DisconnectedAsync += e =>
         {
-            _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
-
-            PositionTelemetryConsumer positionTelemetry = new(mqttClient.InternalClient)
-            {
-                OnTelemetryReceived = m =>
-                _logger.LogInformation("Received msg from {id}. Coordinates lat: {x}, lon: {y}",
-                        m.ClientIdFromTopic,
-                        m.Payload!.Coordinates.Latitude,
-                        m.Payload.Coordinates.Longitude)
-            };
-            await positionTelemetry.StartAsync();
+            _logger.LogInformation("Mqtt client disconnected with reason: {e}", e.Reason);
+            return Task.CompletedTask;
         };
+        MqttClientConnectResult connAck = await mqttClient.ConnectAsync(new MqttClientOptionsBuilder().WithConnectionSettings(cs).Build(), stoppingToken);
+        _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.Options.ClientId, connAck.ResultCode);
 
-        await mqttClient.StartAsync(new ManagedMqttClientOptionsBuilder()
-            .WithClientOptions(new MqttClientOptionsBuilder()
-                .WithConnectionSettings(cs)
-                .Build())
-             .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
-            .Build());
+
+        PositionTelemetryConsumer positionTelemetry = new(mqttClient)
+        {
+            OnTelemetryReceived = m =>
+            _logger.LogInformation("Received msg from {id}. Coordinates lat: {x}, lon: {y}",
+                    m.ClientIdFromTopic,
+                    m.Payload!.Coordinates.Latitude,
+                    m.Payload.Coordinates.Longitude)
+        };
+        await positionTelemetry.StartAsync();
     }
 }
