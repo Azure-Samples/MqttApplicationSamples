@@ -44,6 +44,7 @@ res_id="/subscriptions/${sub_id}/resourceGroups/${rg}/providers/Microsoft.EventG
 To run the `az` cli:
 - Install [AZ CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
 - Authenticate using  `az login`.
+- If the above does not work use `az login --use-device-code`
 
 ```bash
 source az.env
@@ -59,7 +60,7 @@ az resource create --id $res_id --is-full-object --properties '{
       "state": "Enabled"
     }
   },
-  "location": "eastus2euap"
+  "location": "westus2"
 }'
 ```
 
@@ -158,12 +159,15 @@ We are using standard C, and CMake to build. These are the required tools:
 - [Ninja build system](https://github.com/ninja-build/ninja/releases) Version 1.10 or higher
 - GNU C++ compiler
 - SSL
+- UUID Library (if running a sample that uses correlation IDs - currently this is the Command Samples)
 
 An example of installing these tools (other than CMake) is shown below:
 
 ```bash
 sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
 sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev
+# If running a sample that uses Correlation IDs
+sudo apt-get install uuid-dev
 ```
 
 See [c extensions](./mqttclients/c/README.md) for more details.

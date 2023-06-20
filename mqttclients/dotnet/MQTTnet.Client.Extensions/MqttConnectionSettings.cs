@@ -91,10 +91,10 @@ public class MqttConnectionSettings
             KeyFile = Env(nameof(KeyFile)),
             Username = Env(nameof(Username)),
             Password = Env(nameof(Password)),
-            KeepAliveInSeconds = int.TryParse(Env(nameof(KeepAliveInSeconds)), out int keepAliveInSeconds) ? keepAliveInSeconds : Default_KeepAliveInSeconds,
+            KeepAliveInSeconds = string.IsNullOrEmpty(Env(nameof(KeepAliveInSeconds))) ? Default_KeepAliveInSeconds : CheckForValidIntegerInput(nameof(KeepAliveInSeconds), Env(nameof(KeepAliveInSeconds))),
             CleanSession = Env(nameof(CleanSession)) == "true",
-            TcpPort = int.TryParse(Env(nameof(TcpPort)), out int tcpPort) ? tcpPort : Default_TcpPort,
-            UseTls = string.IsNullOrEmpty(Env(nameof(UseTls))) || Env(nameof(UseTls)) == Default_UseTls,
+            TcpPort = string.IsNullOrEmpty(Env(nameof(TcpPort))) ? Default_TcpPort : CheckForValidIntegerInput(nameof(TcpPort), Env(nameof(TcpPort))),
+            UseTls = string.IsNullOrEmpty(Env(nameof(UseTls))) ? true : CheckForValidBooleanInput(nameof(UseTls), Env(nameof(UseTls))),
             CaFile = Env(nameof(CaFile)),
             DisableCrl = Env(nameof(DisableCrl)) == "true",
             KeyFilePassword = Env(nameof(KeyFilePassword)),
@@ -147,6 +147,26 @@ public class MqttConnectionSettings
             DisableCrl = GetStringValue(map, nameof(DisableCrl), Default_DisableCrl) == "true"
         };
         return cs;
+    }
+
+    private static int CheckForValidIntegerInput(string envVarName, string envVarValue)
+    {
+        if (int.TryParse(envVarValue, out var result))
+        {
+            return result;
+        }
+
+        throw new ArgumentException($"An environment variable's type was specified incorrectly: {envVarName}={envVarValue}. Expecting an integer value.");
+    }
+
+    private static bool CheckForValidBooleanInput(string envVarName, string envVarValue)
+    {
+        if (bool.TryParse(envVarValue, out var result))
+        {
+            return result;
+        }
+
+        throw new ArgumentException($"An environment variable's type was specified incorrectly: {envVarName}={envVarValue}. Expecting a boolean value.");
     }
 
     private static void AppendIfNotEmpty(StringBuilder sb, string name, string val)

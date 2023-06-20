@@ -28,7 +28,7 @@ public abstract class CommandClient<T, TResp>
         _requestTopicPattern = requestTopicAttribute!.Topic;
         _responseTopicPattern = responseTopicAttribute!.Topic;
 
-        _mqttClient.ApplicationMessageReceivedAsync += async m =>
+        _mqttClient.ApplicationMessageReceivedAsync += m =>
         {
             string topic = m.ApplicationMessage.Topic;
             if (topic.Equals(_responseTopic))
@@ -51,7 +51,7 @@ public abstract class CommandClient<T, TResp>
                     }
                 }
             }
-            await Task.Yield();
+            return Task.CompletedTask;
         };
     }
     public async Task<TResp> InvokeAsync(string clientId, T request, int timeoutInMilliSeconds = 5000, CancellationToken ct = default)

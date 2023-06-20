@@ -1,0 +1,203 @@
+/* Copyright (c) Microsoft Corporation. All rights reserved. */
+/* SPDX-License-Identifier: MIT */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <uuid/uuid.h>
+
+#include "mosquitto.h"
+#include "mqtt_callbacks.h"
+#include "mqtt_protocol.h"
+#include "mqtt_setup.h"
+
+#define PAYLOAD "\n\v\b\261Í\244\006\020\364\254\265d\022\nmobile-app"
+#define RESPONSE_TOPIC "vehicles/vehicle03/command/unlock/response"
+#define PUB_TOPIC "vehicles/vehicle03/command/unlock/request"
+#define COMMAND_CONTENT_TYPE "application/protobuf"
+#define COMMAND_TIMEOUT_SEC 10
+
+#define QOS_LEVEL 1
+#define MQTT_VERSION MQTT_PROTOCOL_V5
+
+#define UUID_LENGTH 37
+
+#define CONTINUE_IF_ERROR(rc)                                   \
+  if (true)                                                     \
+  {                                                             \
+    if (rc != MOSQ_ERR_SUCCESS)                                 \
+    {                                                           \
+      printf("Error publishing: %s\n", mosquitto_strerror(rc)); \
+      mosquitto_property_free_all(&proplist);                   \
+      proplist = NULL;                                          \
+      continue;                                                 \
+    }                                                           \
+  }
+
+static uuid_t pending_correlation_id;
+static time_t last_command_sent_time;
+
+// Custom callback for when a message is received.
+// prints the message information from the command response and validates that the correlation data
+// matches.
+void handle_message(
+    struct mosquitto* mosq,
+    const struct mosquitto_message* message,
+    const mosquitto_property* props)
+{
+  printf("on_message: Topic: %s; QOS: %d\n", message->topic, message->qos);
+
+  void* correlation_data;
+  uint16_t correlation_data_len;
+  if (mosquitto_property_read_binary(
+          props, MQTT_PROP_CORRELATION_DATA, &correlation_data, &correlation_data_len, false)
+      == NULL)
+  {
+    printf("Message does not have a correlation data property\n");
+    return;
+  }
+
+  char readable_correlation_data[UUID_LENGTH];
+  uuid_unparse(correlation_data, readable_correlation_data);
+  printf("\tcorrelation_data: %s\n", readable_correlation_data);
+  if (uuid_compare(pending_correlation_id, correlation_data) != 0)
+  {
+    uuid_unparse(pending_correlation_id, readable_correlation_data);
+    printf("\t[ERROR] Correlation data does not match, expected: %s\n", readable_correlation_data);
+  }
+  else
+  {
+    uuid_clear(pending_correlation_id);
+  }
+
+  free(correlation_data);
+  correlation_data = NULL;
+}
+
+/* Callback called when the client receives a CONNACK message from the broker and we want to
+ * subscribe on connect. */
+void on_connect_with_subscribe(
+    struct mosquitto* mosq,
+    void* obj,
+    int reason_code,
+    int flags,
+    const mosquitto_property* props)
+{
+  on_connect(mosq, obj, reason_code, flags, props);
+
+  int result;
+  //   mqtt_client_obj* client_obj = (mqtt_client_obj*)obj;
+  //   char sub_topic[strlen(client_obj->client_id) + 33];
+  //     sprintf(sub_topic, "vehicles/%s/command/unlock/response", client_obj->client_id);
+
+  /* Making subscriptions in the on_connect() callback means that if the
+   * connection drops and is automatically resumed by the client, then the
+   * subscriptions will be recreated when the client reconnects. */
+  if (keep_running
+      && (result = mosquitto_subscribe_v5(mosq, NULL, RESPONSE_TOPIC, QOS_LEVEL, 0, NULL))
+          != MOSQ_ERR_SUCCESS)
+  {
+    printf("Error subscribing: %s\n", mosquitto_strerror(result));
+    keep_running = 0;
+    /* We might as well disconnect if we were unable to subscribe */
+    if ((result = mosquitto_disconnect_v5(mosq, reason_code, props)) != MOSQ_ERR_SUCCESS)
+    {
+      printf("Error disconnecting: %s\n", mosquitto_strerror(result));
+    }
+  }
+}
+
+/*
+ * This sample sends an unlock command to the vehicle.
+ */
+int main(int argc, char* argv[])
+{
+  struct mosquitto* mosq;
+  int result;
+
+  mqtt_client_obj obj;
+  obj.mqtt_version = MQTT_VERSION;
+  obj.handle_message = handle_message;
+
+  if ((mosq = mqtt_client_init(true, argv[1], on_connect_with_subscribe, &obj)) == NULL)
+  {
+    result = MOSQ_ERR_UNKNOWN;
+  }
+  else if (
+      (result = mosquitto_connect_bind_v5(
+           mosq, obj.hostname, obj.tcp_port, obj.keep_alive_in_seconds, NULL, NULL))
+      != MOSQ_ERR_SUCCESS)
+  {
+    printf("Connection Error: %s\n", mosquitto_strerror(result));
+    result = MOSQ_ERR_UNKNOWN;
+  }
+  else if ((result = mosquitto_loop_start(mosq)) != MOSQ_ERR_SUCCESS)
+  {
+    printf("loop Error: %s\n", mosquitto_strerror(result));
+    result = MOSQ_ERR_UNKNOWN;
+  }
+  else
+  {
+    // char topic[strlen(obj->client_id) + 33];
+    // sprintf(topic, "vehicles/%s/command/unlock/request", obj->client_id);
+
+    // char response_topic[strlen(obj->client_id) + 33];
+    // sprintf(response_topic, "vehicles/%s/command/unlock/response", obj->client_id);
+
+    mosquitto_property* proplist = NULL;
+    time_t current_time;
+    last_command_sent_time = time(0);
+    uuid_clear(pending_correlation_id);
+
+    while (keep_running)
+    {
+      current_time = time(NULL);
+      // if there's a pending command
+      if (!uuid_is_null(pending_correlation_id))
+      {
+        // wait until the command times out
+        if (current_time < last_command_sent_time + COMMAND_TIMEOUT_SEC)
+        {
+          continue;
+        }
+        else
+        {
+          printf("[ERROR] Command timed out without a response.\n");
+          uuid_clear(pending_correlation_id);
+        }
+      }
+      // If the command timed out (didn't `continue` in the last if statement) or there is no
+      // pending command, send a new command if it's been more than 2 seconds since the last command
+      if (current_time > last_command_sent_time + 2)
+      {
+        last_command_sent_time = current_time;
+
+        CONTINUE_IF_ERROR(
+            mosquitto_property_add_string(&proplist, MQTT_PROP_RESPONSE_TOPIC, RESPONSE_TOPIC));
+        CONTINUE_IF_ERROR(
+            mosquitto_property_add_string(&proplist, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
+
+        uuid_generate(pending_correlation_id);
+
+        CONTINUE_IF_ERROR(mosquitto_property_add_binary(
+            &proplist, MQTT_PROP_CORRELATION_DATA, pending_correlation_id, UUID_LENGTH));
+
+        CONTINUE_IF_ERROR(mosquitto_publish_v5(
+            mosq, NULL, PUB_TOPIC, (int)strlen(PAYLOAD), PAYLOAD, QOS_LEVEL, false, proplist));
+
+        mosquitto_property_free_all(&proplist);
+        proplist = NULL;
+      }
+    }
+  }
+
+  if (mosq != NULL)
+  {
+    mosquitto_disconnect_v5(mosq, result, NULL);
+    mosquitto_loop_stop(mosq, false);
+    mosquitto_destroy(mosq);
+  }
+  mosquitto_lib_cleanup();
+  return result;
+}
