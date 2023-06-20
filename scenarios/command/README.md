@@ -12,10 +12,10 @@ Every command requires a `server` who implements the command and a `client` who 
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
-|vehicle03|server|sub|vehicles/vehicle03/commands/unlock/request|
-|vehicle03|server|pub|vehicles/vehicle03/commands/unlock/response|
-|mobile-app|client|pub|vehicles/vehicle03/commands/unlock/request|
-|mobile-app|client|sub|vehicles/vehicle93/commands/unlock/response|
+|vehicle03|server|sub|vehicles/vehicle03/command/unlock/request|
+|vehicle03|server|pub|vehicles/vehicle03/command/unlock/response|
+|mobile-app|client|pub|vehicles/vehicle03/command/unlock/request|
+|mobile-app|client|sub|vehicles/vehicle03/command/unlock/response|
 
 ## Command flow with user properties
 
@@ -23,7 +23,8 @@ To implement the command pattern, the mqtt message used for the request includes
 
 - `Correlation Id` The client includes a new _Guid_ in the message property _CorrelationData_.
 - `Response Topic` The client specifies what topic it is expecting the response on, using the message property _ResponseTopic_.
-- `Status` The server will set the message property _status_, with a HTTP Status code, to let the client know if the execution was successful.
+- `Status` The server will set the user property _status_ to the response, with a HTTP Status code, to let the client know if the execution was successful.
+- `ContentType` The client sets the message property _ContentType_ to specify the format used in the binary payload. The server will check this value to make sure it's configured with the proper serializer.
 
 ## Payload Format
 
@@ -175,7 +176,7 @@ echo "MQTT_CA_FILE=chain.pem" >> mobile-app.env
 
 ```
 
-To use mosquitto without certificates: change the port to 1883, disable TLS and set the CA_FILE
+To use mosquitto without certificates: change the port to 1883 and disable TLS.
 
 ```bash
 # from folder scenarios/command

@@ -43,7 +43,7 @@ public class Worker : BackgroundService
                 {
                     When = DateTime.UtcNow.ToTimestamp(),
                     RequestedFrom = mqttClient.Options.ClientId
-                }, 2, stoppingToken);
+                }, 2000, stoppingToken);
 
             _logger.LogInformation("Command response: {res}", response.Succeed);
             Console.WriteLine("\nInvoke command again? (y/n)");
