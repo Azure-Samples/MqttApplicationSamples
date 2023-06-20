@@ -18,8 +18,8 @@ namespace MQTTnet.Client.Extensions
                 chain.ChainPolicy.CustomTrustStore.AddRange(certChain);
                 chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
             }
-            var x5092 = new X509Certificate2(cert);
-            var res = chain.Build(x5092);
+            X509Certificate2 x5092 = new X509Certificate2(cert);
+            bool res = chain.Build(x5092);
             if (res == false)
             {
                 Trace.TraceError($"Error validating TLS chain for cert: '{cert.Subject}' issued by '{cert.Issuer}'");

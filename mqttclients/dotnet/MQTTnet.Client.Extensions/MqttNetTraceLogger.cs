@@ -8,10 +8,10 @@ public class MqttNetTraceLogger
     [DebuggerStepThrough()]
     public static MqttNetEventLogger CreateTraceLogger()
     {
-        var logger = new MqttNetEventLogger();
+        MqttNetEventLogger logger = new MqttNetEventLogger();
         logger.LogMessagePublished += (s, e) =>
         {
-            var trace = $">> [{e.LogMessage.ThreadId}]: {e.LogMessage.Message}";
+            string trace = $">> [{e.LogMessage.ThreadId}]: {e.LogMessage.Message}";
             if (e.LogMessage.Exception != null)
             {
                 trace += Environment.NewLine + e.LogMessage.Exception.ToString();

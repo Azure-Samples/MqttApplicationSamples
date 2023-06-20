@@ -59,9 +59,9 @@ public class MqttConnectionSettings
         if (File.Exists(envFile))
         {
             Trace.TraceInformation("Loading environment variables from {envFile}" + new FileInfo(envFile).FullName);
-            foreach (var line in File.ReadAllLines(envFile))
+            foreach (string line in File.ReadAllLines(envFile))
             {
-                var parts = line.Split('=', StringSplitOptions.RemoveEmptyEntries);
+                string[] parts = line.Split('=', StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length != 2)
                 {
                     continue;
@@ -159,7 +159,7 @@ public class MqttConnectionSettings
 
     public override string ToString()
     {
-        var result = new StringBuilder();
+        StringBuilder result = new ();
         AppendIfNotEmpty(result, nameof(HostName), HostName!);
         AppendIfNotEmpty(result, nameof(TcpPort), TcpPort.ToString());
         AppendIfNotEmpty(result, nameof(Username), Username!);

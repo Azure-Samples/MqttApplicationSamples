@@ -4,14 +4,28 @@
 
 This scenario simulates the request-response messaging pattern. Request-response uses two topics, one for the request and one for the response.
 
-Consider a use case where a user can unlock their car from a mobile app. The request to unlock is published on `vehicles/<vehicleId>/commands/unlock` and the response of unlock operation is published on `vehicles/<vehicleId>/commands/unlock/response`.
+Consider a use case where a user can unlock their car from a mobile app. The request to unlock is published on `vehicles/<vehicleId>/commands/unlock/request` and the response of unlock operation is published on `vehicles/<vehicleId>/commands/unlock/response`. 
+
+## Command Server, Command Client
+
+Every command requires a `server` who implements the command and a `client` who invokes the command, in this case the vehichle is the server and the mobile-app is the client.
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
-|vehicle03|producer|sub|vehicles/vehicle1/commands/unlock|
-|vehicle03|producer|pub|vehicles/vehicle1/commands/unlock/response|
-|mobile-app|consumer|pub|vehicles/vehicle1/commands/unlock|
-|mobile-app|consumer|sub|vehicles/vehicle1/commands/unlock/response|
+|vehicle03|server|sub|vehicles/vehicle03/commands/unlock/request|
+|vehicle03|server|pub|vehicles/vehicle03/commands/unlock/response|
+|mobile-app|client|pub|vehicles/vehicle03/commands/unlock/request|
+|mobile-app|client|sub|vehicles/vehicle93/commands/unlock/response|
+
+## Command flow with user properties
+
+To implement the command pattern, the mqtt message used for the request includes additional metadata to control the command flow:
+
+- `Correlation Id` The client includes a new _Guid_ in the message property _CorrelationData_.
+- `Response Topic` The client specified in which topic he is expecting the response, using the message property _ResponseTopic_.
+- `Status` The server will set the message property _status_, with a HTTP Status code, to let the client know if the execution was successful.
+
+## Payload Format
 
 Messages will be encoded using Protobuf with the following payload.
 
@@ -100,7 +114,7 @@ az resource create --id "$res_id/clients/mobile-app" --properties '{
 ```bash
 # from folder scenarios/command
 az resource create --id "$res_id/topicSpaces/vehiclesCommands" --properties '{
-    "topicTemplates": ["vehicles/+/command/#"]
+    "topicTemplates": ["vehicles/+/commands/#"]
 }'
 
 az resource create --id "$res_id/permissionBindings/vehiclesCmdPub" --properties '{

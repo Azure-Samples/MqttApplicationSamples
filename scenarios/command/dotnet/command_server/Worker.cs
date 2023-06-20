@@ -1,7 +1,6 @@
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
-using MQTTnet.Extensions.ManagedClient;
 
 namespace command_server;
 
@@ -17,30 +16,23 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile"));
+        MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile"));
         _logger.LogInformation("Connecting to {cs}", cs);
 
-        var mqttClient = new MqttFactory().CreateManagedMqttClient(MqttNetTraceLogger.CreateTraceLogger());
-
-        mqttClient.InternalClient.ConnectedAsync += async cea =>
+        IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
+        mqttClient.DisconnectedAsync += e =>
         {
-            _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.InternalClient.Options.ClientId, cea.ConnectResult.ResultCode);
-
-            UnlockCommandServer commandUnlock = new(mqttClient.InternalClient)
-            {
-                OnCommandReceived = Unlock
-            };
-            await commandUnlock.StartAsync();
-
-            await Task.Yield();
+            _logger.LogInformation("Mqtt client disconnected with reason: {e}", e.Reason);
+            return Task.CompletedTask;
         };
+        MqttClientConnectResult connAck = await mqttClient.ConnectAsync(new MqttClientOptionsBuilder().WithConnectionSettings(cs).Build(), stoppingToken);
+        _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.Options.ClientId, connAck.ResultCode);
 
-        await mqttClient!.StartAsync(new ManagedMqttClientOptionsBuilder()
-           .WithClientOptions(new MqttClientOptionsBuilder()
-               .WithConnectionSettings(cs)
-               .Build())
-           .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
-           .Build());
+        UnlockCommandServer commandUnlock = new(mqttClient)
+        {
+            OnCommandReceived = Unlock
+        };
+        await commandUnlock.StartAsync(stoppingToken);
     }
 
     private async Task<UnlockResponse> Unlock(UnlockRequest unlockRequest)

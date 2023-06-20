@@ -1,4 +1,7 @@
-﻿namespace MQTTnet.Client.Extensions;
+﻿using MQTTnet.Protocol;
+using System.Text;
+
+namespace MQTTnet.Client.Extensions;
 
 public abstract class CommandServer<T, TResp>
 {
@@ -17,12 +20,12 @@ public abstract class CommandServer<T, TResp>
         _commandName = cmdName;
         _serializer = serializer;
 
-        var rta = GetType().GetCustomAttributes(true).OfType<RequestTopicAttribute>().FirstOrDefault();
+        RequestTopicAttribute? rta = GetType().GetCustomAttributes(true).OfType<RequestTopicAttribute>().FirstOrDefault();
         _requestTopic = rta!.Topic.Replace("{clientId}", _mqttClient.Options.ClientId).Replace("{commandName}", _commandName);
 
         mqttClient.ApplicationMessageReceivedAsync += async m =>
         {
-            var topic = m.ApplicationMessage.Topic;
+            string topic = m.ApplicationMessage.Topic;
             if (topic.Equals(_requestTopic))
             {
                 if (m.ApplicationMessage.ContentType != serializer.ContentType)
@@ -32,21 +35,33 @@ public abstract class CommandServer<T, TResp>
 
                 T request = _serializer.FromBytes<T>(m.ApplicationMessage.Payload);
 
-                TResp response = await OnCommandReceived?.Invoke(request)!;
+                try
+                {
+                    TResp response = await OnCommandReceived?.Invoke(request)!;
 
-                byte[] respBytes = _serializer.ToBytes(response);
+                    byte[] respBytes = _serializer.ToBytes(response);
 
-                var pubAck = await mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-                    .WithTopic(m.ApplicationMessage.ResponseTopic)
-                    .WithContentType(_serializer.ContentType)
-                    .WithPayload(respBytes)
-                    .WithUserProperty("status", 200.ToString())
-                    .WithCorrelationData(m.ApplicationMessage.CorrelationData)
-                    .Build());
+                    MqttClientPublishResult pubAck = await mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                        .WithTopic(m.ApplicationMessage.ResponseTopic)
+                        .WithContentType(_serializer.ContentType)
+                        .WithPayload(respBytes)
+                        .WithUserProperty("status", 200.ToString())
+                        .WithCorrelationData(m.ApplicationMessage.CorrelationData)
+                        .Build());
+                }
+                catch (Exception ex)
+                {
+                    MqttClientPublishResult pubAck = await mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                        .WithTopic(m.ApplicationMessage.ResponseTopic)
+                        .WithCorrelationData(m.ApplicationMessage.CorrelationData)
+                        .WithPayload(Encoding.UTF8.GetBytes(ex.Message))
+                        .WithUserProperty("status", 500.ToString())
+                        .Build());
+                }
             }
         };
     }
 
-    public async Task StartAsync() => await _mqttClient.SubscribeAsync(_requestTopic, MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
-
+    public async Task StartAsync(CancellationToken ct = default) =>
+        await _mqttClient.SubscribeAsync(_requestTopic, MqttQualityOfServiceLevel.AtLeastOnce, ct);
 }

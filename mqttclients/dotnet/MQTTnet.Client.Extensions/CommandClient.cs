@@ -10,8 +10,8 @@ public abstract class CommandClient<T, TResp>
     private readonly IMessageSerializer _serializer;
     private Guid _correlationId;
     private readonly string _requestTopicPattern;
-    private string _responseTopic = string.Empty;
-
+    private readonly string _responseTopicPattern;
+    private string? _responseTopic;
 
     public CommandClient(IMqttClient mqttClient, string cmdName, IMessageSerializer serializer)
     {
@@ -19,16 +19,18 @@ public abstract class CommandClient<T, TResp>
         _commandName = cmdName;
         _serializer = serializer;
 
-        var rta = GetType().GetCustomAttributes(true).OfType<RequestTopicAttribute>().FirstOrDefault();
-        ArgumentNullException.ThrowIfNull(rta, nameof(RequestTopicAttribute));
+        RequestTopicAttribute? requestTopicAttribute = GetType().GetCustomAttributes(true).OfType<RequestTopicAttribute>().FirstOrDefault();
+        ArgumentNullException.ThrowIfNull(requestTopicAttribute, nameof(RequestTopicAttribute));
 
-        _requestTopicPattern = rta!.Topic;
+        ResponseTopicAttribute? responseTopicAttribute = GetType().GetCustomAttributes(true).OfType<ResponseTopicAttribute>().FirstOrDefault();
+        ArgumentNullException.ThrowIfNull(responseTopicAttribute, nameof(ResponseTopicAttribute));
+
+        _requestTopicPattern = requestTopicAttribute!.Topic;
+        _responseTopicPattern = responseTopicAttribute!.Topic;
 
         _mqttClient.ApplicationMessageReceivedAsync += async m =>
         {
-            var topic = m.ApplicationMessage.Topic;
-            Trace.WriteLine(topic);
-            Trace.WriteLine(_tcs!.Task.Status.ToString());
+            string topic = m.ApplicationMessage.Topic;
             if (topic.Equals(_responseTopic))
             {
                 if (m.ApplicationMessage.ContentType != serializer.ContentType)
@@ -55,9 +57,9 @@ public abstract class CommandClient<T, TResp>
     public async Task<TResp> InvokeAsync(string clientId, T request, int timeoutInMilliSeconds = 5000, CancellationToken ct = default)
     {
         string requestTopic = _requestTopicPattern.Replace("{clientId}", clientId).Replace("{commandName}", _commandName);
-        _responseTopic = requestTopic.Replace("request", "response") + "/for/" + _mqttClient.Options.ClientId;
+        _responseTopic = _responseTopicPattern.Replace("{clientId}", clientId).Replace("{commandName}", _commandName); ;
         _correlationId = Guid.NewGuid();
-        await _mqttClient.SubscribeAsync(_responseTopic, Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
+        await _mqttClient.SubscribeAsync(_responseTopic, Protocol.MqttQualityOfServiceLevel.AtLeastOnce, ct);
         await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
             .WithTopic(requestTopic)
             .WithContentType(_serializer.ContentType)
@@ -65,7 +67,7 @@ public abstract class CommandClient<T, TResp>
             .WithCorrelationData(_correlationId.ToByteArray())
             .WithQualityOfServiceLevel(Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
             .WithResponseTopic(_responseTopic)
-            .Build());
+            .Build(), ct);
 
         _tcs = new TaskCompletionSource<TResp>();
         return await _tcs!.Task.TimeoutAfter(TimeSpan.FromMilliseconds(timeoutInMilliSeconds));

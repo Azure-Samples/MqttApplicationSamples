@@ -19,13 +19,13 @@ public class TelemetryConsumer<T>
         _mqttClient.ApplicationMessageReceivedAsync += async m =>
         {
             await Task.Yield();
-            var topic = m.ApplicationMessage.Topic;
+            string topic = m.ApplicationMessage.Topic;
 
-            var res = MqttTopicFilterComparer.Compare(topic, _topicPattern);
+            MqttTopicFilterCompareResult res = MqttTopicFilterComparer.Compare(topic, _topicPattern);
             if (res == MqttTopicFilterCompareResult.IsMatch)
             {
-                var segments = topic.Split('/');
-                var msg = new TelemetryMessage<T>()
+                string[] segments = topic.Split('/');
+                TelemetryMessage<T> msg = new()
                 {
                     ClientIdFromTopic = segments[1],
                     Payload = _serializer.FromBytes<T>(m.ApplicationMessage.Payload)
