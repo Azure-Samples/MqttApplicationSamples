@@ -9,16 +9,16 @@
 
 #include "geo_json_handler.h"
 
-#define RETURN_IF_NULL(x, jobj_to_free)                             \
+#define RETURN_IF_NULL(x, jobj_to_free)               \
   do                                                  \
   {                                                   \
     if ((x) == NULL)                                  \
     {                                                 \
       printf("JSON Parsing Error: %s is NULL\n", #x); \
-      if (jobj_to_free != NULL) \
-      { \
-        json_object_put(jobj_to_free); \
-      } \
+      if (jobj_to_free != NULL)                       \
+      {                                               \
+        json_object_put(jobj_to_free);                \
+      }                                               \
       return -1;                                      \
     }                                                 \
   } while (0)
@@ -29,7 +29,7 @@
     if ((x) != 0)                             \
     {                                         \
       printf("JSON Parsing Error: %s\n", #x); \
-      json_object_put(jobj); \
+      json_object_put(jobj);                  \
       return -1;                              \
     }                                         \
   } while (0)
@@ -42,7 +42,7 @@
     if (errno == EINVAL)                                      \
     {                                                         \
       printf("JSON Parsing Error: %s is not a number\n", #x); \
-      json_object_put(jobj); \
+      json_object_put(jobj);                                  \
       return -1;                                              \
     }                                                         \
   } while (0)
@@ -54,7 +54,9 @@ geojson_point geojson_point_init()
 
 mosquitto_payload mosquitto_payload_init(int max_payload_length)
 {
-  return (mosquitto_payload){ .payload = calloc(1, max_payload_length), .payload_length = 0, .max_payload_length = max_payload_length };
+  return (mosquitto_payload){ .payload = calloc(1, max_payload_length),
+                              .payload_length = 0,
+                              .max_payload_length = max_payload_length };
 }
 
 void mosquitto_payload_destroy(mosquitto_payload* payload)
@@ -125,7 +127,8 @@ int geojson_point_to_mosquitto_payload(
   RETURN_IF_NON_ZERO(json_object_object_add(jobj, "coordinates", coordinates));
   RETURN_IF_NULL(
       payload
-      = json_object_to_json_string_length(jobj, JSON_C_TO_STRING_PLAIN, &message->payload_length), jobj);
+      = json_object_to_json_string_length(jobj, JSON_C_TO_STRING_PLAIN, &message->payload_length),
+      jobj);
   if (message->payload_length > message->max_payload_length)
   {
     printf("JSON Parsing Error: mosquitto payload buffer is too small\n");
@@ -133,7 +136,7 @@ int geojson_point_to_mosquitto_payload(
     json_object_put(jobj);
     return -1;
   }
-        
+
   strcpy(message->payload, payload);
 
   // decrements the reference count of the object and frees it if it reaches zero.
