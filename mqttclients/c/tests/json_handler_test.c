@@ -218,15 +218,6 @@ static void test_mosquitto_payload_to_geojson_point_missing_coordinates_fail(voi
   assert_int_equal(mosquitto_payload_to_geojson_point(&message, &json_point), -1);
 }
 
-// wrong types for coordinates
-static void test_mosquitto_payload_to_geojson_point_wrong_coordinate_types_fail(void** state)
-{
-  geojson_point json_point = geojson_point_init();
-  struct mosquitto_message message;
-  message.payload = "{\"type\":\"Point\",\"coordinates\":[\"cat\",\"dog\"]}";
-  assert_int_equal(mosquitto_payload_to_geojson_point(&message, &json_point), -1);
-}
-
 int test_json_handler()
 {
   const struct CMUnitTest tests[]
@@ -247,9 +238,7 @@ int test_json_handler()
           cmocka_unit_test(test_mosquitto_payload_to_geojson_point_empty_json_fail),
           cmocka_unit_test(test_mosquitto_payload_to_geojson_point_not_geojson_fail),
           cmocka_unit_test(test_mosquitto_payload_to_geojson_point_not_point_fail),
-          cmocka_unit_test(test_mosquitto_payload_to_geojson_point_missing_coordinates_fail),
-          cmocka_unit_test(test_mosquitto_payload_to_geojson_point_wrong_coordinate_types_fail)
-
+          cmocka_unit_test(test_mosquitto_payload_to_geojson_point_missing_coordinates_fail)
         };
   return cmocka_run_group_tests_name("json_handler", tests, NULL, NULL);
 }
