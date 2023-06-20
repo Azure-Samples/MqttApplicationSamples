@@ -22,7 +22,7 @@ Every command requires a `server` who implements the command and a `client` who 
 To implement the command pattern, the mqtt message used for the request includes additional metadata to control the command flow:
 
 - `Correlation Id` The client includes a new _Guid_ in the message property _CorrelationData_.
-- `Response Topic` The client specified in which topic he is expecting the response, using the message property _ResponseTopic_.
+- `Response Topic` The client specifies what topic it is expecting the response on, using the message property _ResponseTopic_.
 - `Status` The server will set the message property _status_, with a HTTP Status code, to let the client know if the execution was successful.
 
 ## Payload Format
