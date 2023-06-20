@@ -23,8 +23,8 @@ To implement the command pattern, the mqtt message used for the request includes
 
 - `Correlation Id` The client includes a new _Guid_ in the message property _CorrelationData_.
 - `Response Topic` The client specifies what topic it is expecting the response on, using the message property _ResponseTopic_.
-- `Status` The server will set the user property _status_ to the response, with a HTTP Status code, to let the client know if the execution was successful.
 - `ContentType` The client sets the message property _ContentType_ to specify the format used in the binary payload. The server will check this value to make sure it's configured with the proper serializer.
+- `Status` The server will set the User Property _status_ to the response, with a HTTP Status code, to let the client know if the execution was successful.
 
 ## Payload Format
 
