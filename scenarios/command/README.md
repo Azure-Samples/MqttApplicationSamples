@@ -8,7 +8,7 @@ Consider a use case where a user can unlock their car from a mobile app. The req
 
 ## Command Server, Command Client
 
-Every command requires a `server` who implements the command and a `client` who invokes the command, in this case the vehichle is the server and the mobile-app is the client.
+Every command requires a `server` who implements the command and a `client` who invokes the command, in this case the vehicle is the server and the mobile-app is the client.
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
