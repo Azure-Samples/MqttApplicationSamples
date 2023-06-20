@@ -9,13 +9,16 @@
 
 #include "geo_json_handler.h"
 
-#define RETURN_IF_NULL(x)                             \
+#define RETURN_IF_NULL(x, jobj_to_free)                             \
   do                                                  \
   {                                                   \
     if ((x) == NULL)                                  \
     {                                                 \
       printf("JSON Parsing Error: %s is NULL\n", #x); \
-      json_object_put(jobj); \
+      if (jobj_to_free != NULL) \
+      { \
+        json_object_put(jobj_to_free); \
+      } \
       return -1;                                      \
     }                                                 \
   } while (0)
@@ -74,19 +77,24 @@ int mosquitto_payload_to_geojson_point(
     const struct mosquitto_message* message,
     geojson_point* output)
 {
+  RETURN_IF_NULL(message, NULL);
+  RETURN_IF_NULL(output, NULL);
+
   json_object* type;
   json_object* coordinates;
   json_object* jobj = json_tokener_parse(message->payload);
+  char* type_str;
 
-  RETURN_IF_NULL(type = json_object_object_get(jobj, "type"));
-  if (strcmp(json_object_get_string(type), "Point") != 0)
+  RETURN_IF_NULL(type = json_object_object_get(jobj, "type"), jobj);
+  RETURN_IF_NULL(type_str = (char*)json_object_get_string(type), jobj);
+  if (strcmp(type_str, "Point") != 0)
   {
     printf("JSON Parsing Error: type is not Point\n");
     json_object_put(jobj);
     return -1;
   }
-  RETURN_IF_NULL(coordinates = json_object_object_get(jobj, "coordinates"));
-  RETURN_IF_NULL(output->type = (char*)json_object_get_string(type));
+  RETURN_IF_NULL(coordinates = json_object_object_get(jobj, "coordinates"), jobj);
+  output->type = type_str;
   RETURN_IF_NAN(
       output->coordinates.x = json_object_get_double(json_object_array_get_idx(coordinates, 0)));
   RETURN_IF_NAN(
@@ -102,12 +110,11 @@ int geojson_point_to_mosquitto_payload(
     const geojson_point geojson_point,
     mosquitto_payload* message)
 {
-  json_object* jobj = json_object_new_object();
+  RETURN_IF_NULL(geojson_point.type, NULL);
+  RETURN_IF_NULL(message->payload, NULL);
 
-  RETURN_IF_NULL(geojson_point.type);
-  RETURN_IF_NULL(message->payload);
-  
   const char* payload;
+  json_object* jobj = json_object_new_object();
   json_object* type = json_object_new_string(geojson_point.type);
   json_object* coordinates = json_object_new_array();
 
@@ -120,10 +127,11 @@ int geojson_point_to_mosquitto_payload(
   RETURN_IF_NON_ZERO(json_object_object_add(jobj, "coordinates", coordinates));
   RETURN_IF_NULL(
       payload
-      = json_object_to_json_string_length(jobj, JSON_C_TO_STRING_PLAIN, &message->payload_length));
+      = json_object_to_json_string_length(jobj, JSON_C_TO_STRING_PLAIN, &message->payload_length), jobj);
   if (message->payload_length > message->max_payload_length)
   {
     printf("JSON Parsing Error: mosquitto payload buffer is too small\n");
+    message->payload_length = 0;
     json_object_put(jobj);
     return -1;
   }
