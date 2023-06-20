@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\alert_message\alert_message.csproj" />
     <ProjectReference Include="..\..\..\..\mqttclients\dotnet\MQTTnet.Client.Extensions\MQTTnet.Client.Extensions.csproj" />
+    <ProjectReference Include="..\alert_message\alert_message.csproj" />
   </ItemGroup>
 </Project>
