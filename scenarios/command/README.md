@@ -167,11 +167,13 @@ The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X
 echo "MQTT_HOST_NAME=localhost" > vehicle03.env
 echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
 echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
+echo "MQTT_CLIENT_ID=vehicle03" >> vehicle03.env
 echo "MQTT_CA_FILE=chain.pem" >> vehicle03.env
 
 echo "MQTT_HOST_NAME=localhost" > mobile-app.env
 echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
 echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
+echo "MQTT_CLIENT_ID=mobile-app" >> mobile-app.env
 echo "MQTT_CA_FILE=chain.pem" >> mobile-app.env
 
 ```
@@ -211,4 +213,48 @@ To run the dotnet sample execute each line below in a different shell/terminal.
 ```
 ```bash
  dotnet/command_consumer/bin/Debug/net7.0/command_consumer --envFile=mobile-app.env
+```
+
+### C
+
+To build the C sample, run from the root folder:
+
+```bash
+cmake --preset=command
+cmake --build --preset=command
+```
+
+The build script will copy the produced binary to `c/build/command`
+
+To run the C sample, execute each line below in a different shell/terminal.
+
+```bash
+# from folder scenarios/command
+c/build/command_server vehicle03.env
+```
+```bash
+c/build/command_client mobile-app.env
+```
+
+For alternate building/running methods and more information, see the [C documentation](../../mqttclients/c/README.md).
+
+
+### python
+
+Install the paho client for python:
+```bash
+pip install paho-mqtt
+```
+
+Install internal sample package:
+```bash
+pip install ../../mqttclients/python
+
+To run the python sample, execute each line below in a different shell/terminal:
+
+```bash
+python python/command_receiver.py --env-file=vehicle03.env
+```
+```bash
+python python/command_invoker.py --env-file=mobile-app.env
 ```
