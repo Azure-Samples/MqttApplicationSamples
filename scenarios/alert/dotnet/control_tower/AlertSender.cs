@@ -24,7 +24,6 @@ namespace control_tower
                    .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                    .WithRetainFlag(false)
                    .WithMessageExpiryInterval(300)
-                   .Build(),
-               ct);
+                   .Build(), ct);
     }
 }
