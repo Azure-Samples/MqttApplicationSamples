@@ -2,9 +2,9 @@
 
 public class TelemetryConsumer<T>
 {
-    readonly IMqttClient _mqttClient;
-    readonly IMessageSerializer _serializer;
-    readonly string _topicPattern;
+    private readonly IMqttClient _mqttClient;
+    private readonly IMessageSerializer _serializer;
+    private readonly string _topicPattern;
     public Action<TelemetryMessage<T>>? OnTelemetryReceived { get; set; }
 
     public TelemetryConsumer(IMqttClient mqttClient, IMessageSerializer serializer, string topicPattern)
@@ -19,9 +19,9 @@ public class TelemetryConsumer<T>
         _mqttClient.ApplicationMessageReceivedAsync += async m =>
         {
             await Task.Yield();
-            var topic = m.ApplicationMessage.Topic;
+            string topic = m.ApplicationMessage.Topic;
 
-            var res = MqttTopicFilterComparer.Compare(topic, _topicPattern);
+            MqttTopicFilterCompareResult res = MqttTopicFilterComparer.Compare(topic, _topicPattern);
             if (res == MqttTopicFilterCompareResult.IsMatch)
             {
                 var segments = topic.Split('/');

@@ -23,10 +23,10 @@ public abstract class CommandConsumer<T, TResp>
         _serializer = serializer;
         _mqttClient.ApplicationMessageReceivedAsync += async m =>
         {
-            var topic = m.ApplicationMessage.Topic;
+            string topic = m.ApplicationMessage.Topic;
             Trace.WriteLine(topic);
             Trace.WriteLine(_tcs!.Task.Status.ToString());
-            var expectedTopic = ResponseTopicPattern!.Replace("{clientId}", _remoteClientId).Replace("{commandName}", cmdName);
+            string expectedTopic = ResponseTopicPattern!.Replace("{clientId}", _remoteClientId).Replace("{commandName}", cmdName);
             if (topic.Equals(expectedTopic))
             {
                 if (m.ApplicationMessage.ContentType != serializer.ContentType)
