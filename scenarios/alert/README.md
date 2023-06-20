@@ -135,12 +135,14 @@ echo "MQTT_USERNAME=vehicle04" >> vehicle04.env
 echo "MQTT_CLIENT_ID=vehicle04" >> vehicle04.env
 echo "MQTT_CERT_FILE=vehicle04.pem" >> vehicle04.env
 echo "MQTT_KEY_FILE=vehicle04.key" >> vehicle04.env
+echo "MQTT_CLEAN_SESSION=false" >> vehicle04.env
 
 echo "MQTT_HOST_NAME=$host_name" > vehicle05.env
 echo "MQTT_USERNAME=vehicle05" >> vehicle05.env
 echo "MQTT_CLIENT_ID=vehicle05" >> vehicle05.env
 echo "MQTT_CERT_FILE=vehicle05.pem" >> vehicle05.env
 echo "MQTT_KEY_FILE=vehicle05.key" >> vehicle05.env
+echo "MQTT_CLEAN_SESSION=false" >> vehicle05.env
 
 echo "MQTT_HOST_NAME=$host_name" > control-tower.env
 echo "MQTT_USERNAME=control-tower" >> control-tower.env
@@ -167,12 +169,14 @@ echo "MQTT_CLIENT_ID=vehicle04" >> vehicle04.env
 echo "MQTT_CERT_FILE=vehicle04.pem" >> vehicle04.env
 echo "MQTT_KEY_FILE=vehicle04.key" >> vehicle04.env
 echo "MQTT_CA_FILE=chain.pem" >> vehicle04.env
+echo "MQTT_CLEAN_SESSION=false" >> vehicle04.env
 
 echo "MQTT_HOST_NAME=localhost" > vehicle05.env
 echo "MQTT_CLIENT_ID=vehicle05" >> vehicle05.env
 echo "MQTT_CERT_FILE=vehicle05.pem" >> vehicle05.env
 echo "MQTT_KEY_FILE=vehicle05.key" >> vehicle05.env
 echo "MQTT_CA_FILE=chain.pem" >> vehicle05.env
+echo "MQTT_CLEAN_SESSION=false" >> vehicle05.env
 
 echo "MQTT_HOST_NAME=localhost" > control-tower.env
 echo "MQTT_CLIENT_ID=control-tower" >> control-tower.env
@@ -190,11 +194,13 @@ echo "MQTT_HOST_NAME=localhost" > vehicle04.env
 echo "MQTT_CLIENT_ID=vehicle04" >> vehicle04.env
 echo "MQTT_TCP_PORT=1883" >> vehicle04.env
 echo "MQTT_USE_TLS=false" >> vehicle04.env
+echo "MQTT_CLEAN_SESSION=false" >> vehicle04.env
 
 echo "MQTT_HOST_NAME=localhost" > vehicle05.env
 echo "MQTT_CLIENT_ID=vehicle05" >> vehicle05.env
 echo "MQTT_TCP_PORT=1883" >> vehicle05.env
 echo "MQTT_USE_TLS=false" >> vehicle05.env
+echo "MQTT_CLEAN_SESSION=false" >> vehicle05.env
 
 echo "MQTT_HOST_NAME=localhost" > control-tower.env
 echo "MQTT_CLIENT_ID=control-tower" >> control-tower.env
@@ -225,7 +231,7 @@ To run the dotnet sample execute each line below in a different shell/terminal.
  dotnet/vehicle/bin/Debug/net7.0/vehicle --envFile=vehicle05.env
 ```
 ```bash
- dotnet/control-tower/bin/Debug/net7.0/control-tower --envFile=control-tower.env
+ dotnet/control_tower/bin/Debug/net7.0/control_tower --envFile=control-tower.env
 ```
 
 ### C
