@@ -97,8 +97,11 @@ int mosquitto_payload_to_geojson_point(
   RETURN_IF_NULL(coordinates = json_object_object_get(jobj, "coordinates"), jobj);
   RETURN_IF_NAN(
       output->coordinates.x = json_object_get_double(json_object_array_get_idx(coordinates, 0)));
+  printf("x: %f\n", output->coordinates.x);
   RETURN_IF_NAN(
       output->coordinates.y = json_object_get_double(json_object_array_get_idx(coordinates, 1)));
+  printf("y: %f\n", output->coordinates.y);
+  printf("message: %s\n", message->payload);
 
   // decrements the reference count of the object and frees it if it reaches zero.
   json_object_put(jobj);
