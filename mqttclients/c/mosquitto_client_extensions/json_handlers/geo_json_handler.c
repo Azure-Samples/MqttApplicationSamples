@@ -83,18 +83,16 @@ int mosquitto_payload_to_geojson_point(
   json_object* type;
   json_object* coordinates;
   json_object* jobj = json_tokener_parse(message->payload);
-  char* type_str;
 
   RETURN_IF_NULL(type = json_object_object_get(jobj, "type"), jobj);
-  RETURN_IF_NULL(type_str = (char*)json_object_get_string(type), jobj);
-  if (strcmp(type_str, "Point") != 0)
+  RETURN_IF_NULL(output->type = (char*)json_object_get_string(type), jobj);
+  if (strcmp(output->type, "Point") != 0)
   {
     printf("JSON Parsing Error: type is not Point\n");
     json_object_put(jobj);
     return -1;
   }
   RETURN_IF_NULL(coordinates = json_object_object_get(jobj, "coordinates"), jobj);
-  output->type = type_str;
   RETURN_IF_NAN(
       output->coordinates.x = json_object_get_double(json_object_array_get_idx(coordinates, 0)));
   RETURN_IF_NAN(
