@@ -23,6 +23,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Telemetry", "Telemetry", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQTTnet.Client.Extensions.Tests", "..\mqttclients\dotnet\MQTTnet.Client.Extensions.Tests\MQTTnet.Client.Extensions.Tests.csproj", "{C7DB8091-7451-4F96-9A7E-60405D86045E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Alert", "Alert", "{14F3FE3B-2503-4215-8958-0F2FEBB7D74A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "alert_message", "alert\dotnet\alert_message\alert_message.csproj", "{DD34D824-2772-46F4-A93C-99317E1C4DB1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vehicle", "alert\dotnet\vehicle\vehicle.csproj", "{336C0CBA-623E-4AA4-B4C7-52EF4400FD2E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "control_tower", "alert\dotnet\control_tower\control_tower.csproj", "{6E9D2BF7-C97A-4958-8E3D-2CB6D29C5F7E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +69,18 @@ Global
 		{C7DB8091-7451-4F96-9A7E-60405D86045E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7DB8091-7451-4F96-9A7E-60405D86045E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7DB8091-7451-4F96-9A7E-60405D86045E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD34D824-2772-46F4-A93C-99317E1C4DB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD34D824-2772-46F4-A93C-99317E1C4DB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD34D824-2772-46F4-A93C-99317E1C4DB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD34D824-2772-46F4-A93C-99317E1C4DB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{336C0CBA-623E-4AA4-B4C7-52EF4400FD2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{336C0CBA-623E-4AA4-B4C7-52EF4400FD2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{336C0CBA-623E-4AA4-B4C7-52EF4400FD2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{336C0CBA-623E-4AA4-B4C7-52EF4400FD2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E9D2BF7-C97A-4958-8E3D-2CB6D29C5F7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E9D2BF7-C97A-4958-8E3D-2CB6D29C5F7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E9D2BF7-C97A-4958-8E3D-2CB6D29C5F7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E9D2BF7-C97A-4958-8E3D-2CB6D29C5F7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,6 +91,9 @@ Global
 		{C5FECBF2-C898-4A02-A761-CA098B884349} = {23D7EF17-B820-4C7E-9039-56A47FA35C55}
 		{63D62307-31E8-4D14-B92F-DEF195D697A3} = {67780A3E-3D40-4D1F-8F2D-BC15B2EE7FCB}
 		{48AF1BD5-B605-45E8-BB4E-9E015A0AAE29} = {67780A3E-3D40-4D1F-8F2D-BC15B2EE7FCB}
+		{DD34D824-2772-46F4-A93C-99317E1C4DB1} = {14F3FE3B-2503-4215-8958-0F2FEBB7D74A}
+		{336C0CBA-623E-4AA4-B4C7-52EF4400FD2E} = {14F3FE3B-2503-4215-8958-0F2FEBB7D74A}
+		{6E9D2BF7-C97A-4958-8E3D-2CB6D29C5F7E} = {14F3FE3B-2503-4215-8958-0F2FEBB7D74A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {07B8E195-2259-4EE7-B379-8A7CCC581E48}
