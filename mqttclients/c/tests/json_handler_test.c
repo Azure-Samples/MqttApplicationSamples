@@ -238,7 +238,6 @@ int test_json_handler()
           cmocka_unit_test(test_mosquitto_payload_to_geojson_point_empty_json_fail),
           cmocka_unit_test(test_mosquitto_payload_to_geojson_point_not_geojson_fail),
           cmocka_unit_test(test_mosquitto_payload_to_geojson_point_not_point_fail),
-          cmocka_unit_test(test_mosquitto_payload_to_geojson_point_missing_coordinates_fail)
-        };
+          cmocka_unit_test(test_mosquitto_payload_to_geojson_point_missing_coordinates_fail) };
   return cmocka_run_group_tests_name("json_handler", tests, NULL, NULL);
 }
