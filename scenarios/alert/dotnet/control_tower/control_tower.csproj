@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-control_tower-29d0e5e1-e95b-4336-a1b7-2547d8318922</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\alert_message\alert_message.csproj" />
+    <ProjectReference Include="..\..\..\..\mqttclients\dotnet\MQTTnet.Client.Extensions\MQTTnet.Client.Extensions.csproj" />
+  </ItemGroup>
+</Project>
