@@ -30,7 +30,6 @@ namespace control_tower
             MqttClientConnectResult connAck = await mqttClient.ConnectAsync(new MqttClientOptionsBuilder().WithConnectionSettings(cs).Build(), stoppingToken);
             _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.Options.ClientId, connAck.ResultCode);
 
-
             AlertSender alertSender = new(mqttClient);
 
             bool sendAlert = true;
