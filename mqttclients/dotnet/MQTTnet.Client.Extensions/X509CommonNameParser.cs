@@ -9,7 +9,7 @@ public static class X509CommonNameParser
     {
         string result;
         string subject = cert.Subject;
-        var dict = subject.ToDictionary(',', '=');
+        IDictionary<string, string> dict = subject.ToDictionary(',', '=');
         if (dict.ContainsKey("CN"))
         {
             result = dict["CN"];
