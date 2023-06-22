@@ -6,12 +6,24 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "geo_json_handler.h"
 #include "mosquitto.h"
 #include "mqtt_setup.h"
 
-#define PAYLOAD "{\"type\":\"Point\",\"coordinates\":[-2.124156,51.899523]}"
 #define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V311
+
+/* We format the doubles to 6 decimal points, and the format is fixed, so the max length is when
+ * both coordinates are negative, ex {"type":"Point","coordinates":[-83.551071,-36.169784]} which is
+ * 54
+ */
+#define MAX_PAYLOAD_LENGTH 60
+
+double generate_random_coordinate()
+{
+  double scale = rand() / (double)RAND_MAX;
+  return (scale * (180)) - 90;
+}
 
 /*
  * This sample sends telemetry messages to the Broker.
@@ -45,11 +57,23 @@ int main(int argc, char* argv[])
   {
     char topic[strlen(obj.client_id) + 17];
     sprintf(topic, "vehicles/%s/position", obj.client_id);
+    mosquitto_payload payload = mosquitto_payload_init(MAX_PAYLOAD_LENGTH);
+    geojson_point json_point = geojson_point_init();
+    strcpy(json_point.type, "Point");
 
     while (keep_running)
     {
-      result = mosquitto_publish_v5(
-          mosq, NULL, topic, (int)strlen(PAYLOAD), PAYLOAD, QOS_LEVEL, false, NULL);
+      geojson_point_set_coordinates(
+          &json_point, generate_random_coordinate(), generate_random_coordinate());
+      if (geojson_point_to_mosquitto_payload(json_point, &payload) != 0)
+      {
+        result = MOSQ_ERR_UNKNOWN;
+      }
+      else
+      {
+        result = mosquitto_publish_v5(
+            mosq, NULL, topic, payload.payload_length, payload.payload, QOS_LEVEL, false, NULL);
+      }
 
       if (result != MOSQ_ERR_SUCCESS)
       {
@@ -58,6 +82,8 @@ int main(int argc, char* argv[])
 
       sleep(5);
     }
+    mosquitto_payload_destroy(&payload);
+    geojson_point_destroy(&json_point);
   }
 
   if (mosq != NULL)

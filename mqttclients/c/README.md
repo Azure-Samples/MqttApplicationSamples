@@ -12,13 +12,16 @@
 - [Ninja build system](https://github.com/ninja-build/ninja/releases) Version 1.10 or higher
 - GNU C++ compiler
 - SSL
-- UUID Library (if running a sample that uses correlation IDs - currently this is the Command Samples)
+- [JSON-C](https://github.com/json-c/json-c) if running a sample that uses JSON - currently these are the Telemetry Samples
+- UUID Library (if running a sample that uses correlation IDs - currently these are the Command Samples)
 
 An example of installing these tools (other than CMake) is shown below:
 
 ``` bash
 sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
 sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitto-dev libssl-dev -y
+# If running a sample that uses JSON
+sudo apt-get install libjson-c-dev
 # If running a sample that uses Correlation IDs
 sudo apt-get install uuid-dev
 ```
@@ -56,6 +59,7 @@ cmake --build scenarios/<sample name>/c/build
 ## Using VS Code
 
 - Install the VS Code extension `ms-vscode.cpptools-extension-pack`
+- sudo apt-get install build-essential gdb
 - Generate .env file(s) and key/pem files as directed in main readmes
 - Go to the `Run and Debug` tab in VS Code and select one of the C samples from the dropdown
 - Click the Green Play button and you should be good to go!
