@@ -49,7 +49,8 @@
 
 geojson_point geojson_point_init()
 {
-  return (geojson_point){ .type = calloc(1, strlen("Point")), .coordinates = (geojson_coordinates){ .x = 0, .y = 0 } };
+  return (geojson_point){ .type = calloc(1, strlen("Point")),
+                          .coordinates = (geojson_coordinates){ .x = 0, .y = 0 } };
 }
 
 void geojson_point_destroy(geojson_point* pt)
@@ -145,8 +146,7 @@ int geojson_point_to_mosquitto_payload(
   RETURN_IF_NON_ZERO(json_object_object_add(jobj, "type", type));
   RETURN_IF_NON_ZERO(json_object_object_add(jobj, "coordinates", coordinates));
   RETURN_IF_NULL(
-      payload
-      = json_object_to_json_string_length(jobj, JSON_C_TO_STRING_PLAIN, &payload_length),
+      payload = json_object_to_json_string_length(jobj, JSON_C_TO_STRING_PLAIN, &payload_length),
       jobj);
   if (payload_length > message->max_payload_length)
   {
