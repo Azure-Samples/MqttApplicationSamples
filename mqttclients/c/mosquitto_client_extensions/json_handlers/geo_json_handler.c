@@ -67,6 +67,7 @@ void mosquitto_payload_destroy(mosquitto_payload* payload)
     payload->payload = NULL;
   }
   payload->payload_length = 0;
+  payload->max_payload_length = 0;
 }
 
 void geojson_point_set_coordinates(geojson_point* pt, double x, double y)
