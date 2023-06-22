@@ -58,13 +58,14 @@ int main(int argc, char* argv[])
     char topic[strlen(obj.client_id) + 17];
     sprintf(topic, "vehicles/%s/position", obj.client_id);
     mosquitto_payload payload = mosquitto_payload_init(MAX_PAYLOAD_LENGTH);
-    geojson_point geojson_point = geojson_point_init();
+    geojson_point json_point = geojson_point_init();
+    json_point.type = "Point";
 
     while (keep_running)
     {
       geojson_point_set_coordinates(
-          &geojson_point, generate_random_coordinate(), generate_random_coordinate());
-      if (geojson_point_to_mosquitto_payload(geojson_point, &payload) != 0)
+          &json_point, generate_random_coordinate(), generate_random_coordinate());
+      if (geojson_point_to_mosquitto_payload(json_point, &payload) != 0)
       {
         result = MOSQ_ERR_UNKNOWN;
       }
@@ -82,6 +83,7 @@ int main(int argc, char* argv[])
       sleep(5);
     }
     mosquitto_payload_destroy(&payload);
+    geojson_point_destroy(&json_point);
   }
 
   if (mosq != NULL)

@@ -33,6 +33,8 @@ void print_point_telemetry_message(
   {
     printf("Error parsing JSON: %s\n", (char*)message->payload);
   }
+
+  geojson_point_destroy(&json_message);
 }
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to

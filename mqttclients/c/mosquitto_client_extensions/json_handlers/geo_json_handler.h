@@ -14,13 +14,6 @@ typedef struct mosquitto_payload
   size_t max_payload_length;
 } mosquitto_payload;
 
-// Reference generic geojson struct if another type is needed in the future
-// typedef struct geojson_struct
-// {
-//     char* type;
-//     void* data;
-// } geojson_struct;
-
 typedef struct geojson_coordinates
 {
   double x, y;
@@ -36,7 +29,8 @@ typedef struct geojson_point
  * @brief Converts a mosquitto_message to a geojson_point
  *
  * @param message The mosquitto_message to convert
- * @param output The geojson_point to output to. On error, any values set should be ignored.
+ * @param output The geojson_point to output to. The type field must already be allocated. The
+ * geojson_point_init() function will do this for you.
  * @return int 0 on success, -1 on failure
  */
 int mosquitto_payload_to_geojson_point(
@@ -47,9 +41,9 @@ int mosquitto_payload_to_geojson_point(
  * @brief Converts a geojson_point to a mosquitto_payload
  *
  * @param geojson_point The geojson_point to convert
- * @param message The mosquitto_payload to output to. On error, any values set should be ignored.
- * Payload must already be allocated to a size of max_payload_length (which must be set and will not
- * be modified in this function). mosquitto_payload_init() will do this for you.
+ * @param message The mosquitto_payload to output to. Payload must already be allocated to a size of
+ * max_payload_length (which must be set and will not be modified in this function).
+ * mosquitto_payload_init() will do this for you.
  * @return int 0 on success, -1 on failure
  */
 int geojson_point_to_mosquitto_payload(
@@ -66,11 +60,19 @@ int geojson_point_to_mosquitto_payload(
 void geojson_point_set_coordinates(geojson_point* pt, double x, double y);
 
 /**
- * @brief Initializes a geojson_point with type "Point" and coordinates (0, 0)
+ * @brief Initializes an empty geojson_point with type allocated to a length of "Point" and
+ * coordinates set to (0, 0). The geojson_point must be freed with geojson_point_destroy().
  *
  * @return geojson_point The initialized geojson_point
  */
 geojson_point geojson_point_init();
+
+/**
+ * @brief Frees the memory of a geojson_point's type field and sets the coordinates to 0.
+ *
+ * @param pt The geojson_point to free
+ */
+void geojson_point_destroy(geojson_point* pt);
 
 /**
  * @brief Initializes a mosquitto_payload with payload_length set to 0 and payload allocated to
