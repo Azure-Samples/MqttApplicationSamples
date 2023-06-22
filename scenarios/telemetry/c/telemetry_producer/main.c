@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
     sprintf(topic, "vehicles/%s/position", obj.client_id);
     mosquitto_payload payload = mosquitto_payload_init(MAX_PAYLOAD_LENGTH);
     geojson_point json_point = geojson_point_init();
-    json_point.type = "Point";
+    strcpy(json_point.type, "Point");
 
     while (keep_running)
     {

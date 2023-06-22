@@ -22,9 +22,11 @@ static void test_geojson_point_init_success(void** state)
 {
   geojson_point json_point = geojson_point_init();
 
-  assert_string_equal(json_point.type, "Point");
+  assert_string_equal(json_point.type, "");
   assert_float_equal(json_point.coordinates.x, 0, 0.1);
   assert_float_equal(json_point.coordinates.y, 0, 0.1);
+
+  geojson_point_destroy(&json_point);
 }
 
 // Init sets payload length to 0, payload to empty string, and saves buffer size in
@@ -63,6 +65,7 @@ static void mosquitto_payload_destroy_success(void** state)
 static void test_geojson_point_to_mosquitto_payload_min_length_success(void** state)
 {
   geojson_point json_point = geojson_point_init();
+  strcpy(json_point.type, "Point");
   mosquitto_payload mosq_payload = mosquitto_payload_init(MAX_PAYLOAD_LENGTH);
 
   assert_int_equal(0, geojson_point_to_mosquitto_payload(json_point, &mosq_payload));
@@ -71,12 +74,14 @@ static void test_geojson_point_to_mosquitto_payload_min_length_success(void** st
       mosq_payload.payload, "{\"type\":\"Point\",\"coordinates\":[0.000000,0.000000]}");
 
   mosquitto_payload_destroy(&mosq_payload);
+  geojson_point_destroy(&json_point);
 }
 
 // max length payload
 static void test_geojson_point_to_mosquitto_payload_max_length_success(void** state)
 {
   geojson_point json_point = geojson_point_init();
+  strcpy(json_point.type, "Point");
   mosquitto_payload mosq_payload = mosquitto_payload_init(MAX_PAYLOAD_LENGTH);
   geojson_point_set_coordinates(&json_point, -83.55107123423, -36.169784234234);
 
@@ -86,6 +91,7 @@ static void test_geojson_point_to_mosquitto_payload_max_length_success(void** st
       mosq_payload.payload, "{\"type\":\"Point\",\"coordinates\":[-83.551071,-36.169784]}");
 
   mosquitto_payload_destroy(&mosq_payload);
+  geojson_point_destroy(&json_point);
 }
 
 // NULL type
@@ -109,7 +115,9 @@ static void test_geojson_point_to_mosquitto_payload_output_null_fail(void** stat
   mosquitto_payload mosq_payload;
   mosq_payload.payload = NULL;
   geojson_point json_point = geojson_point_init();
+  strcpy(json_point.type, "Point");
   assert_int_equal(-1, geojson_point_to_mosquitto_payload(json_point, &mosq_payload));
+  geojson_point_destroy(&json_point);
 }
 
 // output payload buffer is too small
@@ -118,11 +126,13 @@ static void test_geojson_point_to_mosquitto_payload_output_buffer_too_small_fail
 
   mosquitto_payload mosq_payload = mosquitto_payload_init(5);
   geojson_point json_point = geojson_point_init();
+  strcpy(json_point.type, "Point");
   assert_int_equal(-1, geojson_point_to_mosquitto_payload(json_point, &mosq_payload));
   assert_int_equal(mosq_payload.payload_length, 0);
   assert_int_equal(strlen(mosq_payload.payload), 0);
 
   mosquitto_payload_destroy(&mosq_payload);
+  geojson_point_destroy(&json_point);
 }
 
 static void test_geojson_point_set_coordinates_sucess(void** state)
@@ -136,6 +146,8 @@ static void test_geojson_point_set_coordinates_sucess(void** state)
 
   assert_float_equal(json_point.coordinates.x, -83.551071, 0.000001);
   assert_float_equal(json_point.coordinates.y, -36.169784, 0.000001);
+
+  geojson_point_destroy(&json_point);
 }
 
 static void test_mosquitto_payload_to_geojson_point_min_payload_success(void** state)
@@ -148,6 +160,8 @@ static void test_mosquitto_payload_to_geojson_point_min_payload_success(void** s
   assert_string_equal(json_point.type, "Point");
   assert_float_equal(json_point.coordinates.x, 0, 0.1);
   assert_float_equal(json_point.coordinates.y, 0, 0.1);
+
+  geojson_point_destroy(&json_point);
 }
 
 static void test_mosquitto_payload_to_geojson_point_max_payload_success(void** state)
@@ -160,6 +174,8 @@ static void test_mosquitto_payload_to_geojson_point_max_payload_success(void** s
   assert_string_equal(json_point.type, "Point");
   assert_float_equal(json_point.coordinates.x, -83.551071, 0.000001);
   assert_float_equal(json_point.coordinates.y, -36.169784, 0.000001);
+
+  geojson_point_destroy(&json_point);
 }
 
 // both params NULL
@@ -173,6 +189,8 @@ static void test_mosquitto_payload_to_geojson_point_null_message_fail(void** sta
 {
   geojson_point json_point = geojson_point_init();
   assert_int_equal(mosquitto_payload_to_geojson_point(NULL, &json_point), -1);
+
+  geojson_point_destroy(&json_point);
 }
 
 // null json point
@@ -189,6 +207,8 @@ static void test_mosquitto_payload_to_geojson_point_empty_json_fail(void** state
   struct mosquitto_message message;
   message.payload = "";
   assert_int_equal(mosquitto_payload_to_geojson_point(&message, &json_point), -1);
+
+  geojson_point_destroy(&json_point);
 }
 
 // not geojson
@@ -198,6 +218,8 @@ static void test_mosquitto_payload_to_geojson_point_not_geojson_fail(void** stat
   struct mosquitto_message message;
   message.payload = "{\"name\":\"Valerie\",\"shirtColor\":\"blue\"}";
   assert_int_equal(mosquitto_payload_to_geojson_point(&message, &json_point), -1);
+
+  geojson_point_destroy(&json_point);
 }
 
 // not a Point
@@ -207,6 +229,8 @@ static void test_mosquitto_payload_to_geojson_point_not_point_fail(void** state)
   struct mosquitto_message message;
   message.payload = "{\"type\":\"LineString\",\"coordinates\":[[100.0, 0.0],[101.0, 1.0]]}";
   assert_int_equal(mosquitto_payload_to_geojson_point(&message, &json_point), -1);
+
+  geojson_point_destroy(&json_point);
 }
 
 // missing coordinates
@@ -216,6 +240,8 @@ static void test_mosquitto_payload_to_geojson_point_missing_coordinates_fail(voi
   struct mosquitto_message message;
   message.payload = "{\"type\":\"Point\"}";
   assert_int_equal(mosquitto_payload_to_geojson_point(&message, &json_point), -1);
+
+  geojson_point_destroy(&json_point);
 }
 
 int test_json_handler()
