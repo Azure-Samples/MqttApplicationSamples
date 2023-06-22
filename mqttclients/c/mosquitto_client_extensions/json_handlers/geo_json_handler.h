@@ -47,7 +47,9 @@ int mosquitto_payload_to_geojson_point(
  * @brief Converts a geojson_point to a mosquitto_payload
  *
  * @param geojson_point The geojson_point to convert
- * @param message The mosquitto_payload to output to. On error, any values set should be ignored. Payload must already be allocated to a size of max_payload_length (which must be set and will not be modified in this function). mosquitto_payload_init() will do this for you.
+ * @param message The mosquitto_payload to output to. On error, any values set should be ignored.
+ * Payload must already be allocated to a size of max_payload_length (which must be set and will not
+ * be modified in this function). mosquitto_payload_init() will do this for you.
  * @return int 0 on success, -1 on failure
  */
 int geojson_point_to_mosquitto_payload(
@@ -71,15 +73,18 @@ void geojson_point_set_coordinates(geojson_point* pt, double x, double y);
 geojson_point geojson_point_init();
 
 /**
- * @brief Initializes a mosquitto_payload with payload_length set to 0 and payload allocated to max_payload_length. The mosquitto_payload must be freed with mosquitto_payload_destroy().
+ * @brief Initializes a mosquitto_payload with payload_length set to 0 and payload allocated to
+ * max_payload_length. The mosquitto_payload must be freed with mosquitto_payload_destroy().
  *
- * @param max_payload_length The maximum length of the payload - this is used to allocate memory for the payload and ensure more memory is not written to the payload.
+ * @param max_payload_length The maximum length of the payload - this is used to allocate memory for
+ * the payload and ensure more memory is not written to the payload.
  * @return mosquitto_payload The initialized mosquitto_payload
  */
 mosquitto_payload mosquitto_payload_init(int max_payload_length);
 
 /**
- * @brief Frees the memory of a mosquitto_payload's payload and sets the payload_length and max_payload_length to 0.
+ * @brief Frees the memory of a mosquitto_payload's payload and sets the payload_length and
+ * max_payload_length to 0.
  *
  * @param payload The mosquitto_payload to free
  */
