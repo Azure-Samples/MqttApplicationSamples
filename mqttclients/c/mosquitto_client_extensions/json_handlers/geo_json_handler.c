@@ -49,7 +49,7 @@
 
 geojson_point geojson_point_init()
 {
-  return (geojson_point){ .type = calloc(1, strlen("Point")),
+  return (geojson_point){ .type = calloc(1, strlen("Point") + 1),
                           .coordinates = (geojson_coordinates){ .x = 0, .y = 0 } };
 }
 
