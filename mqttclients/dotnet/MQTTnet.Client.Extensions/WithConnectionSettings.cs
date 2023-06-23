@@ -1,6 +1,4 @@
-﻿using MQTTnet.Client;
-
-namespace MQTTnet.Client.Extensions;
+﻿namespace MQTTnet.Client.Extensions;
 
 public static partial class MqttNetExtensions
 {

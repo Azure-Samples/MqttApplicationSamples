@@ -1,9 +1,9 @@
-using GeoJSON.Text.Geometry;
+using Google.Protobuf.WellKnownTypes;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
 
-namespace telemetry_producer;
+namespace command_client;
 
 public class Worker : BackgroundService
 {
@@ -17,6 +17,7 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+
         MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile"));
         _logger.LogInformation("Connecting to {cs}", cs);
 
@@ -26,20 +27,28 @@ public class Worker : BackgroundService
             _logger.LogInformation("Mqtt client disconnected with reason: {e}", e.Reason);
             return Task.CompletedTask;
         };
-
-        MqttClientConnectResult connAck = await mqttClient.ConnectAsync(new MqttClientOptionsBuilder().WithConnectionSettings(cs).Build(), stoppingToken);
+        MqttClientConnectResult connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder().WithConnectionSettings(cs).Build(), stoppingToken);
         _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.Options.ClientId, connAck.ResultCode);
 
+        UnlockCommandClient commandClient = new(mqttClient);
 
-        PositionTelemetryProducer telemetryPosition = new(mqttClient);
+        bool invokeCommand = true;
 
-        while (!stoppingToken.IsCancellationRequested)
+        while (invokeCommand)
         {
-            MqttClientPublishResult pubAck = await telemetryPosition.SendTelemetryAsync(
-                new Point(new Position(51.899523, -2.124156)), stoppingToken);
-            _logger.LogInformation("Message published with PUBACK {code} and mid {mid}", pubAck.ReasonCode, pubAck.PacketIdentifier);
-            await Task.Delay(5000, stoppingToken);
-        }
+            _logger.LogInformation("Invoking Command: {time}", DateTimeOffset.Now);
 
+            UnlockResponse response = await commandClient.InvokeAsync("vehicle03",
+                new UnlockRequest
+                {
+                    When = DateTime.UtcNow.ToTimestamp(),
+                    RequestedFrom = mqttClient.Options.ClientId
+                }, 2000, stoppingToken);
+
+            _logger.LogInformation("Command response: {res}", response.Succeed);
+            Console.WriteLine("\nInvoke command again? (y/n)");
+            invokeCommand = Console.ReadLine()!.ToLower() == "y";
+        }
+        _logger.LogInformation("The End");
     }
 }

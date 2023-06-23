@@ -1,5 +1,4 @@
-using command_producer;
-using System.Diagnostics;
+using command_client;
 
 //Trace.Listeners.Add(new ConsoleTraceListener());
 

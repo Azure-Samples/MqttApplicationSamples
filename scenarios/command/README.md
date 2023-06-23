@@ -4,7 +4,11 @@
 
 This scenario simulates the request-response messaging pattern. Request-response uses two topics, one for the request and one for the response.
 
-Consider a use case where a user can unlock their car from a mobile app. The request to unlock is published on `vehicles/<vehicleId>/command/unlock/request` and the response of unlock operation is published on `vehicles/<vehicleId>/command/unlock/response`.
+Consider a use case where a user can unlock their car from a mobile app. The request to unlock is published on `vehicles/<vehicleId>/commands/unlock/request` and the response of unlock operation is published on `vehicles/<vehicleId>/commands/unlock/response`. 
+
+## Command Server, Command Client
+
+Every command requires a `server` who implements the command and a `client` who invokes the command, in this case the vehicle is the server and the mobile-app is the client.
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
@@ -12,6 +16,17 @@ Consider a use case where a user can unlock their car from a mobile app. The req
 |vehicle03|server|pub|vehicles/vehicle03/command/unlock/response|
 |mobile-app|client|pub|vehicles/vehicle03/command/unlock/request|
 |mobile-app|client|sub|vehicles/vehicle03/command/unlock/response|
+
+## Command flow with user properties
+
+To implement the command pattern, the mqtt message used for the request includes additional metadata to control the command flow:
+
+- `Correlation Id` The client includes a new _Guid_ in the message property _CorrelationData_.
+- `Response Topic` The client specifies what topic it is expecting the response on, using the message property _ResponseTopic_.
+- `ContentType` The client sets the message property _ContentType_ to specify the format used in the binary payload. The server will check this value to make sure it's configured with the proper serializer.
+- `Status` The server will set the User Property _status_ on the response, with a HTTP Status code, to let the client know if the execution was successful.
+
+## Payload Format
 
 Messages will be encoded using Protobuf with the following payload.
 
@@ -100,7 +115,7 @@ az resource create --id "$res_id/clients/mobile-app" --properties '{
 ```bash
 # from folder scenarios/command
 az resource create --id "$res_id/topicSpaces/vehiclesCommands" --properties '{
-    "topicTemplates": ["vehicles/+/command/#"]
+    "topicTemplates": ["vehicles/+/commands/#"]
 }'
 
 az resource create --id "$res_id/permissionBindings/vehiclesCmdPub" --properties '{
@@ -127,13 +142,11 @@ host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfig
 
 echo "MQTT_HOST_NAME=$host_name" > vehicle03.env
 echo "MQTT_USERNAME=vehicle03" >> vehicle03.env
-echo "MQTT_CLIENT_ID=vehicle03" >> vehicle03.env
 echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
 echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
 
 echo "MQTT_HOST_NAME=$host_name" > mobile-app.env
 echo "MQTT_USERNAME=mobile-app" >> mobile-app.env
-echo "MQTT_CLIENT_ID=mobile-app" >> mobile-app.env
 echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
 echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
 ```
@@ -152,20 +165,20 @@ The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X
 ```bash
 # from folder scenarios/command
 echo "MQTT_HOST_NAME=localhost" > vehicle03.env
-echo "MQTT_CLIENT_ID=vehicle03" >> vehicle03.env
 echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
 echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
+echo "MQTT_CLIENT_ID=vehicle03" >> vehicle03.env
 echo "MQTT_CA_FILE=chain.pem" >> vehicle03.env
 
 echo "MQTT_HOST_NAME=localhost" > mobile-app.env
-echo "MQTT_CLIENT_ID=mobile-app" >> mobile-app.env
 echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
 echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
+echo "MQTT_CLIENT_ID=mobile-app" >> mobile-app.env
 echo "MQTT_CA_FILE=chain.pem" >> mobile-app.env
 
 ```
 
-To use mosquitto without certificates: change the port to 1883 and disable TLS
+To use mosquitto without certificates: change the port to 1883 and disable TLS.
 
 ```bash
 # from folder scenarios/command
