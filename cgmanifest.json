@@ -63,6 +63,16 @@
         },
         {
             "Component": {
+                "Type": "git",
+                "git": {
+                    "RepositoryUrl": "https://github.com/protobuf-c/protobuf-c.git",
+                    "CommitHash": "f20a3fa131c275a0e795d99a28f94b4dbbb5af26"
+                }
+            },
+            "DevelopmentDependency": false
+        },
+        {
+            "Component": {
                 "Type": "linux",
                 "linux": {
                     "Name": "clang-format-9",
