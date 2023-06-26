@@ -28,7 +28,7 @@
   {                                                             \
     if (rc != MOSQ_ERR_SUCCESS)                                 \
     {                                                           \
-      printf("Error publishing: %s\n", mosquitto_strerror(rc)); \
+      printf("[ERROR] Failure while publishing: %s\n", mosquitto_strerror(rc)); \
       mosquitto_property_free_all(&proplist);                   \
       proplist = NULL;                                          \
       continue;                                                 \
@@ -46,7 +46,19 @@ void handle_message(
     const struct mosquitto_message* message,
     const mosquitto_property* props)
 {
-  printf("on_message: Topic: %s; QOS: %d\n", message->topic, message->qos);
+  UnlockResponse* unlock_response = unlock_response__unpack(NULL, message->payloadlen, message->payload);
+  if (unlock_response == NULL)
+  {
+    printf("[ERROR] Failure unpacking protobuf payload\n");
+  }
+  else if (unlock_response->succeed)
+  {
+    printf("\tCommand response: True\n");
+  }
+  else
+  {
+    printf("\tCommand response: False\n\tError: %s\n", unlock_response->errordetail);
+  }
 
   void* correlation_data;
   uint16_t correlation_data_len;
@@ -54,7 +66,7 @@ void handle_message(
           props, MQTT_PROP_CORRELATION_DATA, &correlation_data, &correlation_data_len, false)
       == NULL)
   {
-    printf("Message does not have a correlation data property\n");
+    printf("[ERROR] Message does not have a correlation data property\n");
     return;
   }
 
@@ -98,12 +110,12 @@ void on_connect_with_subscribe(
       && (result = mosquitto_subscribe_v5(mosq, NULL, RESPONSE_TOPIC, QOS_LEVEL, 0, NULL))
           != MOSQ_ERR_SUCCESS)
   {
-    printf("Error subscribing: %s\n", mosquitto_strerror(result));
+    printf("[ERROR] Failed to subscribe: %s\n", mosquitto_strerror(result));
     keep_running = 0;
     /* We might as well disconnect if we were unable to subscribe */
     if ((result = mosquitto_disconnect_v5(mosq, reason_code, props)) != MOSQ_ERR_SUCCESS)
     {
-      printf("Error disconnecting: %s\n", mosquitto_strerror(result));
+      printf("[ERROR] Failed to disconnect: %s\n", mosquitto_strerror(result));
     }
   }
 }
@@ -129,12 +141,12 @@ int main(int argc, char* argv[])
            mosq, obj.hostname, obj.tcp_port, obj.keep_alive_in_seconds, NULL, NULL))
       != MOSQ_ERR_SUCCESS)
   {
-    printf("Connection Error: %s\n", mosquitto_strerror(result));
+    printf("[ERROR] Failed to connect: %s\n", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else if ((result = mosquitto_loop_start(mosq)) != MOSQ_ERR_SUCCESS)
   {
-    printf("loop Error: %s\n", mosquitto_strerror(result));
+    printf("[ERROR] Failure in mosquitto loop: %s\n", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else
@@ -186,7 +198,7 @@ int main(int argc, char* argv[])
         UnlockRequest unlock_request = UNLOCK_REQUEST__INIT;
         void * buf;
         unsigned len;
-        unlock_request.requestedfrom = obj->client_id;
+        unlock_request.requestedfrom = obj.client_id;
         Google__Protobuf__Timestamp timestamp = GOOGLE__PROTOBUF__TIMESTAMP__INIT;
         timestamp.seconds = time(NULL);
         timestamp.nanos = 0;
@@ -194,13 +206,16 @@ int main(int argc, char* argv[])
         len = unlock_request__get_packed_size(&unlock_request);
         buf = malloc(len);
         unlock_request__pack(&unlock_request, buf);
-        printf("unlock payload: %s\n", (char*)buf);
+        printf("[Client] Sending unlock request from %s at %s", unlock_request.requestedfrom, asctime( localtime(&unlock_request.when->seconds)));
 
         CONTINUE_IF_ERROR(mosquitto_publish_v5(
             mosq, NULL, PUB_TOPIC, len, buf, QOS_LEVEL, false, proplist));
 
         mosquitto_property_free_all(&proplist);
         proplist = NULL;
+
+        free(buf);
+        buf = NULL;
       }
     }
   }

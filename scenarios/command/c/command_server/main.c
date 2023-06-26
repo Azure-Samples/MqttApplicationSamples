@@ -4,16 +4,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_protocol.h"
 #include "mqtt_setup.h"
 
+#include "unlock_command.pb-c.h"
+
 #define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V5
 
-#define PAYLOAD "\b\001"
 #define COMMAND_CONTENT_TYPE "application/protobuf"
 
 #define RETURN_IF_ERROR(rc)                                           \
@@ -21,7 +23,7 @@
   {                                                                   \
     if (rc != MOSQ_ERR_SUCCESS)                                       \
     {                                                                 \
-      printf("Error sending response: %s\n", mosquitto_strerror(rc)); \
+      printf("[ERROR] Failure while sending response: %s\n", mosquitto_strerror(rc)); \
       free(response_topic);                                           \
       response_topic = NULL;                                          \
       free(correlation_data);                                         \
@@ -31,6 +33,23 @@
       return;                                                         \
     }                                                                 \
   } while (0)
+
+// Function to execute unlock request. For this sample, it just prints the request information.
+bool handle_unlock(char* payload, int payload_length)
+{
+  UnlockRequest* unlock_request = unlock_request__unpack(NULL, payload_length, payload);
+  if (unlock_request == NULL)
+  {
+    printf("[ERROR] Failure unpacking protobuf payload\n");
+    return false;
+  }
+  else
+  {
+    printf("\tUnlock request sent from %s at %s", unlock_request->requestedfrom, asctime( localtime(&unlock_request->when->seconds)));
+    printf("[Server] Vehicle successfully unlocked\n");
+    return true;
+  }
+}
 
 // Custom callback for when a message is received.
 // Prints the command request information and sends the response.
@@ -44,12 +63,12 @@ void handle_message(
   uint16_t correlation_data_len;
   mosquitto_property* response_props = NULL;
 
-  printf("on_message: Topic: %s; QOS: %d\n", message->topic, message->qos);
+  bool command_succeed = handle_unlock(message->payload, message->payloadlen);
 
   if (mosquitto_property_read_string(props, MQTT_PROP_RESPONSE_TOPIC, &response_topic, false)
       == NULL)
   {
-    printf("Message does not have a response topic property\n");
+    printf("[ERROR] Message does not have a response topic property\n");
     return;
   }
 
@@ -59,7 +78,7 @@ void handle_message(
           props, MQTT_PROP_CORRELATION_DATA, &correlation_data, &correlation_data_len, false)
       == NULL)
   {
-    printf("Message does not have a correlation data property\n");
+    printf("[ERROR] Message does not have a correlation data property\n");
     return;
   }
 
@@ -68,8 +87,24 @@ void handle_message(
   RETURN_IF_ERROR(
       mosquitto_property_add_string(&response_props, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
 
-  RETURN_IF_ERROR(mosquitto_publish_v5(
-      mosq, NULL, response_topic, (int)strlen(PAYLOAD), PAYLOAD, QOS_LEVEL, false, response_props));
+  UnlockResponse unlock_response = UNLOCK_RESPONSE__INIT;
+  void * buf;
+  unsigned len;
+  unlock_response.succeed = command_succeed;
+  if (command_succeed == false)
+  {
+    unlock_response.errordetail = "Error executing unlock request";
+  }
+  len = unlock_response__get_packed_size(&unlock_response);
+  buf = malloc(len);
+  unlock_response__pack(&unlock_response, buf);
+  printf("[Server] Sending unlock response:\n\tSucceed: %s\n", unlock_response.succeed ? "True" : "False");
+  if (command_succeed == false)
+  {
+    printf("\tError: %s\n", unlock_response.errordetail);
+  }
+
+  RETURN_IF_ERROR(mosquitto_publish_v5(mosq, NULL, response_topic, len, buf, QOS_LEVEL, false, response_props));
 
   free(response_topic);
   response_topic = NULL;
@@ -77,6 +112,8 @@ void handle_message(
   correlation_data = NULL;
   mosquitto_property_free_all(&response_props);
   response_props = NULL;
+  free(buf);
+  buf = NULL;
 }
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to
@@ -102,12 +139,12 @@ void on_connect_with_subscribe(
       && (result = mosquitto_subscribe_v5(mosq, NULL, sub_topic, QOS_LEVEL, 0, NULL))
           != MOSQ_ERR_SUCCESS)
   {
-    printf("Error subscribing: %s\n", mosquitto_strerror(result));
+    printf("[ERROR] Failed to subscribe: %s\n", mosquitto_strerror(result));
     keep_running = 0;
     /* We might as well disconnect if we were unable to subscribe */
     if ((result = mosquitto_disconnect_v5(mosq, reason_code, props)) != MOSQ_ERR_SUCCESS)
     {
-      printf("Error disconnecting: %s\n", mosquitto_strerror(result));
+      printf("[ERROR] Failed to disconnect: %s\n", mosquitto_strerror(result));
     }
   }
 }
@@ -133,12 +170,12 @@ int main(int argc, char* argv[])
            mosq, obj.hostname, obj.tcp_port, obj.keep_alive_in_seconds, NULL, NULL))
       != MOSQ_ERR_SUCCESS)
   {
-    printf("Connection Error: %s\n", mosquitto_strerror(result));
+    printf("[ERROR] Failed to connect: %s\n", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else if ((result = mosquitto_loop_start(mosq)) != MOSQ_ERR_SUCCESS)
   {
-    printf("loop Error: %s\n", mosquitto_strerror(result));
+    printf("[ERROR] Failure in mosquitto loop: %s\n", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else
