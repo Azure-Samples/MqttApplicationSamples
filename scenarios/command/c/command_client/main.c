@@ -31,6 +31,8 @@
       printf("[ERROR] Failure while publishing: %s\n", mosquitto_strerror(rc)); \
       mosquitto_property_free_all(&proplist);                   \
       proplist = NULL;                                          \
+      free(payload_buf); \
+      payload_buf = NULL;                                       \
       continue;                                                 \
     }                                                           \
   }
@@ -67,6 +69,7 @@ void handle_message(
       == NULL)
   {
     printf("[ERROR] Message does not have a correlation data property\n");
+    unlock_response__free_unpacked(unlock_response, NULL);
     return;
   }
 
@@ -85,6 +88,7 @@ void handle_message(
 
   free(correlation_data);
   correlation_data = NULL;
+  unlock_response__free_unpacked(unlock_response, NULL);
 }
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to
@@ -146,7 +150,7 @@ int main(int argc, char* argv[])
   }
   else if ((result = mosquitto_loop_start(mosq)) != MOSQ_ERR_SUCCESS)
   {
-    printf("[ERROR] Failure in mosquitto loop: %s\n", mosquitto_strerror(result));
+    printf("[ERROR] Failure starting mosquitto loop: %s\n", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else
@@ -156,6 +160,14 @@ int main(int argc, char* argv[])
 
     // char response_topic[strlen(obj->client_id) + 33];
     // sprintf(response_topic, "vehicles/%s/command/unlock/response", obj->client_id);
+
+    // Set up protobuf payload
+    UnlockRequest proto_unlock_request = UNLOCK_REQUEST__INIT;
+    void * payload_buf;
+    size_t proto_payload_len;
+    Google__Protobuf__Timestamp proto_timestamp = GOOGLE__PROTOBUF__TIMESTAMP__INIT;
+    proto_unlock_request.requestedfrom = obj.client_id;
+    proto_timestamp.nanos = 0;
 
     mosquitto_property* proplist = NULL;
     time_t current_time;
@@ -185,6 +197,12 @@ int main(int argc, char* argv[])
       {
         last_command_sent_time = current_time;
 
+        proto_timestamp.seconds = current_time;
+        proto_unlock_request.when = &proto_timestamp;
+        proto_payload_len = unlock_request__get_packed_size(&proto_unlock_request);
+        payload_buf = malloc(proto_payload_len);
+        unlock_request__pack(&proto_unlock_request, payload_buf);
+
         CONTINUE_IF_ERROR(
             mosquitto_property_add_string(&proplist, MQTT_PROP_RESPONSE_TOPIC, RESPONSE_TOPIC));
         CONTINUE_IF_ERROR(
@@ -195,27 +213,16 @@ int main(int argc, char* argv[])
         CONTINUE_IF_ERROR(mosquitto_property_add_binary(
             &proplist, MQTT_PROP_CORRELATION_DATA, pending_correlation_id, UUID_LENGTH));
 
-        UnlockRequest unlock_request = UNLOCK_REQUEST__INIT;
-        void * buf;
-        unsigned len;
-        unlock_request.requestedfrom = obj.client_id;
-        Google__Protobuf__Timestamp timestamp = GOOGLE__PROTOBUF__TIMESTAMP__INIT;
-        timestamp.seconds = time(NULL);
-        timestamp.nanos = 0;
-        unlock_request.when = &timestamp;
-        len = unlock_request__get_packed_size(&unlock_request);
-        buf = malloc(len);
-        unlock_request__pack(&unlock_request, buf);
-        printf("[Client] Sending unlock request from %s at %s", unlock_request.requestedfrom, asctime( localtime(&unlock_request.when->seconds)));
+        printf("[Client] Sending unlock request from %s at %s", proto_unlock_request.requestedfrom, asctime( localtime(&proto_unlock_request.when->seconds)));
 
         CONTINUE_IF_ERROR(mosquitto_publish_v5(
-            mosq, NULL, PUB_TOPIC, len, buf, QOS_LEVEL, false, proplist));
+            mosq, NULL, PUB_TOPIC, proto_payload_len, payload_buf, QOS_LEVEL, false, proplist));
 
         mosquitto_property_free_all(&proplist);
         proplist = NULL;
 
-        free(buf);
-        buf = NULL;
+        free(payload_buf);
+        payload_buf = NULL;
       }
     }
   }

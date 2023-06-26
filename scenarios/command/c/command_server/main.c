@@ -30,6 +30,8 @@
       correlation_data = NULL;                                        \
       mosquitto_property_free_all(&response_props);                   \
       response_props = NULL;                                          \
+      free(payload_buf); \
+      payload_buf = NULL; \
       return;                                                         \
     }                                                                 \
   } while (0)
@@ -47,6 +49,7 @@ bool handle_unlock(char* payload, int payload_length)
   {
     printf("\tUnlock request sent from %s at %s", unlock_request->requestedfrom, asctime( localtime(&unlock_request->when->seconds)));
     printf("[Server] Vehicle successfully unlocked\n");
+    unlock_request__free_unpacked(unlock_request, NULL);
     return true;
   }
 }
@@ -65,14 +68,24 @@ void handle_message(
 
   bool command_succeed = handle_unlock(message->payload, message->payloadlen);
 
+  UnlockResponse proto_unlock_response = UNLOCK_RESPONSE__INIT;
+  void * payload_buf;
+  unsigned proto_payload_len;
+  proto_unlock_response.succeed = command_succeed;
+  if (command_succeed == false)
+  {
+    proto_unlock_response.errordetail = "Error executing unlock request";
+  }
+  proto_payload_len = unlock_response__get_packed_size(&proto_unlock_response);
+  payload_buf = malloc(proto_payload_len);
+  unlock_response__pack(&proto_unlock_response, payload_buf);
+
   if (mosquitto_property_read_string(props, MQTT_PROP_RESPONSE_TOPIC, &response_topic, false)
       == NULL)
   {
     printf("[ERROR] Message does not have a response topic property\n");
     return;
   }
-
-  printf("\tresponse_topic: %s\n", response_topic);
 
   if (mosquitto_property_read_binary(
           props, MQTT_PROP_CORRELATION_DATA, &correlation_data, &correlation_data_len, false)
@@ -87,24 +100,14 @@ void handle_message(
   RETURN_IF_ERROR(
       mosquitto_property_add_string(&response_props, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
 
-  UnlockResponse unlock_response = UNLOCK_RESPONSE__INIT;
-  void * buf;
-  unsigned len;
-  unlock_response.succeed = command_succeed;
+  
+  printf("[Server] Sending unlock response (on topic %s):\n\tSucceed: %s\n", response_topic, proto_unlock_response.succeed ? "True" : "False");
   if (command_succeed == false)
   {
-    unlock_response.errordetail = "Error executing unlock request";
-  }
-  len = unlock_response__get_packed_size(&unlock_response);
-  buf = malloc(len);
-  unlock_response__pack(&unlock_response, buf);
-  printf("[Server] Sending unlock response:\n\tSucceed: %s\n", unlock_response.succeed ? "True" : "False");
-  if (command_succeed == false)
-  {
-    printf("\tError: %s\n", unlock_response.errordetail);
+    printf("\tError: %s\n", proto_unlock_response.errordetail);
   }
 
-  RETURN_IF_ERROR(mosquitto_publish_v5(mosq, NULL, response_topic, len, buf, QOS_LEVEL, false, response_props));
+  RETURN_IF_ERROR(mosquitto_publish_v5(mosq, NULL, response_topic, proto_payload_len, payload_buf, QOS_LEVEL, false, response_props));
 
   free(response_topic);
   response_topic = NULL;
@@ -112,8 +115,8 @@ void handle_message(
   correlation_data = NULL;
   mosquitto_property_free_all(&response_props);
   response_props = NULL;
-  free(buf);
-  buf = NULL;
+  free(payload_buf);
+  payload_buf = NULL;
 }
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to
@@ -175,7 +178,7 @@ int main(int argc, char* argv[])
   }
   else if ((result = mosquitto_loop_start(mosq)) != MOSQ_ERR_SUCCESS)
   {
-    printf("[ERROR] Failure in mosquitto loop: %s\n", mosquitto_strerror(result));
+    printf("[ERROR] Failure starting mosquitto loop: %s\n", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else
