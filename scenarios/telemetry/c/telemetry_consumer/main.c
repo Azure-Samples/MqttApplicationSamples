@@ -19,8 +19,6 @@ void print_point_telemetry_message(
     const struct mosquitto_message* message,
     const mosquitto_property* props)
 {
-  printf("on_message: Topic: %s; QOS: %d; mid: %d\n", message->topic, message->qos, message->mid);
-
   geojson_point json_message = geojson_point_init();
 
   int rc = mosquitto_payload_to_geojson_point(message, &json_message);

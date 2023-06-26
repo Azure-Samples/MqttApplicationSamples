@@ -40,7 +40,7 @@ void on_connect(
     int rc;
     if ((rc = mosquitto_disconnect_v5(mosq, reason_code, NULL)) != MOSQ_ERR_SUCCESS)
     {
-      printf("Error disconnecting: %s\n", mosquitto_strerror(rc));
+      printf("[ERROR] Failure on disconnect: %s\n", mosquitto_strerror(rc));
     }
   }
 }
@@ -79,6 +79,8 @@ void on_message(
     const struct mosquitto_message* msg,
     const mosquitto_property* props)
 {
+  printf("on_message: Topic: %s; QOS: %d; mid: %d\n", msg->topic, msg->qos, msg->mid);
+
   mqtt_client_obj* client_obj = (mqtt_client_obj*)obj;
 
   if (client_obj != NULL && client_obj->handle_message != NULL)
@@ -88,8 +90,7 @@ void on_message(
   else
   {
     /* This blindly prints the payload, but the payload can be anything so take care. */
-    printf(
-        "on_message: Topic: %s; QOS: %d; Payload: %s\n", msg->topic, msg->qos, (char*)msg->payload);
+    printf("\tPayload: %s\n", (char*)msg->payload);
   }
 }
 
