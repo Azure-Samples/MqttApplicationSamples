@@ -94,7 +94,7 @@ sudo apt install -y clang-format-9
 To fix any style errors, run this command from the root of the repo (if you used a different install method than apt install, use `clang-format` instead of `clang-format-9`):
 
 ``` bash
-clang-format-9 -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*")
+clang-format-9 -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*" -not -name "*.pb-c.*")
 ```
 
 ## Running Tests
