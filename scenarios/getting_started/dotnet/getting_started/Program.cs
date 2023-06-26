@@ -8,7 +8,7 @@ using MQTTnet.Client.Extensions;
 MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars();
 Console.WriteLine($"Connecting to {cs}");
 
-var mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
+IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
 
 MqttClientConnectResult connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder().WithConnectionSettings(cs).Build());
 Console.WriteLine($"Client Connected: {mqttClient.IsConnected} with CONNACK: {connAck.ResultCode}");

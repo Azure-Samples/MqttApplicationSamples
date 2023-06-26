@@ -2,13 +2,12 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
 
-namespace telemetry_consumer;
+namespace command_server;
 
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly IConfiguration _configuration;
-
     public Worker(ILogger<Worker> logger, IConfiguration configuration)
     {
         _logger = logger;
@@ -17,9 +16,8 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile")!);
+        MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars(_configuration.GetValue<string>("envFile"));
         _logger.LogInformation("Connecting to {cs}", cs);
-
 
         IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
         mqttClient.DisconnectedAsync += e =>
@@ -30,15 +28,20 @@ public class Worker : BackgroundService
         MqttClientConnectResult connAck = await mqttClient.ConnectAsync(new MqttClientOptionsBuilder().WithConnectionSettings(cs).Build(), stoppingToken);
         _logger.LogInformation("Client {ClientId} connected: {ResultCode}", mqttClient.Options.ClientId, connAck.ResultCode);
 
-
-        PositionTelemetryConsumer positionTelemetry = new(mqttClient)
+        UnlockCommandServer commandUnlock = new(mqttClient)
         {
-            OnTelemetryReceived = m =>
-            _logger.LogInformation("Received msg from {id}. Coordinates lat: {x}, lon: {y}",
-                    m.ClientIdFromTopic,
-                    m.Payload!.Coordinates.Latitude,
-                    m.Payload.Coordinates.Longitude)
+            OnCommandReceived = Unlock
         };
-        await positionTelemetry.StartAsync();
+        await commandUnlock.StartAsync(stoppingToken);
+    }
+
+    private async Task<UnlockResponse> Unlock(UnlockRequest unlockRequest)
+    {
+        _logger.LogInformation("Received Unlock request from {from}", unlockRequest.RequestedFrom);
+
+        return await Task.FromResult(new UnlockResponse
+        {
+            Succeed = true
+        });
     }
 }

@@ -8,7 +8,7 @@ public class X509ClientCertificateLocator
     public static X509Certificate2 Load(string certFile, string keyFile, string keyFilePassword)
     {
         X509Certificate2? cert = string.IsNullOrEmpty(keyFilePassword) ?
-            X509Certificate2.CreateFromPemFile(certFile, keyFile) : 
+            X509Certificate2.CreateFromPemFile(certFile, keyFile) :
             X509Certificate2.CreateFromEncryptedPemFile(certFile, keyFile, keyFilePassword);
 
         if (cert.NotAfter.ToUniversalTime() < DateTime.UtcNow)

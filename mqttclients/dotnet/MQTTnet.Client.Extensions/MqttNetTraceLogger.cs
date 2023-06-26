@@ -8,7 +8,7 @@ public class MqttNetTraceLogger
     [DebuggerStepThrough()]
     public static MqttNetEventLogger CreateTraceLogger()
     {
-        var logger = new MqttNetEventLogger();
+        MqttNetEventLogger logger = new MqttNetEventLogger();
         logger.LogMessagePublished += (s, e) =>
         {
             string trace = $">> [{e.LogMessage.ThreadId}]: {e.LogMessage.Message}";

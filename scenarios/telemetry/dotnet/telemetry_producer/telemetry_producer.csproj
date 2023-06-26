@@ -19,13 +19,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="GeoJSON.Text" Version="1.0.1" />
+		<PackageReference Include="GeoJSON.Text" Version="1.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-		<PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.1.4.563" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\..\mqttclients\dotnet\MQTTnet.Client.Extensions\MQTTnet.Client.Extensions.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update=".env">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

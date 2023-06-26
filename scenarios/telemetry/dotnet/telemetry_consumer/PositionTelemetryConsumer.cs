@@ -6,7 +6,7 @@ namespace telemetry_consumer
 {
     internal class PositionTelemetryConsumer : TelemetryConsumer<Point>
     {
-        public PositionTelemetryConsumer(IMqttClient mqttClient) 
+        public PositionTelemetryConsumer(IMqttClient mqttClient)
             : base(mqttClient, new Utf8JsonSerializer(), "vehicles/+/position")
         {
         }
