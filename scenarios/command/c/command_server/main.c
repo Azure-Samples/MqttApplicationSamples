@@ -18,22 +18,22 @@
 
 #define COMMAND_CONTENT_TYPE "application/protobuf"
 
-#define RETURN_IF_ERROR(rc)                                           \
-  do                                                                  \
-  {                                                                   \
-    if (rc != MOSQ_ERR_SUCCESS)                                       \
-    {                                                                 \
+#define RETURN_IF_ERROR(rc)                                                           \
+  do                                                                                  \
+  {                                                                                   \
+    if (rc != MOSQ_ERR_SUCCESS)                                                       \
+    {                                                                                 \
       printf("[ERROR] Failure while sending response: %s\n", mosquitto_strerror(rc)); \
-      free(response_topic);                                           \
-      response_topic = NULL;                                          \
-      free(correlation_data);                                         \
-      correlation_data = NULL;                                        \
-      mosquitto_property_free_all(&response_props);                   \
-      response_props = NULL;                                          \
-      free(payload_buf); \
-      payload_buf = NULL; \
-      return;                                                         \
-    }                                                                 \
+      free(response_topic);                                                           \
+      response_topic = NULL;                                                          \
+      free(correlation_data);                                                         \
+      correlation_data = NULL;                                                        \
+      mosquitto_property_free_all(&response_props);                                   \
+      response_props = NULL;                                                          \
+      free(payload_buf);                                                              \
+      payload_buf = NULL;                                                             \
+      return;                                                                         \
+    }                                                                                 \
   } while (0)
 
 // Function to execute unlock request. For this sample, it just prints the request information.
@@ -47,7 +47,10 @@ bool handle_unlock(char* payload, int payload_length)
   }
   else
   {
-    printf("\tUnlock request sent from %s at %s", unlock_request->requestedfrom, asctime( localtime(&unlock_request->when->seconds)));
+    printf(
+        "\tUnlock request sent from %s at %s",
+        unlock_request->requestedfrom,
+        asctime(localtime(&unlock_request->when->seconds)));
     printf("[Server] Vehicle successfully unlocked\n");
     unlock_request__free_unpacked(unlock_request, NULL);
     return true;
@@ -69,7 +72,7 @@ void handle_message(
   bool command_succeed = handle_unlock(message->payload, message->payloadlen);
 
   UnlockResponse proto_unlock_response = UNLOCK_RESPONSE__INIT;
-  void * payload_buf;
+  void* payload_buf;
   unsigned proto_payload_len;
   proto_unlock_response.succeed = command_succeed;
   if (command_succeed == false)
@@ -100,14 +103,24 @@ void handle_message(
   RETURN_IF_ERROR(
       mosquitto_property_add_string(&response_props, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
 
-  
-  printf("[Server] Sending unlock response (on topic %s):\n\tSucceed: %s\n", response_topic, proto_unlock_response.succeed ? "True" : "False");
+  printf(
+      "[Server] Sending unlock response (on topic %s):\n\tSucceed: %s\n",
+      response_topic,
+      proto_unlock_response.succeed ? "True" : "False");
   if (command_succeed == false)
   {
     printf("\tError: %s\n", proto_unlock_response.errordetail);
   }
 
-  RETURN_IF_ERROR(mosquitto_publish_v5(mosq, NULL, response_topic, proto_payload_len, payload_buf, QOS_LEVEL, false, response_props));
+  RETURN_IF_ERROR(mosquitto_publish_v5(
+      mosq,
+      NULL,
+      response_topic,
+      proto_payload_len,
+      payload_buf,
+      QOS_LEVEL,
+      false,
+      response_props));
 
   free(response_topic);
   response_topic = NULL;

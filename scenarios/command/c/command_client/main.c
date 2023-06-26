@@ -23,18 +23,18 @@
 
 #define UUID_LENGTH 37
 
-#define CONTINUE_IF_ERROR(rc)                                   \
-  if (true)                                                     \
-  {                                                             \
-    if (rc != MOSQ_ERR_SUCCESS)                                 \
-    {                                                           \
+#define CONTINUE_IF_ERROR(rc)                                                   \
+  if (true)                                                                     \
+  {                                                                             \
+    if (rc != MOSQ_ERR_SUCCESS)                                                 \
+    {                                                                           \
       printf("[ERROR] Failure while publishing: %s\n", mosquitto_strerror(rc)); \
-      mosquitto_property_free_all(&proplist);                   \
-      proplist = NULL;                                          \
-      free(payload_buf); \
-      payload_buf = NULL;                                       \
-      continue;                                                 \
-    }                                                           \
+      mosquitto_property_free_all(&proplist);                                   \
+      proplist = NULL;                                                          \
+      free(payload_buf);                                                        \
+      payload_buf = NULL;                                                       \
+      continue;                                                                 \
+    }                                                                           \
   }
 
 static uuid_t pending_correlation_id;
@@ -48,7 +48,8 @@ void handle_message(
     const struct mosquitto_message* message,
     const mosquitto_property* props)
 {
-  UnlockResponse* unlock_response = unlock_response__unpack(NULL, message->payloadlen, message->payload);
+  UnlockResponse* unlock_response
+      = unlock_response__unpack(NULL, message->payloadlen, message->payload);
   if (unlock_response == NULL)
   {
     printf("[ERROR] Failure unpacking protobuf payload\n");
@@ -163,7 +164,7 @@ int main(int argc, char* argv[])
 
     // Set up protobuf payload
     UnlockRequest proto_unlock_request = UNLOCK_REQUEST__INIT;
-    void * payload_buf;
+    void* payload_buf;
     size_t proto_payload_len;
     Google__Protobuf__Timestamp proto_timestamp = GOOGLE__PROTOBUF__TIMESTAMP__INIT;
     proto_unlock_request.requestedfrom = obj.client_id;
@@ -213,7 +214,10 @@ int main(int argc, char* argv[])
         CONTINUE_IF_ERROR(mosquitto_property_add_binary(
             &proplist, MQTT_PROP_CORRELATION_DATA, pending_correlation_id, UUID_LENGTH));
 
-        printf("[Client] Sending unlock request from %s at %s", proto_unlock_request.requestedfrom, asctime( localtime(&proto_unlock_request.when->seconds)));
+        printf(
+            "[Client] Sending unlock request from %s at %s",
+            proto_unlock_request.requestedfrom,
+            asctime(localtime(&proto_unlock_request.when->seconds)));
 
         CONTINUE_IF_ERROR(mosquitto_publish_v5(
             mosq, NULL, PUB_TOPIC, proto_payload_len, payload_buf, QOS_LEVEL, false, proplist));
