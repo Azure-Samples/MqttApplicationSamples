@@ -86,7 +86,7 @@ void handle_message(
     printf("\t[ERROR] Failed to allocate memory for payload buffer.\n");
     return;
   }
-  
+
   if (unlock_response__pack(&proto_unlock_response, payload_buf) != proto_payload_len)
   {
     printf("\t[ERROR] Failure serializing payload.\n");
