@@ -42,7 +42,7 @@ bool handle_unlock(char* payload, int payload_length)
   UnlockRequest* unlock_request = unlock_request__unpack(NULL, payload_length, payload);
   if (unlock_request == NULL)
   {
-    printf("[ERROR] Failure unpacking protobuf payload\n");
+    printf("\t[ERROR] Failure deserializing protobuf payload\n");
     return false;
   }
   else
@@ -58,7 +58,7 @@ bool handle_unlock(char* payload, int payload_length)
 }
 
 // Custom callback for when a message is received.
-// Prints the command request information and sends the response.
+// Executes vehicle unlock and sends the response.
 void handle_message(
     struct mosquitto* mosq,
     const struct mosquitto_message* message,
@@ -81,12 +81,23 @@ void handle_message(
   }
   proto_payload_len = unlock_response__get_packed_size(&proto_unlock_response);
   payload_buf = malloc(proto_payload_len);
-  unlock_response__pack(&proto_unlock_response, payload_buf);
-
+  if (payload_buf == NULL)
+  {
+    printf("\t[ERROR] Failed to allocate memory for payload buffer.\n");
+    return;
+  }
+  
+  if (unlock_response__pack(&proto_unlock_response, payload_buf) != proto_payload_len)
+  {
+    printf("\t[ERROR] Failure serializing payload.\n");
+    free(payload_buf);
+    payload_buf = NULL;
+    return;
+  }
   if (mosquitto_property_read_string(props, MQTT_PROP_RESPONSE_TOPIC, &response_topic, false)
       == NULL)
   {
-    printf("[ERROR] Message does not have a response topic property\n");
+    printf("\t[ERROR] Message does not have a response topic property\n");
     return;
   }
 
@@ -94,7 +105,7 @@ void handle_message(
           props, MQTT_PROP_CORRELATION_DATA, &correlation_data, &correlation_data_len, false)
       == NULL)
   {
-    printf("[ERROR] Message does not have a correlation data property\n");
+    printf("\t[ERROR] Message does not have a correlation data property\n");
     return;
   }
 

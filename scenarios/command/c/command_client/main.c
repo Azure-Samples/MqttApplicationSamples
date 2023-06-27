@@ -48,39 +48,42 @@ void handle_message(
     const struct mosquitto_message* message,
     const mosquitto_property* props)
 {
+  void* correlation_data;
+  uint16_t correlation_data_len;
+
+  // deserialize the protobuf payload
   UnlockResponse* unlock_response
       = unlock_response__unpack(NULL, message->payloadlen, message->payload);
   if (unlock_response == NULL)
   {
-    printf("[ERROR] Failure unpacking protobuf payload\n");
+    printf("\t[ERROR] Failure deserializing protobuf payload\n");
   }
-  else if (unlock_response->succeed)
+  else if (unlock_response->succeed == true)
   {
-    printf("\tCommand response: True\n");
+    printf("\tCommand succeed: True\n");
   }
   else
   {
-    printf("\tCommand response: False\n\tError: %s\n", unlock_response->errordetail);
+    printf("\tCommand succeed: False\n\tError: %s\n", unlock_response->errordetail);
   }
 
-  void* correlation_data;
-  uint16_t correlation_data_len;
   if (mosquitto_property_read_binary(
           props, MQTT_PROP_CORRELATION_DATA, &correlation_data, &correlation_data_len, false)
       == NULL)
   {
-    printf("[ERROR] Message does not have a correlation data property\n");
+    printf("\t[ERROR] Message does not have a correlation data property\n");
     unlock_response__free_unpacked(unlock_response, NULL);
+    unlock_response = NULL;
     return;
   }
 
-  char readable_correlation_data[UUID_LENGTH];
-  uuid_unparse(correlation_data, readable_correlation_data);
-  printf("\tcorrelation_data: %s\n", readable_correlation_data);
   if (uuid_compare(pending_correlation_id, correlation_data) != 0)
   {
+    char readable_correlation_data[UUID_LENGTH];
     uuid_unparse(pending_correlation_id, readable_correlation_data);
-    printf("\t[ERROR] Correlation data does not match, expected: %s\n", readable_correlation_data);
+    printf("\t[ERROR] Correlation data does not match, expected: %s ", readable_correlation_data);
+    uuid_unparse(correlation_data, readable_correlation_data);
+    printf("received: %s\n", readable_correlation_data);
   }
   else
   {
@@ -90,6 +93,7 @@ void handle_message(
   free(correlation_data);
   correlation_data = NULL;
   unlock_response__free_unpacked(unlock_response, NULL);
+  unlock_response = NULL;
 }
 
 /* Callback called when the client receives a CONNACK message from the broker and we want to
@@ -162,7 +166,7 @@ int main(int argc, char* argv[])
     // char response_topic[strlen(obj->client_id) + 33];
     // sprintf(response_topic, "vehicles/%s/command/unlock/response", obj->client_id);
 
-    // Set up protobuf payload
+    // Set up protobuf unlock payload
     UnlockRequest proto_unlock_request = UNLOCK_REQUEST__INIT;
     void* payload_buf;
     size_t proto_payload_len;
@@ -202,7 +206,20 @@ int main(int argc, char* argv[])
         proto_unlock_request.when = &proto_timestamp;
         proto_payload_len = unlock_request__get_packed_size(&proto_unlock_request);
         payload_buf = malloc(proto_payload_len);
-        unlock_request__pack(&proto_unlock_request, payload_buf);
+
+        if (payload_buf == NULL)
+        {
+          printf("[ERROR] Failed to allocate memory for payload buffer.\n");
+          continue;
+        }
+
+        if (unlock_request__pack(&proto_unlock_request, payload_buf) != proto_payload_len)
+        {
+          printf("[ERROR] Failure serializing payload.\n");
+          free(payload_buf);
+          payload_buf = NULL;
+          continue;
+        }
 
         CONTINUE_IF_ERROR(
             mosquitto_property_add_string(&proplist, MQTT_PROP_RESPONSE_TOPIC, RESPONSE_TOPIC));
