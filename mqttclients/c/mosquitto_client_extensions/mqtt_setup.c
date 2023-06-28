@@ -22,24 +22,24 @@ static void sig_handler(int _)
   keep_running = 0;
 }
 
-#define MQTT_RETURN_IF_FAILED(rc)                \
-  do                                             \
-  {                                              \
-    enum mosq_err_t const mosq_result = (rc);    \
-    if (mosq_result != MOSQ_ERR_SUCCESS)         \
-    {                                            \
-      if (mosq != NULL)                          \
-      {                                          \
-        mosquitto_destroy(mosq);                 \
-      }                                          \
-      printf(                                    \
+#define MQTT_RETURN_IF_FAILED(rc)                        \
+  do                                                     \
+  {                                                      \
+    enum mosq_err_t const mosq_result = (rc);            \
+    if (mosq_result != MOSQ_ERR_SUCCESS)                 \
+    {                                                    \
+      if (mosq != NULL)                                  \
+      {                                                  \
+        mosquitto_destroy(mosq);                         \
+      }                                                  \
+      printf(                                            \
           "[ERROR] Mosquitto Error: %s At [%s:%s:%d]\n", \
-          mosquitto_strerror(mosq_result),       \
-          __FILE__,                              \
-          __func__,                              \
-          __LINE__);                             \
-      return NULL;                               \
-    }                                            \
+          mosquitto_strerror(mosq_result),               \
+          __FILE__,                                      \
+          __func__,                                      \
+          __LINE__);                                     \
+      return NULL;                                       \
+    }                                                    \
   } while (0)
 
 #define RETURN_FALSE_IF_FAILED(rc) \
@@ -130,7 +130,10 @@ bool set_int_connection_setting(int* connection_setting, char* env_name, int def
     int env_int_value = atoi(env_value);
     if (env_int_value == 0 && strcmp(env_value, "0") != 0)
     {
-      printf("[ERROR] Environment variable %s (value: %s) is not a valid integer.\n", env_name, env_value);
+      printf(
+          "[ERROR] Environment variable %s (value: %s) is not a valid integer.\n",
+          env_name,
+          env_value);
       return false;
     }
     else
@@ -171,7 +174,10 @@ bool set_bool_connection_setting(bool* connection_setting, char* env_name, bool 
     }
     else
     {
-      printf("[ERROR] Environment variable %s (value: %s) is not a valid boolean.\n", env_name, env_value);
+      printf(
+          "[ERROR] Environment variable %s (value: %s) is not a valid boolean.\n",
+          env_name,
+          env_value);
       return false;
     }
     printf("\t%s = %s\n", env_name, *connection_setting ? "true" : "false");

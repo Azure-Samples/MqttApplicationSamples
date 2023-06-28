@@ -9,42 +9,42 @@
 
 #include "geo_json_handler.h"
 
-#define RETURN_IF_NULL(x, jobj_to_free)               \
-  do                                                  \
-  {                                                   \
-    if ((x) == NULL)                                  \
-    {                                                 \
+#define RETURN_IF_NULL(x, jobj_to_free)                         \
+  do                                                            \
+  {                                                             \
+    if ((x) == NULL)                                            \
+    {                                                           \
       printf("[ERROR] Failure parsing JSON: %s is NULL\n", #x); \
-      if (jobj_to_free != NULL)                       \
-      {                                               \
-        json_object_put(jobj_to_free);                \
-      }                                               \
-      return -1;                                      \
-    }                                                 \
+      if (jobj_to_free != NULL)                                 \
+      {                                                         \
+        json_object_put(jobj_to_free);                          \
+      }                                                         \
+      return -1;                                                \
+    }                                                           \
   } while (0)
 
-#define RETURN_IF_NON_ZERO(x)                 \
-  do                                          \
-  {                                           \
-    if ((x) != 0)                             \
-    {                                         \
+#define RETURN_IF_NON_ZERO(x)                           \
+  do                                                    \
+  {                                                     \
+    if ((x) != 0)                                       \
+    {                                                   \
       printf("[ERROR] Failure parsing JSON: %s\n", #x); \
-      json_object_put(jobj);                  \
-      return -1;                              \
-    }                                         \
+      json_object_put(jobj);                            \
+      return -1;                                        \
+    }                                                   \
   } while (0)
 
-#define RETURN_IF_NAN(x)                                      \
-  do                                                          \
-  {                                                           \
-    errno = 0;                                                \
-    x;                                                        \
-    if (errno == EINVAL)                                      \
-    {                                                         \
+#define RETURN_IF_NAN(x)                                                \
+  do                                                                    \
+  {                                                                     \
+    errno = 0;                                                          \
+    x;                                                                  \
+    if (errno == EINVAL)                                                \
+    {                                                                   \
       printf("[ERROR] Failure parsing JSON: %s is not a number\n", #x); \
-      json_object_put(jobj);                                  \
-      return -1;                                              \
-    }                                                         \
+      json_object_put(jobj);                                            \
+      return -1;                                                        \
+    }                                                                   \
   } while (0)
 
 geojson_point geojson_point_init()

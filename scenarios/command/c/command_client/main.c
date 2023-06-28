@@ -23,16 +23,16 @@
 
 #define UUID_LENGTH 37
 
-#define CONTINUE_IF_ERROR(rc)                                   \
-  if (true)                                                     \
-  {                                                             \
-    if (rc != MOSQ_ERR_SUCCESS)                                 \
-    {                                                           \
+#define CONTINUE_IF_ERROR(rc)                                                   \
+  if (true)                                                                     \
+  {                                                                             \
+    if (rc != MOSQ_ERR_SUCCESS)                                                 \
+    {                                                                           \
       printf("[ERROR] Failure while publishing: %s\n", mosquitto_strerror(rc)); \
-      mosquitto_property_free_all(&proplist);                   \
-      proplist = NULL;                                          \
-      continue;                                                 \
-    }                                                           \
+      mosquitto_property_free_all(&proplist);                                   \
+      proplist = NULL;                                                          \
+      continue;                                                                 \
+    }                                                                           \
   }
 
 static uuid_t pending_correlation_id;
