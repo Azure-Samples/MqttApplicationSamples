@@ -14,7 +14,7 @@
   {                                                   \
     if ((x) == NULL)                                  \
     {                                                 \
-      printf("JSON Parsing Error: %s is NULL\n", #x); \
+      printf("[ERROR] Failure parsing JSON: %s is NULL\n", #x); \
       if (jobj_to_free != NULL)                       \
       {                                               \
         json_object_put(jobj_to_free);                \
@@ -28,7 +28,7 @@
   {                                           \
     if ((x) != 0)                             \
     {                                         \
-      printf("JSON Parsing Error: %s\n", #x); \
+      printf("[ERROR] Failure parsing JSON: %s\n", #x); \
       json_object_put(jobj);                  \
       return -1;                              \
     }                                         \
@@ -41,7 +41,7 @@
     x;                                                        \
     if (errno == EINVAL)                                      \
     {                                                         \
-      printf("JSON Parsing Error: %s is not a number\n", #x); \
+      printf("[ERROR] Failure parsing JSON: %s is not a number\n", #x); \
       json_object_put(jobj);                                  \
       return -1;                                              \
     }                                                         \
@@ -107,7 +107,7 @@ int mosquitto_payload_to_geojson_point(
   RETURN_IF_NULL(type_string = (char*)json_object_get_string(type), jobj);
   if (strcmp(type_string, "Point") != 0)
   {
-    printf("JSON Parsing Error: type is not Point\n");
+    printf("[ERROR] Failure parsing JSON: type is not Point\n");
     json_object_put(jobj);
     return -1;
   }
@@ -150,7 +150,7 @@ int geojson_point_to_mosquitto_payload(
       jobj);
   if (payload_length > message->max_payload_length)
   {
-    printf("JSON Parsing Error: mosquitto payload buffer is too small\n");
+    printf("[ERROR] Failure parsing JSON: mosquitto payload buffer is too small\n");
     json_object_put(jobj);
     return -1;
   }

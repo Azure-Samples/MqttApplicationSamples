@@ -33,7 +33,7 @@ static void sig_handler(int _)
         mosquitto_destroy(mosq);                 \
       }                                          \
       printf(                                    \
-          "Mosquitto Error: %s At [%s:%s:%d]\n", \
+          "[ERROR] Mosquitto Error: %s At [%s:%s:%d]\n", \
           mosquitto_strerror(mosq_result),       \
           __FILE__,                              \
           __func__,                              \
@@ -80,7 +80,7 @@ void mqtt_client_read_env_file(char* file_path)
   }
   else
   {
-    printf("Cannot open env file. Sample will try to use environment variables. \n");
+    printf("[WARNING] Cannot open env file. Sample will try to use environment variables. \n");
   }
 }
 
@@ -100,11 +100,11 @@ bool set_char_connection_setting(
   char* env_value = getenv(env_name);
   if (env_value == NULL && fail_not_defined)
   {
-    printf("Environment variable %s is required but not set.\n", env_name);
+    printf("[ERROR] Environment variable %s is required but not set.\n", env_name);
     return false;
   }
   *connection_setting = env_value;
-  printf("%s = %s\n", env_name, *connection_setting);
+  printf("\t%s = %s\n", env_name, *connection_setting);
 
   return true;
 }
@@ -123,20 +123,20 @@ bool set_int_connection_setting(int* connection_setting, char* env_name, int def
   if (env_value == NULL)
   {
     *connection_setting = default_value;
-    printf("%s = %d (Default value)\n", env_name, *connection_setting);
+    printf("\t%s = %d (Default value)\n", env_name, *connection_setting);
   }
   else
   {
     int env_int_value = atoi(env_value);
     if (env_int_value == 0 && strcmp(env_value, "0") != 0)
     {
-      printf("Environment variable %s (value: %s) is not a valid integer.\n", env_name, env_value);
+      printf("[ERROR] Environment variable %s (value: %s) is not a valid integer.\n", env_name, env_value);
       return false;
     }
     else
     {
       *connection_setting = env_int_value;
-      printf("%s = %d\n", env_name, *connection_setting);
+      printf("\t%s = %d\n", env_name, *connection_setting);
     }
   }
   return true;
@@ -156,7 +156,7 @@ bool set_bool_connection_setting(bool* connection_setting, char* env_name, bool 
   if (env_value == NULL)
   {
     *connection_setting = default_value;
-    printf("%s = %s (Default value)\n", env_name, *connection_setting ? "true" : "false");
+    printf("\t%s = %s (Default value)\n", env_name, *connection_setting ? "true" : "false");
     return true;
   }
   else
@@ -171,10 +171,10 @@ bool set_bool_connection_setting(bool* connection_setting, char* env_name, bool 
     }
     else
     {
-      printf("Environment variable %s (value: %s) is not a valid boolean.\n", env_name, env_value);
+      printf("[ERROR] Environment variable %s (value: %s) is not a valid boolean.\n", env_name, env_value);
       return false;
     }
-    printf("%s = %s\n", env_name, *connection_setting ? "true" : "false");
+    printf("\t%s = %s\n", env_name, *connection_setting ? "true" : "false");
     return true;
   }
 }
@@ -259,7 +259,7 @@ void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* 
         log_level_str = "";
         break;
     }
-    printf("Mosquitto log: [%s] %s\n", log_level_str, str);
+    printf("[Mosquitto] [%s] %s\n", log_level_str, str);
   }
 #endif
 }
@@ -285,7 +285,7 @@ struct mosquitto* mqtt_client_init(
   mqtt_client_read_env_file(env_file);
   if (!mqtt_client_set_connection_settings(&connection_settings))
   {
-    printf("Error: Failed to set connection settings.\n");
+    printf("[ERROR] Failed to set connection settings.\n");
     return NULL;
   }
 
@@ -306,14 +306,14 @@ struct mosquitto* mqtt_client_init(
 
   if (mosq == NULL)
   {
-    printf("Error: Out of memory.\n");
+    printf("[ERROR] Out of memory.\n");
     return NULL;
   }
 
   mosquitto_log_callback_set(mosq, on_mosquitto_log);
 
   printf(
-      "MQTT_VERSION = %s\n",
+      "\tMQTT_VERSION = %s\n",
       obj->mqtt_version == MQTT_PROTOCOL_V5
           ? "MQTT_PROTOCOL_V5"
           : obj->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311" : "UNKNOWN");
