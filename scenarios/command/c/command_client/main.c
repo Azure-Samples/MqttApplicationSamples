@@ -13,10 +13,11 @@
 #include "mqtt_setup.h"
 #include "unlock_command.pb-c.h"
 
-#define RESPONSE_TOPIC "vehicles/vehicle03/command/unlock/response"
-#define PUB_TOPIC "vehicles/vehicle03/command/unlock/request"
+#define COMMAND_TARGET_CLIENT_ID "vehicle03"
+#define COMMAND_TARGET_CLIENT_ID_LEN 9
 #define COMMAND_CONTENT_TYPE "application/protobuf"
 #define COMMAND_TIMEOUT_SEC 10
+#define COMMAND_MIN_RATE_SEC 2
 
 #define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V5
@@ -39,6 +40,16 @@
 
 static uuid_t pending_correlation_id;
 static time_t last_command_sent_time;
+static char response_topic[COMMAND_TARGET_CLIENT_ID_LEN + 34];
+
+char* get_response_topic()
+{
+  if (strlen(response_topic) == 0)
+  {
+    sprintf(response_topic, "vehicles/%s/command/unlock/response", COMMAND_TARGET_CLIENT_ID);
+  }
+  return response_topic;
+}
 
 // Custom callback for when a message is received.
 // prints the message information from the command response and validates that the correlation data
@@ -108,15 +119,12 @@ void on_connect_with_subscribe(
   on_connect(mosq, obj, reason_code, flags, props);
 
   int result;
-  //   mqtt_client_obj* client_obj = (mqtt_client_obj*)obj;
-  //   char sub_topic[strlen(client_obj->client_id) + 33];
-  //     sprintf(sub_topic, "vehicles/%s/command/unlock/response", client_obj->client_id);
 
   /* Making subscriptions in the on_connect() callback means that if the
    * connection drops and is automatically resumed by the client, then the
    * subscriptions will be recreated when the client reconnects. */
   if (keep_running
-      && (result = mosquitto_subscribe_v5(mosq, NULL, RESPONSE_TOPIC, QOS_LEVEL, 0, NULL))
+      && (result = mosquitto_subscribe_v5(mosq, NULL, get_response_topic(), QOS_LEVEL, 0, NULL))
           != MOSQ_ERR_SUCCESS)
   {
     printf("[ERROR] Failed to subscribe: %s\n", mosquitto_strerror(result));
@@ -160,11 +168,8 @@ int main(int argc, char* argv[])
   }
   else
   {
-    // char topic[strlen(obj->client_id) + 33];
-    // sprintf(topic, "vehicles/%s/command/unlock/request", obj->client_id);
-
-    // char response_topic[strlen(obj->client_id) + 33];
-    // sprintf(response_topic, "vehicles/%s/command/unlock/response", obj->client_id);
+    char pub_topic[COMMAND_TARGET_CLIENT_ID_LEN + 33];
+    sprintf(pub_topic, "vehicles/%s/command/unlock/request", COMMAND_TARGET_CLIENT_ID);
 
     // Set up protobuf unlock payload
     UnlockRequest proto_unlock_request = UNLOCK_REQUEST__INIT;
@@ -197,8 +202,8 @@ int main(int argc, char* argv[])
         }
       }
       // If the command timed out (didn't `continue` in the last if statement) or there is no
-      // pending command, send a new command if it's been more than 2 seconds since the last command
-      if (current_time > last_command_sent_time + 2)
+      // pending command, send a new command if it's been more than 2 seconds since the last command (to avoid spamming commands)
+      if (current_time > last_command_sent_time + COMMAND_MIN_RATE_SEC)
       {
         last_command_sent_time = current_time;
 
@@ -222,7 +227,7 @@ int main(int argc, char* argv[])
         }
 
         CONTINUE_IF_ERROR(
-            mosquitto_property_add_string(&proplist, MQTT_PROP_RESPONSE_TOPIC, RESPONSE_TOPIC));
+            mosquitto_property_add_string(&proplist, MQTT_PROP_RESPONSE_TOPIC, get_response_topic()));
         CONTINUE_IF_ERROR(
             mosquitto_property_add_string(&proplist, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
 
@@ -237,7 +242,7 @@ int main(int argc, char* argv[])
             asctime(localtime(&proto_unlock_request.when->seconds)));
 
         CONTINUE_IF_ERROR(mosquitto_publish_v5(
-            mosq, NULL, PUB_TOPIC, proto_payload_len, payload_buf, QOS_LEVEL, false, proplist));
+            mosq, NULL, pub_topic, proto_payload_len, payload_buf, QOS_LEVEL, false, proplist));
 
         mosquitto_property_free_all(&proplist);
         proplist = NULL;

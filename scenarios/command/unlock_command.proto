@@ -8,7 +8,7 @@ message UnlockRequest {
 }
 
 message UnlockResponse {
-    bool succeed =1 ;
+    bool succeed = 1;
     string errorDetail = 2;
 }
 

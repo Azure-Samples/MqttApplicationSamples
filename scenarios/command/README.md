@@ -4,7 +4,9 @@
 
 This scenario simulates the request-response messaging pattern. Request-response uses two topics, one for the request and one for the response.
 
-Consider a use case where a user can unlock their car from a mobile app. The request to unlock is published on `vehicles/<vehicleId>/commands/unlock/request` and the response of unlock operation is published on `vehicles/<vehicleId>/commands/unlock/response`. 
+Consider a use case where a user can unlock their car from a mobile app. The request to unlock is published on `vehicles/<vehicleId>/commands/unlock/request` and the response of unlock operation is published on `vehicles/<vehicleId>/commands/unlock/response`.
+
+> NOTE: This code is a basic example of the request-response messaging pattern. It is not a secure solution for unlocking a vehicle without further security checks.
 
 ## Command Server, Command Client
 
@@ -41,7 +43,7 @@ message unlockRequest {
 }
 
 message unlockResponse {
-    bool succeed =1 ;
+    bool succeed = 1;
     string errorDetail = 2;
 }
 
