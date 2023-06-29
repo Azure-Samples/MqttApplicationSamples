@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
-          sudo apt-get update && sudo apt-get install ninja-build libmosquitto-dev uuid-dev libjson-c-dev libprotobuf-c-dev -y
+          sudo apt-get update && sudo apt-get install ninja-build libmosquitto-dev uuid-dev libjson-c-dev libprotobuf-c-dev protobuf-c-compiler libprotobuf-dev -y
           sudo apt install -y clang-format-9 libcmocka-dev libcmocka0
           cmake --version
 
@@ -54,7 +54,7 @@ jobs:
       - name: Build telemetry Samples
         run: cmake --preset=telemetry;cmake --build --preset=telemetry
       - name: Build command Samples
-        run: cmake --preset=command;cmake --build --preset=command
+        run: protoc-c --c_out=./scenarios/command/c/protobuf --proto_path=./scenarios/command/c/protobuf unlock_command.proto google/protobuf/timestamp.proto; cmake --preset=command;cmake --build --preset=command
 
       - name: Build & Run Unit Tests
         run: |
