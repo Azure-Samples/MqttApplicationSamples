@@ -13,6 +13,7 @@ Blue:    \x1B[34m
 Magenta: \x1B[35m
 Cyan:    \x1B[36m
 White:   \x1B[37m
+Dim:     \x1b[2m
 Reset:   \x1B[0m
 */
 
@@ -28,11 +29,12 @@ Reset:   \x1B[0m
     (void)printf("\n");                            \
   } while (0)
 
-#define LOG_ERROR(...)                                   \
-  do                                                     \
-  {                                                      \
-    (void)printf("\x1B[31m[ERROR]\x1B[0m " __VA_ARGS__); \
-    (void)printf("\n");                                  \
+#define LOG_ERROR(...)                                                       \
+  do                                                                         \
+  {                                                                          \
+    (void)printf("\x1B[31m[ERROR]\x1B[0m " __VA_ARGS__);                     \
+    (void)printf(" \x1b[2m[%s:%s:%d]\x1B[0m", __FILE__, __func__, __LINE__); \
+    (void)printf("\n");                                                      \
   } while (0)
 
 #define LOG_WARNING(...)                                   \
