@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "logging.h"
 
 #include "geo_json_handler.h"
 
@@ -14,7 +15,7 @@
   {                                                             \
     if ((x) == NULL)                                            \
     {                                                           \
-      printf("[ERROR] Failure parsing JSON: %s is NULL\n", #x); \
+      LOG_ERROR("Failure parsing JSON: %s is NULL", #x); \
       if (jobj_to_free != NULL)                                 \
       {                                                         \
         json_object_put(jobj_to_free);                          \
@@ -28,7 +29,7 @@
   {                                                     \
     if ((x) != 0)                                       \
     {                                                   \
-      printf("[ERROR] Failure parsing JSON: %s\n", #x); \
+      LOG_ERROR("Failure parsing JSON: %s", #x); \
       json_object_put(jobj);                            \
       return -1;                                        \
     }                                                   \
@@ -41,7 +42,7 @@
     x;                                                                  \
     if (errno == EINVAL)                                                \
     {                                                                   \
-      printf("[ERROR] Failure parsing JSON: %s is not a number\n", #x); \
+      LOG_ERROR("Failure parsing JSON: %s is not a number", #x); \
       json_object_put(jobj);                                            \
       return -1;                                                        \
     }                                                                   \
@@ -107,7 +108,7 @@ int mosquitto_payload_to_geojson_point(
   RETURN_IF_NULL(type_string = (char*)json_object_get_string(type), jobj);
   if (strcmp(type_string, "Point") != 0)
   {
-    printf("[ERROR] Failure parsing JSON: type is not Point\n");
+    LOG_ERROR("Failure parsing JSON: type is not Point");
     json_object_put(jobj);
     return -1;
   }
@@ -150,7 +151,7 @@ int geojson_point_to_mosquitto_payload(
       jobj);
   if (payload_length > message->max_payload_length)
   {
-    printf("[ERROR] Failure parsing JSON: mosquitto payload buffer is too small\n");
+    LOG_ERROR("Failure parsing JSON: mosquitto payload buffer is too small");
     json_object_put(jobj);
     return -1;
   }

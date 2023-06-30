@@ -9,6 +9,7 @@
 #include "mqtt_callbacks.h"
 #include "mqtt_protocol.h"
 #include "mqtt_setup.h"
+#include "logging.h"
 
 #define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V5
@@ -21,7 +22,7 @@
   {                                                                                   \
     if (rc != MOSQ_ERR_SUCCESS)                                                       \
     {                                                                                 \
-      printf("[ERROR] Failure while sending response: %s\n", mosquitto_strerror(rc)); \
+      LOG_ERROR("Failure while sending response: %s", mosquitto_strerror(rc)); \
       free(response_topic);                                                           \
       response_topic = NULL;                                                          \
       free(correlation_data);                                                         \
@@ -47,7 +48,7 @@ void handle_message(
   if (mosquitto_property_read_string(props, MQTT_PROP_RESPONSE_TOPIC, &response_topic, false)
       == NULL)
   {
-    printf("\t[ERROR] Message does not have a response topic property\n");
+    LOG_ERROR("Message does not have a response topic property");
     return;
   }
 
@@ -57,7 +58,7 @@ void handle_message(
           props, MQTT_PROP_CORRELATION_DATA, &correlation_data, &correlation_data_len, false)
       == NULL)
   {
-    printf("\t[ERROR] Message does not have a correlation data property\n");
+    LOG_ERROR("Message does not have a correlation data property");
     return;
   }
 
@@ -100,12 +101,12 @@ void on_connect_with_subscribe(
       && (result = mosquitto_subscribe_v5(mosq, NULL, sub_topic, QOS_LEVEL, 0, NULL))
           != MOSQ_ERR_SUCCESS)
   {
-    printf("[ERROR] Failed to subscribe: %s\n", mosquitto_strerror(result));
+    LOG_ERROR("Failed to subscribe: %s", mosquitto_strerror(result));
     keep_running = 0;
     /* We might as well disconnect if we were unable to subscribe */
     if ((result = mosquitto_disconnect_v5(mosq, reason_code, props)) != MOSQ_ERR_SUCCESS)
     {
-      printf("[ERROR] Failed to subscribe: %s\n", mosquitto_strerror(result));
+      LOG_ERROR("Failed to disconnect: %s", mosquitto_strerror(result));
     }
   }
 }
@@ -131,12 +132,12 @@ int main(int argc, char* argv[])
            mosq, obj.hostname, obj.tcp_port, obj.keep_alive_in_seconds, NULL, NULL))
       != MOSQ_ERR_SUCCESS)
   {
-    printf("[ERROR] Failed to connect: %s\n", mosquitto_strerror(result));
+    LOG_ERROR("Failed to connect: %s", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else if ((result = mosquitto_loop_start(mosq)) != MOSQ_ERR_SUCCESS)
   {
-    printf("[ERROR] Failure starting mosquitto loop: %s\n", mosquitto_strerror(result));
+    LOG_ERROR("Failure starting mosquitto loop: %s", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else

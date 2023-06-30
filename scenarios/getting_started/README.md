@@ -162,7 +162,7 @@ To build the C sample, run from the root folder:
 cmake --preset=getting_started
 cmake --build --preset=getting_started
 ```
-The build script will copy the produced binary to `c/build/getting_started`
+This will generate the produced binary in `scenarios/getting_started/c/build/`
 
 To run the C sample:
 

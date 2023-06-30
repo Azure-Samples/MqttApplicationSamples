@@ -9,6 +9,7 @@
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
+#include "logging.h"
 
 // A certificate path (any string) is required when configuring mosquitto to use OS certificates
 // when use_TLS is true and you're not using a ca file.
@@ -32,12 +33,8 @@ static void sig_handler(int _)
       {                                                  \
         mosquitto_destroy(mosq);                         \
       }                                                  \
-      printf(                                            \
-          "[ERROR] Mosquitto Error: %s At [%s:%s:%d]\n", \
-          mosquitto_strerror(mosq_result),               \
-          __FILE__,                                      \
-          __func__,                                      \
-          __LINE__);                                     \
+      LOG_ERROR("Mosquitto Error: %s",     \
+          mosquitto_strerror(mosq_result));               \
       return NULL;                                       \
     }                                                    \
   } while (0)
@@ -59,7 +56,7 @@ void mqtt_client_read_env_file(char* file_path)
     file_path = ".env";
   }
 
-  printf("Loading environment variables from %s\n", file_path);
+  LOG_INFO(APP_LOG_TAG, "Loading environment variables from %s", file_path);
 
   FILE* file_ptr = fopen(file_path, "r");
 
@@ -80,7 +77,7 @@ void mqtt_client_read_env_file(char* file_path)
   }
   else
   {
-    printf("[WARNING] Cannot open env file. Sample will try to use environment variables. \n");
+    LOG_WARNING("Cannot open env file. Sample will try to use environment variables.");
   }
 }
 
@@ -100,7 +97,7 @@ bool set_char_connection_setting(
   char* env_value = getenv(env_name);
   if (env_value == NULL && fail_not_defined)
   {
-    printf("[ERROR] Environment variable %s is required but not set.\n", env_name);
+    LOG_ERROR("Environment variable %s is required but not set.", env_name);
     return false;
   }
   *connection_setting = env_value;
@@ -130,8 +127,7 @@ bool set_int_connection_setting(int* connection_setting, char* env_name, int def
     int env_int_value = atoi(env_value);
     if (env_int_value == 0 && strcmp(env_value, "0") != 0)
     {
-      printf(
-          "[ERROR] Environment variable %s (value: %s) is not a valid integer.\n",
+      LOG_ERROR("Environment variable %s (value: %s) is not a valid integer.",
           env_name,
           env_value);
       return false;
@@ -174,8 +170,7 @@ bool set_bool_connection_setting(bool* connection_setting, char* env_name, bool 
     }
     else
     {
-      printf(
-          "[ERROR] Environment variable %s (value: %s) is not a valid boolean.\n",
+      LOG_ERROR("Environment variable %s (value: %s) is not a valid boolean.",
           env_name,
           env_value);
       return false;
@@ -239,7 +234,7 @@ void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* 
 #ifndef LOG_ALL_MOSQUITTO
   if (level == MOSQ_LOG_ERR || strstr(str, "PINGREQ") != NULL || strstr(str, "PINGRESP") != NULL)
   {
-    printf("%s\n", str);
+    LOG_INFO(MOSQUITTO_LOG_TAG, "%s", str);
   }
 #else
   {
@@ -265,7 +260,7 @@ void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* 
         log_level_str = "";
         break;
     }
-    printf("[Mosquitto] [%s] %s\n", log_level_str, str);
+    LOG_INFO(MOSQUITTO_LOG_TAG, "[%s] %s", log_level_str, str);
   }
 #endif
 }
@@ -291,7 +286,7 @@ struct mosquitto* mqtt_client_init(
   mqtt_client_read_env_file(env_file);
   if (!mqtt_client_set_connection_settings(&connection_settings))
   {
-    printf("[ERROR] Failed to set connection settings.\n");
+    LOG_ERROR("Failed to set connection settings.");
     return NULL;
   }
 
@@ -312,7 +307,7 @@ struct mosquitto* mqtt_client_init(
 
   if (mosq == NULL)
   {
-    printf("[ERROR] Out of memory.\n");
+    LOG_ERROR("Out of memory.");
     return NULL;
   }
 
