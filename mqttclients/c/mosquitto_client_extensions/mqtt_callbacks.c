@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
-#include "logging.h"
 
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect(

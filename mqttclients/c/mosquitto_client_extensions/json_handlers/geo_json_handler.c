@@ -1,51 +1,51 @@
 /* Copyright (c) Microsoft Corporation. All rights reserved. */
 /* SPDX-License-Identifier: MIT */
 
+#include "logging.h"
 #include <errno.h>
 #include <json-c/json.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "logging.h"
 
 #include "geo_json_handler.h"
 
-#define RETURN_IF_NULL(x, jobj_to_free)                         \
-  do                                                            \
-  {                                                             \
-    if ((x) == NULL)                                            \
-    {                                                           \
+#define RETURN_IF_NULL(x, jobj_to_free)                  \
+  do                                                     \
+  {                                                      \
+    if ((x) == NULL)                                     \
+    {                                                    \
       LOG_ERROR("Failure parsing JSON: %s is NULL", #x); \
-      if (jobj_to_free != NULL)                                 \
-      {                                                         \
-        json_object_put(jobj_to_free);                          \
-      }                                                         \
-      return -1;                                                \
-    }                                                           \
+      if (jobj_to_free != NULL)                          \
+      {                                                  \
+        json_object_put(jobj_to_free);                   \
+      }                                                  \
+      return -1;                                         \
+    }                                                    \
   } while (0)
 
-#define RETURN_IF_NON_ZERO(x)                           \
-  do                                                    \
-  {                                                     \
-    if ((x) != 0)                                       \
-    {                                                   \
+#define RETURN_IF_NON_ZERO(x)                    \
+  do                                             \
+  {                                              \
+    if ((x) != 0)                                \
+    {                                            \
       LOG_ERROR("Failure parsing JSON: %s", #x); \
-      json_object_put(jobj);                            \
-      return -1;                                        \
-    }                                                   \
+      json_object_put(jobj);                     \
+      return -1;                                 \
+    }                                            \
   } while (0)
 
-#define RETURN_IF_NAN(x)                                                \
-  do                                                                    \
-  {                                                                     \
-    errno = 0;                                                          \
-    x;                                                                  \
-    if (errno == EINVAL)                                                \
-    {                                                                   \
+#define RETURN_IF_NAN(x)                                         \
+  do                                                             \
+  {                                                              \
+    errno = 0;                                                   \
+    x;                                                           \
+    if (errno == EINVAL)                                         \
+    {                                                            \
       LOG_ERROR("Failure parsing JSON: %s is not a number", #x); \
-      json_object_put(jobj);                                            \
-      return -1;                                                        \
-    }                                                                   \
+      json_object_put(jobj);                                     \
+      return -1;                                                 \
+    }                                                            \
   } while (0)
 
 geojson_point geojson_point_init()

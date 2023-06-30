@@ -20,26 +20,26 @@ Reset:   \x1B[0m
 #define MQTT_LOG_TAG "MQTT"
 #define APP_LOG_TAG "App"
 
-#define LOG_INFO(log_tag, ...) \
-  do                                \
-  {                                 \
-    (void)printf("\x1B[34m[%s]\x1B[0m ", log_tag);     \
-    (void)printf(__VA_ARGS__);      \
-    (void)printf("\n");             \
+#define LOG_INFO(log_tag, ...)                     \
+  do                                               \
+  {                                                \
+    (void)printf("\x1B[34m[%s]\x1B[0m ", log_tag); \
+    (void)printf(__VA_ARGS__);                     \
+    (void)printf("\n");                            \
   } while (0)
 
-#define LOG_ERROR(...) \
-  do                                \
-  {                                 \
-    (void)printf("\x1B[31m[ERROR]\x1B[0m " __VA_ARGS__);      \
-    (void)printf("\n");             \
+#define LOG_ERROR(...)                                   \
+  do                                                     \
+  {                                                      \
+    (void)printf("\x1B[31m[ERROR]\x1B[0m " __VA_ARGS__); \
+    (void)printf("\n");                                  \
   } while (0)
 
-#define LOG_WARNING(...) \
-  do                                \
-  {                                 \
-    (void)printf("\x1B[33m[WARNING]\x1B[0m " __VA_ARGS__);      \
-    (void)printf("\n");             \
+#define LOG_WARNING(...)                                   \
+  do                                                       \
+  {                                                        \
+    (void)printf("\x1B[33m[WARNING]\x1B[0m " __VA_ARGS__); \
+    (void)printf("\n");                                    \
   } while (0)
 
 #endif /* LOGGING_H */

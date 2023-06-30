@@ -6,10 +6,10 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
-#include "logging.h"
 
 #define PUB_TOPIC "sample/topic1"
 #define PAYLOAD "Hello World!"

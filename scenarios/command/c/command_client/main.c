@@ -7,11 +7,11 @@
 #include <unistd.h>
 #include <uuid/uuid.h>
 
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_protocol.h"
 #include "mqtt_setup.h"
-#include "logging.h"
 
 #define PAYLOAD "\n\v\b\261Í\244\006\020\364\254\265d\022\nmobile-app"
 #define RESPONSE_TOPIC "vehicles/vehicle03/command/unlock/response"
@@ -24,16 +24,16 @@
 
 #define UUID_LENGTH 37
 
-#define CONTINUE_IF_ERROR(rc)                                                   \
-  if (true)                                                                     \
-  {                                                                             \
-    if (rc != MOSQ_ERR_SUCCESS)                                                 \
-    {                                                                           \
+#define CONTINUE_IF_ERROR(rc)                                            \
+  if (true)                                                              \
+  {                                                                      \
+    if (rc != MOSQ_ERR_SUCCESS)                                          \
+    {                                                                    \
       LOG_ERROR("Failure while publishing: %s", mosquitto_strerror(rc)); \
-      mosquitto_property_free_all(&proplist);                                   \
-      proplist = NULL;                                                          \
-      continue;                                                                 \
-    }                                                                           \
+      mosquitto_property_free_all(&proplist);                            \
+      proplist = NULL;                                                   \
+      continue;                                                          \
+    }                                                                    \
   }
 
 static uuid_t pending_correlation_id;

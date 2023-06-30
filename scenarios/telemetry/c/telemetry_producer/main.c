@@ -7,9 +7,9 @@
 #include <unistd.h>
 
 #include "geo_json_handler.h"
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_setup.h"
-#include "logging.h"
 
 #define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V311

@@ -6,10 +6,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
-#include "logging.h"
 
 // A certificate path (any string) is required when configuring mosquitto to use OS certificates
 // when use_TLS is true and you're not using a ca file.
@@ -23,20 +23,19 @@ static void sig_handler(int _)
   keep_running = 0;
 }
 
-#define MQTT_RETURN_IF_FAILED(rc)                        \
-  do                                                     \
-  {                                                      \
-    enum mosq_err_t const mosq_result = (rc);            \
-    if (mosq_result != MOSQ_ERR_SUCCESS)                 \
-    {                                                    \
-      if (mosq != NULL)                                  \
-      {                                                  \
-        mosquitto_destroy(mosq);                         \
-      }                                                  \
-      LOG_ERROR("Mosquitto Error: %s",     \
-          mosquitto_strerror(mosq_result));               \
-      return NULL;                                       \
-    }                                                    \
+#define MQTT_RETURN_IF_FAILED(rc)                                        \
+  do                                                                     \
+  {                                                                      \
+    enum mosq_err_t const mosq_result = (rc);                            \
+    if (mosq_result != MOSQ_ERR_SUCCESS)                                 \
+    {                                                                    \
+      if (mosq != NULL)                                                  \
+      {                                                                  \
+        mosquitto_destroy(mosq);                                         \
+      }                                                                  \
+      LOG_ERROR("Mosquitto Error: %s", mosquitto_strerror(mosq_result)); \
+      return NULL;                                                       \
+    }                                                                    \
   } while (0)
 
 #define RETURN_FALSE_IF_FAILED(rc) \
@@ -127,9 +126,7 @@ bool set_int_connection_setting(int* connection_setting, char* env_name, int def
     int env_int_value = atoi(env_value);
     if (env_int_value == 0 && strcmp(env_value, "0") != 0)
     {
-      LOG_ERROR("Environment variable %s (value: %s) is not a valid integer.",
-          env_name,
-          env_value);
+      LOG_ERROR("Environment variable %s (value: %s) is not a valid integer.", env_name, env_value);
       return false;
     }
     else
@@ -170,9 +167,7 @@ bool set_bool_connection_setting(bool* connection_setting, char* env_name, bool 
     }
     else
     {
-      LOG_ERROR("Environment variable %s (value: %s) is not a valid boolean.",
-          env_name,
-          env_value);
+      LOG_ERROR("Environment variable %s (value: %s) is not a valid boolean.", env_name, env_value);
       return false;
     }
     printf("\t%s = %s\n", env_name, *connection_setting ? "true" : "false");

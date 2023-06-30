@@ -5,10 +5,10 @@
 #include <stdlib.h>
 
 #include "geo_json_handler.h"
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
-#include "logging.h"
 
 #define SUB_TOPIC "vehicles/+/position"
 #define QOS_LEVEL 1

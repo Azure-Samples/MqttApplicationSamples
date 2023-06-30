@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_protocol.h"
 #include "mqtt_setup.h"
-#include "logging.h"
 
 #define QOS_LEVEL 1
 #define MQTT_VERSION MQTT_PROTOCOL_V5
@@ -17,20 +17,20 @@
 #define PAYLOAD "\b\001"
 #define COMMAND_CONTENT_TYPE "application/protobuf"
 
-#define RETURN_IF_ERROR(rc)                                                           \
-  do                                                                                  \
-  {                                                                                   \
-    if (rc != MOSQ_ERR_SUCCESS)                                                       \
-    {                                                                                 \
+#define RETURN_IF_ERROR(rc)                                                    \
+  do                                                                           \
+  {                                                                            \
+    if (rc != MOSQ_ERR_SUCCESS)                                                \
+    {                                                                          \
       LOG_ERROR("Failure while sending response: %s", mosquitto_strerror(rc)); \
-      free(response_topic);                                                           \
-      response_topic = NULL;                                                          \
-      free(correlation_data);                                                         \
-      correlation_data = NULL;                                                        \
-      mosquitto_property_free_all(&response_props);                                   \
-      response_props = NULL;                                                          \
-      return;                                                                         \
-    }                                                                                 \
+      free(response_topic);                                                    \
+      response_topic = NULL;                                                   \
+      free(correlation_data);                                                  \
+      correlation_data = NULL;                                                 \
+      mosquitto_property_free_all(&response_props);                            \
+      response_props = NULL;                                                   \
+      return;                                                                  \
+    }                                                                          \
   } while (0)
 
 // Custom callback for when a message is received.
