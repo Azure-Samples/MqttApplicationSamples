@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
@@ -24,11 +25,11 @@ void on_connect(
    */
   if (client_obj->mqtt_version == MQTT_PROTOCOL_V5)
   {
-    printf("on_connect: %s\n", mosquitto_reason_string(reason_code));
+    LOG_INFO(MQTT_LOG_TAG, "on_connect: %s", mosquitto_reason_string(reason_code));
   }
   else
   {
-    printf("on_connect: %s\n", mosquitto_connack_string(reason_code));
+    LOG_INFO(MQTT_LOG_TAG, "on_connect: %s", mosquitto_connack_string(reason_code));
   }
 
   if (reason_code != 0)
@@ -40,7 +41,7 @@ void on_connect(
     int rc;
     if ((rc = mosquitto_disconnect_v5(mosq, reason_code, NULL)) != MOSQ_ERR_SUCCESS)
     {
-      printf("Error disconnecting: %s\n", mosquitto_strerror(rc));
+      LOG_ERROR("Failure on disconnect: %s", mosquitto_strerror(rc));
     }
   }
 }
@@ -49,7 +50,7 @@ void on_connect(
  * client. */
 void on_disconnect(struct mosquitto* mosq, void* obj, int rc, const mosquitto_property* props)
 {
-  printf("on_disconnect: reason=%s\n", mosquitto_strerror(rc));
+  LOG_INFO(MQTT_LOG_TAG, "on_disconnect: reason=%s", mosquitto_strerror(rc));
 }
 
 /* Callback called when the broker sends a SUBACK in response to a SUBSCRIBE. */
@@ -61,7 +62,7 @@ void on_subscribe(
     const int* granted_qos,
     const mosquitto_property* props)
 {
-  printf("on_subscribe: Subscribed with mid %d; %d topics.\n", mid, qos_count);
+  LOG_INFO(MQTT_LOG_TAG, "on_subscribe: Subscribed with mid %d; %d topics.", mid, qos_count);
 
   /* In this example we only subscribe to a single topic at once, but a
    * SUBSCRIBE can contain many topics at once, so this is one way to check
@@ -79,6 +80,8 @@ void on_message(
     const struct mosquitto_message* msg,
     const mosquitto_property* props)
 {
+  LOG_INFO(MQTT_LOG_TAG, "on_message: Topic: %s; QOS: %d; mid: %d", msg->topic, msg->qos, msg->mid);
+
   mqtt_client_obj* client_obj = (mqtt_client_obj*)obj;
 
   if (client_obj != NULL && client_obj->handle_message != NULL)
@@ -88,8 +91,7 @@ void on_message(
   else
   {
     /* This blindly prints the payload, but the payload can be anything so take care. */
-    printf(
-        "on_message: Topic: %s; QOS: %d; Payload: %s\n", msg->topic, msg->qos, (char*)msg->payload);
+    printf("\tPayload: %s\n", (char*)msg->payload);
   }
 }
 
@@ -105,5 +107,5 @@ void on_publish(
     int reason_code,
     const mosquitto_property* props)
 {
-  printf("on_publish: Message with mid %d has been published.\n", mid);
+  LOG_INFO(MQTT_LOG_TAG, "on_publish: Message with mid %d has been published.", mid);
 }

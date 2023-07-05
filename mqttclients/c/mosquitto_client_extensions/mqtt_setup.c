@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
@@ -22,24 +23,19 @@ static void sig_handler(int _)
   keep_running = 0;
 }
 
-#define MQTT_RETURN_IF_FAILED(rc)                \
-  do                                             \
-  {                                              \
-    enum mosq_err_t const mosq_result = (rc);    \
-    if (mosq_result != MOSQ_ERR_SUCCESS)         \
-    {                                            \
-      if (mosq != NULL)                          \
-      {                                          \
-        mosquitto_destroy(mosq);                 \
-      }                                          \
-      printf(                                    \
-          "Mosquitto Error: %s At [%s:%s:%d]\n", \
-          mosquitto_strerror(mosq_result),       \
-          __FILE__,                              \
-          __func__,                              \
-          __LINE__);                             \
-      return NULL;                               \
-    }                                            \
+#define MQTT_RETURN_IF_FAILED(rc)                                        \
+  do                                                                     \
+  {                                                                      \
+    enum mosq_err_t const mosq_result = (rc);                            \
+    if (mosq_result != MOSQ_ERR_SUCCESS)                                 \
+    {                                                                    \
+      if (mosq != NULL)                                                  \
+      {                                                                  \
+        mosquitto_destroy(mosq);                                         \
+      }                                                                  \
+      LOG_ERROR("Mosquitto Error: %s", mosquitto_strerror(mosq_result)); \
+      return NULL;                                                       \
+    }                                                                    \
   } while (0)
 
 #define RETURN_FALSE_IF_FAILED(rc) \
@@ -59,7 +55,7 @@ void mqtt_client_read_env_file(char* file_path)
     file_path = ".env";
   }
 
-  printf("Loading environment variables from %s\n", file_path);
+  LOG_INFO(APP_LOG_TAG, "Loading environment variables from %s", file_path);
 
   FILE* file_ptr = fopen(file_path, "r");
 
@@ -80,7 +76,7 @@ void mqtt_client_read_env_file(char* file_path)
   }
   else
   {
-    printf("Cannot open env file. Sample will try to use environment variables. \n");
+    LOG_WARNING("Cannot open env file. Sample will try to use environment variables.");
   }
 }
 
@@ -100,11 +96,11 @@ bool set_char_connection_setting(
   char* env_value = getenv(env_name);
   if (env_value == NULL && fail_not_defined)
   {
-    printf("Environment variable %s is required but not set.\n", env_name);
+    LOG_ERROR("Environment variable %s is required but not set.", env_name);
     return false;
   }
   *connection_setting = env_value;
-  printf("%s = %s\n", env_name, *connection_setting);
+  printf("\t%s = %s\n", env_name, *connection_setting);
 
   return true;
 }
@@ -123,20 +119,20 @@ bool set_int_connection_setting(int* connection_setting, char* env_name, int def
   if (env_value == NULL)
   {
     *connection_setting = default_value;
-    printf("%s = %d (Default value)\n", env_name, *connection_setting);
+    printf("\t%s = %d (Default value)\n", env_name, *connection_setting);
   }
   else
   {
     int env_int_value = atoi(env_value);
     if (env_int_value == 0 && strcmp(env_value, "0") != 0)
     {
-      printf("Environment variable %s (value: %s) is not a valid integer.\n", env_name, env_value);
+      LOG_ERROR("Environment variable %s (value: %s) is not a valid integer.", env_name, env_value);
       return false;
     }
     else
     {
       *connection_setting = env_int_value;
-      printf("%s = %d\n", env_name, *connection_setting);
+      printf("\t%s = %d\n", env_name, *connection_setting);
     }
   }
   return true;
@@ -156,7 +152,7 @@ bool set_bool_connection_setting(bool* connection_setting, char* env_name, bool 
   if (env_value == NULL)
   {
     *connection_setting = default_value;
-    printf("%s = %s (Default value)\n", env_name, *connection_setting ? "true" : "false");
+    printf("\t%s = %s (Default value)\n", env_name, *connection_setting ? "true" : "false");
     return true;
   }
   else
@@ -171,10 +167,10 @@ bool set_bool_connection_setting(bool* connection_setting, char* env_name, bool 
     }
     else
     {
-      printf("Environment variable %s (value: %s) is not a valid boolean.\n", env_name, env_value);
+      LOG_ERROR("Environment variable %s (value: %s) is not a valid boolean.", env_name, env_value);
       return false;
     }
-    printf("%s = %s\n", env_name, *connection_setting ? "true" : "false");
+    printf("\t%s = %s\n", env_name, *connection_setting ? "true" : "false");
     return true;
   }
 }
@@ -233,7 +229,7 @@ void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* 
 #ifndef LOG_ALL_MOSQUITTO
   if (level == MOSQ_LOG_ERR || strstr(str, "PINGREQ") != NULL || strstr(str, "PINGRESP") != NULL)
   {
-    printf("%s\n", str);
+    LOG_INFO(MOSQUITTO_LOG_TAG, "%s", str);
   }
 #else
   {
@@ -259,7 +255,7 @@ void on_mosquitto_log(struct mosquitto* mosq, void* obj, int level, const char* 
         log_level_str = "";
         break;
     }
-    printf("Mosquitto log: [%s] %s\n", log_level_str, str);
+    LOG_INFO(MOSQUITTO_LOG_TAG, "[%s] %s", log_level_str, str);
   }
 #endif
 }
@@ -285,7 +281,7 @@ struct mosquitto* mqtt_client_init(
   mqtt_client_read_env_file(env_file);
   if (!mqtt_client_set_connection_settings(&connection_settings))
   {
-    printf("Error: Failed to set connection settings.\n");
+    LOG_ERROR("Failed to set connection settings.");
     return NULL;
   }
 
@@ -306,14 +302,14 @@ struct mosquitto* mqtt_client_init(
 
   if (mosq == NULL)
   {
-    printf("Error: Out of memory.\n");
+    LOG_ERROR("Out of memory.");
     return NULL;
   }
 
   mosquitto_log_callback_set(mosq, on_mosquitto_log);
 
   printf(
-      "MQTT_VERSION = %s\n",
+      "\tMQTT_VERSION = %s\n",
       obj->mqtt_version == MQTT_PROTOCOL_V5
           ? "MQTT_PROTOCOL_V5"
           : obj->mqtt_version == MQTT_PROTOCOL_V311 ? "MQTT_PROTOCOL_V311" : "UNKNOWN");

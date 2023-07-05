@@ -1,6 +1,7 @@
 /* Copyright (c) Microsoft Corporation. All rights reserved. */
 /* SPDX-License-Identifier: MIT */
 
+#include "logging.h"
 #include <errno.h>
 #include <json-c/json.h>
 #include <stdio.h>
@@ -9,42 +10,42 @@
 
 #include "geo_json_handler.h"
 
-#define RETURN_IF_NULL(x, jobj_to_free)               \
-  do                                                  \
-  {                                                   \
-    if ((x) == NULL)                                  \
-    {                                                 \
-      printf("JSON Parsing Error: %s is NULL\n", #x); \
-      if (jobj_to_free != NULL)                       \
-      {                                               \
-        json_object_put(jobj_to_free);                \
-      }                                               \
-      return -1;                                      \
-    }                                                 \
+#define RETURN_IF_NULL(x, jobj_to_free)                  \
+  do                                                     \
+  {                                                      \
+    if ((x) == NULL)                                     \
+    {                                                    \
+      LOG_ERROR("Failure parsing JSON: %s is NULL", #x); \
+      if (jobj_to_free != NULL)                          \
+      {                                                  \
+        json_object_put(jobj_to_free);                   \
+      }                                                  \
+      return -1;                                         \
+    }                                                    \
   } while (0)
 
-#define RETURN_IF_NON_ZERO(x)                 \
-  do                                          \
-  {                                           \
-    if ((x) != 0)                             \
-    {                                         \
-      printf("JSON Parsing Error: %s\n", #x); \
-      json_object_put(jobj);                  \
-      return -1;                              \
-    }                                         \
+#define RETURN_IF_NON_ZERO(x)                    \
+  do                                             \
+  {                                              \
+    if ((x) != 0)                                \
+    {                                            \
+      LOG_ERROR("Failure parsing JSON: %s", #x); \
+      json_object_put(jobj);                     \
+      return -1;                                 \
+    }                                            \
   } while (0)
 
-#define RETURN_IF_NAN(x)                                      \
-  do                                                          \
-  {                                                           \
-    errno = 0;                                                \
-    x;                                                        \
-    if (errno == EINVAL)                                      \
-    {                                                         \
-      printf("JSON Parsing Error: %s is not a number\n", #x); \
-      json_object_put(jobj);                                  \
-      return -1;                                              \
-    }                                                         \
+#define RETURN_IF_NAN(x)                                         \
+  do                                                             \
+  {                                                              \
+    errno = 0;                                                   \
+    x;                                                           \
+    if (errno == EINVAL)                                         \
+    {                                                            \
+      LOG_ERROR("Failure parsing JSON: %s is not a number", #x); \
+      json_object_put(jobj);                                     \
+      return -1;                                                 \
+    }                                                            \
   } while (0)
 
 geojson_point geojson_point_init()
@@ -107,7 +108,7 @@ int mosquitto_payload_to_geojson_point(
   RETURN_IF_NULL(type_string = (char*)json_object_get_string(type), jobj);
   if (strcmp(type_string, "Point") != 0)
   {
-    printf("JSON Parsing Error: type is not Point\n");
+    LOG_ERROR("Failure parsing JSON: type is not Point");
     json_object_put(jobj);
     return -1;
   }
@@ -150,7 +151,7 @@ int geojson_point_to_mosquitto_payload(
       jobj);
   if (payload_length > message->max_payload_length)
   {
-    printf("JSON Parsing Error: mosquitto payload buffer is too small\n");
+    LOG_ERROR("Failure parsing JSON: mosquitto payload buffer is too small");
     json_object_put(jobj);
     return -1;
   }
