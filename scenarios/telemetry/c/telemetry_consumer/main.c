@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "geo_json_handler.h"
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_setup.h"
@@ -29,7 +30,7 @@ void print_point_telemetry_message(
   }
   else
   {
-    printf("Error parsing JSON: %s\n", (char*)message->payload);
+    LOG_ERROR("Failure parsing JSON: %s", (char*)message->payload);
   }
 
   geojson_point_destroy(&json_message);
@@ -55,12 +56,12 @@ void on_connect_with_subscribe(
       && (result = mosquitto_subscribe_v5(mosq, NULL, SUB_TOPIC, QOS_LEVEL, 0, NULL))
           != MOSQ_ERR_SUCCESS)
   {
-    printf("Error subscribing: %s\n", mosquitto_strerror(result));
+    LOG_ERROR("Failed to subscribe: %s", mosquitto_strerror(result));
     keep_running = 0;
     /* We might as well disconnect if we were unable to subscribe */
     if ((result = mosquitto_disconnect_v5(mosq, reason_code, props)) != MOSQ_ERR_SUCCESS)
     {
-      printf("Error disconnecting: %s\n", mosquitto_strerror(result));
+      LOG_ERROR("Failed to disconnect: %s", mosquitto_strerror(result));
     }
   }
 }
@@ -86,12 +87,12 @@ int main(int argc, char* argv[])
            mosq, obj.hostname, obj.tcp_port, obj.keep_alive_in_seconds, NULL, NULL))
       != MOSQ_ERR_SUCCESS)
   {
-    printf("Connection Error: %s\n", mosquitto_strerror(result));
+    LOG_ERROR("Failed to connect: %s", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else if ((result = mosquitto_loop_start(mosq)) != MOSQ_ERR_SUCCESS)
   {
-    printf("loop Error: %s\n", mosquitto_strerror(result));
+    LOG_ERROR("Failure starting mosquitto loop: %s", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else

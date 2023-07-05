@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include "geo_json_handler.h"
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_setup.h"
 
@@ -45,12 +46,12 @@ int main(int argc, char* argv[])
            mosq, obj.hostname, obj.tcp_port, obj.keep_alive_in_seconds, NULL, NULL))
       != MOSQ_ERR_SUCCESS)
   {
-    printf("Connection Error: %s\n", mosquitto_strerror(result));
+    LOG_ERROR("Failed to connect: %s", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else if ((result = mosquitto_loop_start(mosq)) != MOSQ_ERR_SUCCESS)
   {
-    printf("loop Error: %s\n", mosquitto_strerror(result));
+    LOG_ERROR("Failure starting mosquitto loop: %s", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else
@@ -77,7 +78,7 @@ int main(int argc, char* argv[])
 
       if (result != MOSQ_ERR_SUCCESS)
       {
-        printf("Error publishing: %s\n", mosquitto_strerror(result));
+        LOG_ERROR("Failure while publishing: %s", mosquitto_strerror(result));
       }
 
       sleep(5);

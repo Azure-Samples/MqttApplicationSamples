@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <uuid/uuid.h>
 
+#include "logging.h"
 #include "mosquitto.h"
 #include "mqtt_callbacks.h"
 #include "mqtt_protocol.h"
@@ -24,18 +25,18 @@
 
 #define UUID_LENGTH 37
 
-#define CONTINUE_IF_ERROR(rc)                                                   \
-  if (true)                                                                     \
-  {                                                                             \
-    if (rc != MOSQ_ERR_SUCCESS)                                                 \
-    {                                                                           \
-      printf("[ERROR] Failure while publishing: %s\n", mosquitto_strerror(rc)); \
-      mosquitto_property_free_all(&proplist);                                   \
-      proplist = NULL;                                                          \
-      free(payload_buf);                                                        \
-      payload_buf = NULL;                                                       \
-      continue;                                                                 \
-    }                                                                           \
+#define CONTINUE_IF_ERROR(rc)                                            \
+  if (true)                                                              \
+  {                                                                      \
+    if (rc != MOSQ_ERR_SUCCESS)                                          \
+    {                                                                    \
+      LOG_ERROR("Failure while publishing: %s", mosquitto_strerror(rc)); \
+      mosquitto_property_free_all(&proplist);                            \
+      proplist = NULL;                                                   \
+      free(payload_buf);                                                 \
+      payload_buf = NULL;                                                \
+      continue;                                                          \
+    }                                                                    \
   }
 
 static uuid_t pending_correlation_id;
@@ -82,7 +83,7 @@ void handle_message(
           props, MQTT_PROP_CORRELATION_DATA, &correlation_data, &correlation_data_len, false)
       == NULL)
   {
-    printf("\t[ERROR] Message does not have a correlation data property\n");
+    LOG_ERROR("Message does not have a correlation data property");
     unlock_response__free_unpacked(unlock_response, NULL);
     unlock_response = NULL;
     return;
@@ -92,9 +93,9 @@ void handle_message(
   {
     char readable_correlation_data[UUID_LENGTH];
     uuid_unparse(pending_correlation_id, readable_correlation_data);
-    printf("\t[ERROR] Correlation data does not match, expected: %s ", readable_correlation_data);
+    LOG_ERROR("Correlation data does not match, expected: %s", readable_correlation_data);
     uuid_unparse(correlation_data, readable_correlation_data);
-    printf("received: %s\n", readable_correlation_data);
+    printf("\treceived: %s\n", readable_correlation_data);
   }
   else
   {
@@ -127,12 +128,12 @@ void on_connect_with_subscribe(
       && (result = mosquitto_subscribe_v5(mosq, NULL, get_response_topic(), QOS_LEVEL, 0, NULL))
           != MOSQ_ERR_SUCCESS)
   {
-    printf("[ERROR] Failed to subscribe: %s\n", mosquitto_strerror(result));
+    LOG_ERROR("Failed to subscribe: %s", mosquitto_strerror(result));
     keep_running = 0;
     /* We might as well disconnect if we were unable to subscribe */
     if ((result = mosquitto_disconnect_v5(mosq, reason_code, props)) != MOSQ_ERR_SUCCESS)
     {
-      printf("[ERROR] Failed to disconnect: %s\n", mosquitto_strerror(result));
+      LOG_ERROR("Failed to disconnect: %s", mosquitto_strerror(result));
     }
   }
 }
@@ -158,12 +159,12 @@ int main(int argc, char* argv[])
            mosq, obj.hostname, obj.tcp_port, obj.keep_alive_in_seconds, NULL, NULL))
       != MOSQ_ERR_SUCCESS)
   {
-    printf("[ERROR] Failed to connect: %s\n", mosquitto_strerror(result));
+    LOG_ERROR("Failed to connect: %s", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else if ((result = mosquitto_loop_start(mosq)) != MOSQ_ERR_SUCCESS)
   {
-    printf("[ERROR] Failure starting mosquitto loop: %s\n", mosquitto_strerror(result));
+    LOG_ERROR("Failure starting mosquitto loop: %s", mosquitto_strerror(result));
     result = MOSQ_ERR_UNKNOWN;
   }
   else
@@ -197,7 +198,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-          printf("[ERROR] Command timed out without a response.\n");
+          LOG_ERROR("Command timed out without a response.");
           uuid_clear(pending_correlation_id);
         }
       }
