@@ -238,7 +238,8 @@ int main(int argc, char* argv[])
         CONTINUE_IF_ERROR(mosquitto_property_add_binary(
             &proplist, MQTT_PROP_CORRELATION_DATA, pending_correlation_id, UUID_LENGTH));
 
-        LOG_INFO(CLIENT_LOG_TAG, 
+        LOG_INFO(
+            CLIENT_LOG_TAG,
             "Sending unlock request from %s at %s",
             proto_unlock_request.requestedfrom,
             asctime(localtime(&proto_unlock_request.when->seconds)));
