@@ -43,7 +43,7 @@ bool handle_unlock(char* payload, int payload_length)
   UnlockRequest* unlock_request = unlock_request__unpack(NULL, payload_length, payload);
   if (unlock_request == NULL)
   {
-    printf("\t[ERROR] Failure deserializing protobuf payload\n");
+    LOG_ERROR("Failure deserializing protobuf payload");
     return false;
   }
   else
@@ -52,7 +52,7 @@ bool handle_unlock(char* payload, int payload_length)
         "\tUnlock request sent from %s at %s",
         unlock_request->requestedfrom,
         asctime(localtime(&unlock_request->when->seconds)));
-    printf("[Server] Vehicle successfully unlocked\n");
+    LOG_INFO(SERVER_LOG_TAG, "Vehicle successfully unlocked");
     unlock_request__free_unpacked(unlock_request, NULL);
     return true;
   }
@@ -84,13 +84,13 @@ void handle_message(
   payload_buf = malloc(proto_payload_len);
   if (payload_buf == NULL)
   {
-    printf("\t[ERROR] Failed to allocate memory for payload buffer.\n");
+    LOG_ERROR("Failed to allocate memory for payload buffer.");
     return;
   }
 
   if (unlock_response__pack(&proto_unlock_response, payload_buf) != proto_payload_len)
   {
-    printf("\t[ERROR] Failure serializing payload.\n");
+    LOG_ERROR("Failure serializing payload.");
     free(payload_buf);
     payload_buf = NULL;
     return;
@@ -98,7 +98,7 @@ void handle_message(
   if (mosquitto_property_read_string(props, MQTT_PROP_RESPONSE_TOPIC, &response_topic, false)
       == NULL)
   {
-    printf("\t[ERROR] Message does not have a response topic property\n");
+    LOG_ERROR("Message does not have a response topic property");
     return;
   }
 
@@ -115,8 +115,8 @@ void handle_message(
   RETURN_IF_ERROR(
       mosquitto_property_add_string(&response_props, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
 
-  printf(
-      "[Server] Sending unlock response (on topic %s):\n\tSucceed: %s\n",
+  LOG_INFO(SERVER_LOG_TAG,
+      "Sending unlock response (on topic %s):\n\tSucceed: %s",
       response_topic,
       proto_unlock_response.succeed ? "True" : "False");
   if (command_succeed == false)

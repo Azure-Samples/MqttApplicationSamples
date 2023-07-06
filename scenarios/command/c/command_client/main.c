@@ -68,7 +68,7 @@ void handle_message(
       = unlock_response__unpack(NULL, message->payloadlen, message->payload);
   if (unlock_response == NULL)
   {
-    printf("\t[ERROR] Failure deserializing protobuf payload\n");
+    LOG_ERROR("Failure deserializing protobuf payload");
   }
   else if (unlock_response->succeed == true)
   {
@@ -216,13 +216,13 @@ int main(int argc, char* argv[])
 
         if (payload_buf == NULL)
         {
-          printf("[ERROR] Failed to allocate memory for payload buffer.\n");
+          LOG_ERROR("Failed to allocate memory for payload buffer.");
           continue;
         }
 
         if (unlock_request__pack(&proto_unlock_request, payload_buf) != proto_payload_len)
         {
-          printf("[ERROR] Failure serializing payload.\n");
+          LOG_ERROR("Failure serializing payload.");
           free(payload_buf);
           payload_buf = NULL;
           continue;
@@ -238,8 +238,8 @@ int main(int argc, char* argv[])
         CONTINUE_IF_ERROR(mosquitto_property_add_binary(
             &proplist, MQTT_PROP_CORRELATION_DATA, pending_correlation_id, UUID_LENGTH));
 
-        printf(
-            "[Client] Sending unlock request from %s at %s",
+        LOG_INFO(CLIENT_LOG_TAG, 
+            "Sending unlock request from %s at %s",
             proto_unlock_request.requestedfrom,
             asctime(localtime(&proto_unlock_request.when->seconds)));
 

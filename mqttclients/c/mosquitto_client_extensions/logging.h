@@ -20,6 +20,8 @@ Reset:   \x1B[0m
 #define MOSQUITTO_LOG_TAG "mosquitto"
 #define MQTT_LOG_TAG "MQTT"
 #define APP_LOG_TAG "App"
+#define CLIENT_LOG_TAG "Client"
+#define SERVER_LOG_TAG "Server"
 
 #define LOG_INFO(log_tag, ...)                     \
   do                                               \
