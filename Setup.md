@@ -161,6 +161,7 @@ We are using standard C, and CMake to build. These are the required tools:
 - SSL
 - [JSON-C](https://github.com/json-c/json-c) if running a sample that uses JSON - currently these are the Telemetry Samples
 - UUID Library (if running a sample that uses correlation IDs - currently these are the Command Samples)
+- [protobuf-c](https://github.com/protobuf-c/protobuf-c) If running a sample that uses protobuf - currently these are the Command Samples. Note that you'll need protobuf-c-compiler and libprotobuf-dev as well if you're generating code for new proto files.
 
 An example of installing these tools (other than CMake) is shown below:
 
@@ -171,6 +172,8 @@ sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitt
 sudo apt-get install libjson-c-dev
 # If running a sample that uses Correlation IDs
 sudo apt-get install uuid-dev
+# If running a sample that uses protobuf
+sudo apt-get install libprotobuf-c-dev
 ```
 
 See [c extensions](./mqttclients/c/README.md) for more details.

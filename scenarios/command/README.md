@@ -4,7 +4,9 @@
 
 This scenario simulates the request-response messaging pattern. Request-response uses two topics, one for the request and one for the response.
 
-Consider a use case where a user can unlock their car from a mobile app. The request to unlock is published on `vehicles/<vehicleId>/commands/unlock/request` and the response of unlock operation is published on `vehicles/<vehicleId>/commands/unlock/response`. 
+Consider a use case where a user can unlock their car from a mobile app. The request to unlock is published on `vehicles/<vehicleId>/commands/unlock/request` and the response of unlock operation is published on `vehicles/<vehicleId>/commands/unlock/response`.
+
+> NOTE: This code is a basic example of the request-response messaging pattern. It is not a secure solution for unlocking a vehicle without further security checks.
 
 ## Command Server, Command Client
 
@@ -41,7 +43,7 @@ message unlockRequest {
 }
 
 message unlockResponse {
-    bool succeed =1 ;
+    bool succeed = 1;
     string errorDetail = 2;
 }
 
@@ -216,6 +218,17 @@ To run the dotnet sample execute each line below in a different shell/terminal.
 ```
 
 ### C
+
+To generate the c files to handle the protobuf payload, install protobuf-c-compiler and libprotobuf-dev. Note that you only need these to generate the files, running the sample only requires the libprotobuf-c-dev package.
+```bash
+sudo apt-get install protobuf-c-compiler libprotobuf-dev
+```
+
+Then, to generate the files, run:
+```bash
+# from the root folder
+protoc-c --c_out=./scenarios/command/c/protobuf --proto_path=./scenarios/command/c/protobuf unlock_command.proto google/protobuf/timestamp.proto
+```
 
 To build the C sample, run from the root folder:
 

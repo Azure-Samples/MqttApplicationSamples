@@ -14,6 +14,7 @@
 - SSL
 - [JSON-C](https://github.com/json-c/json-c) if running a sample that uses JSON - currently these are the Telemetry Samples
 - UUID Library (if running a sample that uses correlation IDs - currently these are the Command Samples)
+- [protobuf-c](https://github.com/protobuf-c/protobuf-c) If running a sample that uses protobuf - currently these are the Command Samples. Note that you'll need protobuf-c-compiler and libprotobuf-dev as well if you're generating code for new proto files.
 
 An example of installing these tools (other than CMake) is shown below:
 
@@ -24,6 +25,8 @@ sudo apt-get update && sudo apt-get install g++-multilib ninja-build libmosquitt
 sudo apt-get install libjson-c-dev
 # If running a sample that uses Correlation IDs
 sudo apt-get install uuid-dev
+# If running a sample that uses protobuf
+sudo apt-get install libprotobuf-c-dev
 ```
 
 ## Using the Command Line
@@ -90,7 +93,7 @@ sudo apt install -y clang-format-9
 To fix any style errors, run this command from the root of the repo (if you used a different install method than apt install, use `clang-format` instead of `clang-format-9`):
 
 ``` bash
-clang-format-9 -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*")
+clang-format-9 -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*" -not -name "*.pb-c.*")
 ```
 
 ## Running Tests

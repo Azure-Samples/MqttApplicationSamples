@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
-          sudo apt-get update && sudo apt-get install ninja-build libmosquitto-dev uuid-dev libjson-c-dev -y
+          sudo apt-get update && sudo apt-get install ninja-build libmosquitto-dev uuid-dev libjson-c-dev libprotobuf-c-dev protobuf-c-compiler libprotobuf-dev -y
           sudo apt install -y clang-format-9 libcmocka-dev libcmocka0
           cmake --version
 
@@ -35,14 +35,14 @@ jobs:
       - name: Style check
         run: |
           clang-format-9 --version
-          clang-format-9 -style=file --verbose -i $(find . -name "*.[ch]" -not -path "./*/build/*")
+          clang-format-9 -style=file --verbose -i $(find . -name "*.[ch]" -not -path "./*/build/*" -not -name "*.pb-c.*")
 
           git status --untracked-files=no --porcelain
 
           if [[ `git status --untracked-files=no --porcelain` ]]; then
             echo Some files were not formatted correctly according to the .clang-format file.
             echo Please run clang-format to fix the issue by using this bash command at the root of the repo:
-            echo "clang-format -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*")"
+            echo "clang-format -style=file -i $(find . -name "*.[ch]" -not -path "./*/build/*" -not -name "*.pb-c.*")"
             exit 1
           fi
 
@@ -54,7 +54,7 @@ jobs:
       - name: Build telemetry Samples
         run: cmake --preset=telemetry;cmake --build --preset=telemetry
       - name: Build command Samples
-        run: cmake --preset=command;cmake --build --preset=command
+        run: protoc-c --c_out=./scenarios/command/c/protobuf --proto_path=./scenarios/command/c/protobuf unlock_command.proto google/protobuf/timestamp.proto; cmake --preset=command;cmake --build --preset=command
 
       - name: Build & Run Unit Tests
         run: |
