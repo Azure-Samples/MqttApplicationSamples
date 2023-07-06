@@ -115,7 +115,8 @@ void handle_message(
   RETURN_IF_ERROR(
       mosquitto_property_add_string(&response_props, MQTT_PROP_CONTENT_TYPE, COMMAND_CONTENT_TYPE));
 
-  LOG_INFO(SERVER_LOG_TAG,
+  LOG_INFO(
+      SERVER_LOG_TAG,
       "Sending unlock response (on topic %s):\n\tSucceed: %s",
       response_topic,
       proto_unlock_response.succeed ? "True" : "False");
