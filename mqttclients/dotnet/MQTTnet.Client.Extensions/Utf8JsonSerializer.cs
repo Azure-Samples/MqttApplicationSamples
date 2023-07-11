@@ -7,7 +7,7 @@ public class Utf8JsonSerializer : IMessageSerializer
 
     public T FromBytes<T>(byte[] payload)
     {
-        var reader = new Utf8JsonReader(payload);
+        Utf8JsonReader reader = new Utf8JsonReader(payload);
         return JsonSerializer.Deserialize<T>(ref reader)!;
     }
 

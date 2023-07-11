@@ -53,12 +53,32 @@
         },
         {
             "Component": {
+                "Type": "git",
+                "git": {
+                    "RepositoryUrl": "https://github.com/json-c/json-c.git",
+                    "CommitHash": "9021cdcdd01fc9dbcbe1f06391848c2ac915212f"
+                }
+            },
+            "DevelopmentDependency": false
+        },
+        {
+            "Component": {
+                "Type": "git",
+                "git": {
+                    "RepositoryUrl": "https://github.com/protobuf-c/protobuf-c.git",
+                    "CommitHash": "f20a3fa131c275a0e795d99a28f94b4dbbb5af26"
+                }
+            },
+            "DevelopmentDependency": false
+        },
+        {
+            "Component": {
                 "Type": "linux",
                 "linux": {
-                    "Name": "clang-format",
-                    "Version": "9.0.0-2",
+                    "Name": "clang-format-9",
+                    "Version": "1:9.0.1-12",
                     "Distribution": "Ubuntu",
-                    "Release": "18.04",
+                    "Release": "20.04",
                     "Pool-URL": "http://archive.ubuntu.com/ubuntu",
                     "Key-URL": "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg"
                 }
@@ -84,7 +104,7 @@
                 "Type": "linux",
                 "linux": {
                     "Name": "uuid-dev",
-                    "Version": "2.37.2-4ubuntu3",
+                    "Version": "2.31.1-0.4ubuntu3.7",
                     "Distribution": "Ubuntu",
                     "Release": "18.04",
                     "Pool-URL": "http://archive.ubuntu.com/ubuntu",

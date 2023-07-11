@@ -359,3 +359,6 @@ MigrationBackup/
 
 # Python packaging artifacts
 *.egg-info/
+
+# Generated C protobuf files
+*.pb-c.*
