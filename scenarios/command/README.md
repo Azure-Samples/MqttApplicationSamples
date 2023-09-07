@@ -140,14 +140,14 @@ The required `.env` files can be configured manually, we provide the script belo
 ```bash
 # from folder scenarios/command
 source ../../az.env
-host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+mqtt_hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-echo "MQTT_HOST_NAME=$host_name" > vehicle03.env
+echo "MQTT_HOST_NAME=$mqtt_hostname" > vehicle03.env
 echo "MQTT_USERNAME=vehicle03" >> vehicle03.env
 echo "MQTT_CERT_FILE=vehicle03.pem" >> vehicle03.env
 echo "MQTT_KEY_FILE=vehicle03.key" >> vehicle03.env
 
-echo "MQTT_HOST_NAME=$host_name" > mobile-app.env
+echo "MQTT_HOST_NAME=$mqtt_hostname" > mobile-app.env
 echo "MQTT_USERNAME=mobile-app" >> mobile-app.env
 echo "MQTT_CERT_FILE=mobile-app.pem" >> mobile-app.env
 echo "MQTT_KEY_FILE=mobile-app.key" >> mobile-app.env
