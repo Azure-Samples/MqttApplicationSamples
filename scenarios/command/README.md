@@ -211,10 +211,10 @@ dotnet build dotnet/command.sln
 To run the dotnet sample execute each line below in a different shell/terminal.
 
 ```bash
- dotnet/command_server/bin/Debug/net7.0/command_server --envFile=vehicle03.env
+ dotnet/command_producer/bin/Debug/net7.0/command_producer --envFile=vehicle03.env
 ```
 ```bash
- dotnet/command_client/bin/Debug/net7.0/command_client --envFile=mobile-app.env
+ dotnet/command_consumer/bin/Debug/net7.0/command_consumer --envFile=mobile-app.env
 ```
 
 ### C
