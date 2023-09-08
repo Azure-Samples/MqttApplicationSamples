@@ -94,9 +94,9 @@ The required `.env` files can be configured manually, we provide the script belo
 ```bash
 # from folder scenarios/getting_started
 source ../../az.env
-mqtt_hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-echo "MQTT_HOST_NAME=$mqtt_hostname" > .env
+echo "MQTT_HOST_NAME=$host_name" > .env
 echo "MQTT_USERNAME=sample_client" >> .env
 echo "MQTT_CLIENT_ID=sample_client" >> .env
 echo "MQTT_CERT_FILE=sample_client.pem" >> .env

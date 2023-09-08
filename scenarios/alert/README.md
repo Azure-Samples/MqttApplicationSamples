@@ -128,23 +128,23 @@ The required `.env` files can be configured manually, we provide the script belo
 ```bash
 # from folder scenarios/alert
 source ../../az.env
-mqtt_hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-echo "MQTT_HOST_NAME=$mqtt_hostname" > vehicle04.env
+echo "MQTT_HOST_NAME=$host_name" > vehicle04.env
 echo "MQTT_USERNAME=vehicle04" >> vehicle04.env
 echo "MQTT_CLIENT_ID=vehicle04" >> vehicle04.env
 echo "MQTT_CERT_FILE=vehicle04.pem" >> vehicle04.env
 echo "MQTT_KEY_FILE=vehicle04.key" >> vehicle04.env
 echo "MQTT_CLEAN_SESSION=false" >> vehicle04.env
 
-echo "MQTT_HOST_NAME=$mqtt_hostname" > vehicle05.env
+echo "MQTT_HOST_NAME=$host_name" > vehicle05.env
 echo "MQTT_USERNAME=vehicle05" >> vehicle05.env
 echo "MQTT_CLIENT_ID=vehicle05" >> vehicle05.env
 echo "MQTT_CERT_FILE=vehicle05.pem" >> vehicle05.env
 echo "MQTT_KEY_FILE=vehicle05.key" >> vehicle05.env
 echo "MQTT_CLEAN_SESSION=false" >> vehicle05.env
 
-echo "MQTT_HOST_NAME=$mqtt_hostname" > control-tower.env
+echo "MQTT_HOST_NAME=$host_name" > control-tower.env
 echo "MQTT_USERNAME=control-tower" >> control-tower.env
 echo "MQTT_CLIENT_ID=control-tower" >> control-tower.env
 echo "MQTT_CERT_FILE=control-tower.pem" >> control-tower.env

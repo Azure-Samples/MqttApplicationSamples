@@ -128,21 +128,21 @@ The required `.env` files can be configured manually, we provide the script belo
 ```bash
 # from folder scenarios/telemetry
 source ../../az.env
-mqtt_hostname=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
-echo "MQTT_HOST_NAME=$mqtt_hostname" > vehicle01.env
+echo "MQTT_HOST_NAME=$host_name" > vehicle01.env
 echo "MQTT_USERNAME=vehicle01" >> vehicle01.env
 echo "MQTT_CLIENT_ID=vehicle01" >> vehicle01.env
 echo "MQTT_CERT_FILE=vehicle01.pem" >> vehicle01.env
 echo "MQTT_KEY_FILE=vehicle01.key" >> vehicle01.env
 
-echo "MQTT_HOST_NAME=$mqtt_hostname" > vehicle02.env
+echo "MQTT_HOST_NAME=$host_name" > vehicle02.env
 echo "MQTT_USERNAME=vehicle02" >> vehicle02.env
 echo "MQTT_CLIENT_ID=vehicle02" >> vehicle02.env
 echo "MQTT_CERT_FILE=vehicle02.pem" >> vehicle02.env
 echo "MQTT_KEY_FILE=vehicle02.key" >> vehicle02.env
 
-echo "MQTT_HOST_NAME=$mqtt_hostname" > map-app.env
+echo "MQTT_HOST_NAME=$host_name" > map-app.env
 echo "MQTT_USERNAME=map-app" >> map-app.env
 echo "MQTT_CLIENT_ID=map-app" >> map-app.env
 echo "MQTT_CERT_FILE=map-app.pem" >> map-app.env
