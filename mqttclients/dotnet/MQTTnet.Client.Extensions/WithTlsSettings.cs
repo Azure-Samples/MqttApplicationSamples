@@ -8,49 +8,31 @@ public static partial class MqttNetExtensions
 {
     public static MqttClientOptionsBuilder WithTlsSettings(this MqttClientOptionsBuilder builder, MqttConnectionSettings cs)
     {
-        MqttClientOptionsBuilderTlsParameters tls = new MqttClientOptionsBuilderTlsParameters
-        {
-            UseTls = cs.UseTls
-        };
         if (cs.UseTls)
         {
-            List<X509Certificate2> certs = new List<X509Certificate2>();
-            X509Certificate2 cert;
-            if (!string.IsNullOrEmpty(cs.CertFile))
-            {
-                cert = X509ClientCertificateLocator.Load(cs.CertFile!, cs.KeyFile!, cs.KeyFilePassword!);
-                if (cert.HasPrivateKey == false)
-                {
-                    throw new SecurityException("Provided Cert Has not Private Key");
-                }
-                if (string.IsNullOrEmpty(cs.ClientId))
-                {
-                    cs.ClientId = X509CommonNameParser.GetCNFromCertSubject(cert);
-                }
-                certs.Add(cert);
-            }
+            var tlsParams = new MqttClientTlsOptionsBuilder();
+            tlsParams.WithSslProtocols(System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13);
 
             if (!string.IsNullOrEmpty(cs.CaFile))
             {
-                X509Certificate2Collection caCerts = new();
-                caCerts.ImportFromPemFile(cs.CaFile);
-                certs.AddRange(caCerts);
-                foreach (X509Certificate2 c in caCerts)
-                {
-                    Trace.WriteLine($"cert trust chain: {c.Subject}");
-                }
+                tlsParams.WithCertificateValidationHandler(ea => X509ChainValidator.ValidateChain(ea, cs.CaFile!));
+            }
 
-                tls.CertificateValidationHandler = ea => X509ChainValidator.ValidateChain(ea.Certificate, caCerts);
-            }
-            else
+            if (!string.IsNullOrEmpty(cs.CertFile) && !string.IsNullOrEmpty(cs.KeyFile))
             {
-                tls.CertificateValidationHandler += ea => X509ChainValidator.ValidateChain(ea.Certificate);
+                List<X509Certificate2> certs = new();
+                X509Certificate2 cert = X509ClientCertificateLocator.Load(cs.CertFile, cs.KeyFile, cs.KeyFilePassword!);
+                if (!cert.HasPrivateKey)
+                {
+                    throw new SecurityException("Provided Cert Has not Private Key");
+                }
+                certs.Add(cert);
+                tlsParams.WithClientCertificates(certs);
             }
-            tls.IgnoreCertificateChainErrors = true;
-            tls.Certificates = certs;
-            tls.IgnoreCertificateRevocationErrors = cs.DisableCrl;
-            builder.WithTls(tls);
+
+            builder.WithTlsOptions(tlsParams.Build());
         }
         return builder;
     }
 }
+
