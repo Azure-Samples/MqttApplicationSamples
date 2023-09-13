@@ -28,10 +28,10 @@ namespace MQTTnet.Client.Extensions
             Trace.TraceWarning($"Loaded {caChain.Count} certs ");
             caChain.ToList().ForEach(c => Trace.TraceWarning(c.Subject));
 
-            var sslErrors = Enum.GetValues<SslPolicyErrors>().Where(e => certValArgs.SslPolicyErrors.HasFlag(e)).ToList();
+            List<SslPolicyErrors> sslErrors = Enum.GetValues<SslPolicyErrors>().Where(e => certValArgs.SslPolicyErrors.HasFlag(e)).ToList();
             bool valid = false;
 
-            foreach (var sslError in sslErrors)
+            foreach (SslPolicyErrors sslError in sslErrors)
             {
                 if (sslError == SslPolicyErrors.RemoteCertificateChainErrors)
                 {
