@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: leaf-device
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: leaf-device
+  template:
+    metadata:
+      labels:
+        app: leaf-device
+    spec:
+      containers:
+      - name: leaf-device
+        image: e4khubconnector.azurecr.io/leaf-device:latest
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: ca
+          mountPath: /certs/ca.pem 
+          subPath: ca.pem
+        env:
+        - name: ConnectionStrings__cs
+          valueFrom:
+            secretKeyRef:
+              name: leaf-device-secrets
+              key: cs
+      imagePullSecrets: 
+      - name: e4kacr
+      volumes:
+      - name: ca 
+        configMap:
+          name: azedge-broker-ca
+          items:
+            - key: ca.pem 
+              path: ca.pem        
