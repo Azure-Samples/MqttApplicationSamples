@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sts-module
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sts-module
+  template:
+    metadata:
+      labels:
+        app: sts-module
+    spec:
+      containers:
+      - name: sts-module
+        image: e4khubconnector.azurecr.io/stsmodule:latest
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: mqtt-client-token
+          mountPath: /var/run/secrets/tokens
+        - name: ca
+          mountPath: /certs/ca.pem 
+          subPath: ca.pem
+        env:
+        - name: IOTEDGE_IOTHUBHOSTNAME
+          value: e4k-hub.azure-devices.net
+        - name: IOTEDGE_DEVICEID
+          value: e4k-gateway
+        - name: IOTEDGE_MODULEID
+          value: SimulatedTemperatureSensor
+        - name: AZEDGE_MQTT_GATEWAY_HOST_NAME
+          value: azedge-dmqtt-frontend
+        - name: AZEDGE_MQTT_GATEWAY_CA_FILE
+          value: /certs/ca.pem
+      imagePullSecrets: 
+      - name: e4kacr
+      volumes:
+      - name: mqtt-client-token
+        projected:
+          sources:
+          - serviceAccountToken:
+              path: mqtt-client-token
+              audience: azedge-modules
+      - name: ca 
+        configMap:
+          name: azedge-broker-ca
+          items:
+            - key: ca.pem 
+              path: ca.pem

@@ -98,8 +98,8 @@ namespace module_sample
                 _logger.LogInformation("Desired Property received: {t}", twin);
             }, null!, cancellationToken: stoppingToken);
 
-            /*Twin twin = await moduleClient.GetTwinAsync(stoppingToken);
-            _logger.LogInformation("twin received: {t}", twin.ToJson());*/
+            Twin twin = await moduleClient.GetTwinAsync(stoppingToken);
+            _logger.LogInformation("twin received: {t}", twin.ToJson());
 
             while (!stoppingToken.IsCancellationRequested)
             {
