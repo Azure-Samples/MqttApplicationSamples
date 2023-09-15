@@ -362,3 +362,6 @@ MigrationBackup/
 
 # Generated C protobuf files
 *.pb-c.*
+
+# TypeScript related files
+dist

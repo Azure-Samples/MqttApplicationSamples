@@ -59,6 +59,18 @@
             "label": "Build C Command",
             "type": "shell",
             "command": "cmake --preset=command;cmake --build --preset=command"
+        },
+        {
+            "label": "build_ts_getting_started",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/scenarios/getting_started/TypeScript"
+            },
+            "command": "node ./node_modules/.bin/tsc -p .",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": "build"
         }
     ]
 }

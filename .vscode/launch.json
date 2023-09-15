@@ -12,12 +12,11 @@
             "console": "integratedTerminal",
             "stopAtEntry": false,
             "env": {
-                "HostName" : "localhost"
+                "HostName": "localhost"
             },
             "presentation": {
                 "group": "dotnet"
             }
-
         },
         {
             "name": "telemetry_producer/dotnet",
@@ -26,7 +25,10 @@
             "preLaunchTask": "build_telemetry",
             "program": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_producer/bin/Debug/net7.0/telemetry_producer.dll",
             "cwd": "${workspaceFolder}/scenarios/telemetry/",
-            "args": ["--envFile", "vehicle01.env"],
+            "args": [
+                "--envFile",
+                "vehicle01.env"
+            ],
             "console": "integratedTerminal",
             "stopAtEntry": false,
             "presentation": {
@@ -40,7 +42,10 @@
             "preLaunchTask": "build_telemetry",
             "program": "${workspaceFolder}/scenarios/telemetry/dotnet/telemetry_consumer/bin/Debug/net7.0/telemetry_consumer.dll",
             "cwd": "${workspaceFolder}/scenarios/telemetry/",
-            "args": ["--envFile", "map-app.env"],
+            "args": [
+                "--envFile",
+                "map-app.env"
+            ],
             "console": "integratedTerminal",
             "stopAtEntry": false,
             "presentation": {
@@ -53,7 +58,10 @@
             "request": "launch",
             "preLaunchTask": "build_command",
             "program": "${workspaceFolder}/scenarios/command/dotnet/command_consumer/bin/Debug/net7.0/command_consumer.dll",
-            "args": ["--envFile", "mobile-app.env"],
+            "args": [
+                "--envFile",
+                "mobile-app.env"
+            ],
             "cwd": "${workspaceFolder}/scenarios/command/",
             "console": "integratedTerminal",
             "stopAtEntry": false,
@@ -67,7 +75,10 @@
             "request": "launch",
             "preLaunchTask": "build_command",
             "program": "${workspaceFolder}/scenarios/command/dotnet/command_producer/bin/Debug/net7.0/command_producer.dll",
-            "args": ["--envFile", "vehicle03.env"],
+            "args": [
+                "--envFile",
+                "vehicle03.env"
+            ],
             "cwd": "${workspaceFolder}/scenarios/command/",
             "console": "integratedTerminal",
             "stopAtEntry": false,
@@ -102,7 +113,9 @@
             "program": "${workspaceFolder}/scenarios/telemetry/c/build/telemetry_producer",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/scenarios/telemetry",
-            "args": ["${workspaceFolder}/scenarios/telemetry/vehicle01.env"],
+            "args": [
+                "${workspaceFolder}/scenarios/telemetry/vehicle01.env"
+            ],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -123,7 +136,9 @@
             "program": "${workspaceFolder}/scenarios/telemetry/c/build/telemetry_consumer",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/scenarios/telemetry",
-            "args": ["${workspaceFolder}/scenarios/telemetry/map-app.env"],
+            "args": [
+                "${workspaceFolder}/scenarios/telemetry/map-app.env"
+            ],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -144,7 +159,9 @@
             "program": "${workspaceFolder}/scenarios/command/c/build/command_client",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/scenarios/command",
-            "args": ["${workspaceFolder}/scenarios/command/mobile-app.env"],
+            "args": [
+                "${workspaceFolder}/scenarios/command/mobile-app.env"
+            ],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -165,7 +182,9 @@
             "program": "${workspaceFolder}/scenarios/command/c/build/command_server",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/scenarios/command",
-            "args": ["${workspaceFolder}/scenarios/command/vehicle03.env"],
+            "args": [
+                "${workspaceFolder}/scenarios/command/vehicle03.env"
+            ],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -178,26 +197,60 @@
                 "order": 7,
                 "group": "C"
             }
-        }
+        },
+        {
+            "name": "TypeScript Getting Started",
+            "type": "node",
+            "request": "launch",
+            "preLaunchTask": "build_ts_getting_started",
+            "program": "${workspaceFolder}/scenarios/getting_started/TypeScript/src/index.ts",
+            "args": [],
+            "cwd": "${workspaceFolder}/scenarios/getting_started/TypeScript",
+            "console": "integratedTerminal",
+            "smartStep": true,
+            "showAsyncStacks": true,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/dist/**/*.js"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "HostName": "localhost"
+            },
+            "presentation": {
+                "group": "ts"
+            }
+        },
     ],
     "compounds": [
         {
             "name": "telemetry/dotnet",
-            "configurations": ["telemetry_producer/dotnet", "telemetry_consumer/dotnet" ],
+            "configurations": [
+                "telemetry_producer/dotnet",
+                "telemetry_consumer/dotnet"
+            ],
             "presentation": {
                 "group": "dotnet"
             }
         },
         {
             "name": "command/dotnet",
-            "configurations": ["command_producer/dotnet", "command_consumer/dotnet" ],
+            "configurations": [
+                "command_producer/dotnet",
+                "command_consumer/dotnet"
+            ],
             "presentation": {
                 "group": "dotnet"
             }
         },
         {
             "name": "C Telemetry",
-            "configurations": ["C Telemetry Consumer", "C Telemetry Producer" ],
+            "configurations": [
+                "C Telemetry Consumer",
+                "C Telemetry Producer"
+            ],
             "stopAll": true,
             "presentation": {
                 "order": 2,
@@ -206,7 +259,10 @@
         },
         {
             "name": "C Command",
-            "configurations": ["C Command Server", "C Command Client" ],
+            "configurations": [
+                "C Command Server",
+                "C Command Client"
+            ],
             "stopAll": true,
             "presentation": {
                 "order": 3,
