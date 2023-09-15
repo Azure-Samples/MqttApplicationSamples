@@ -1,6 +1,7 @@
 import { Logger } from './logger';
 import { ConnectionSettings } from './connectionSettings';
 import {
+    ErrorWithReasonCode,
     IClientOptions,
     MqttClient,
     connect as mqttConnect
@@ -21,42 +22,47 @@ export class SampleMqttClient {
     }
 
     public async connect(): Promise<void> {
-        if (!this.connectionSettings.MQTT_CLEAN_SESSION) {
-            throw new Error('This sample does not support connecting with existing sessions');
+        try {
+            if (!this.connectionSettings.MQTT_CLEAN_SESSION) {
+                throw new Error('This sample does not support connecting with existing sessions');
+            }
+
+            Logger.log([ModuleName, 'info'], `Initializing MQTT client`);
+            const mqttClientOptions: IClientOptions = this.createMqttClientOptions();
+
+            mqttClientOptions.manualConnect = true;
+            this.mqttClient = mqttConnect(this.connectionSettings.MQTT_HOST_NAME, mqttClientOptions);
+
+            // Attach MQTT client event handlers
+            this.mqttClient.on('connect', this.onConnect.bind(this));
+            this.mqttClient.on('disconnect', this.onDisconnect.bind(this));
+            this.mqttClient.on('message', this.onMessage.bind(this));
+            this.mqttClient.on('error', this.onError.bind(this));
+            this.mqttClient.on('close', this.onClose.bind(this));
+            this.mqttClient.on('end', this.onEnd.bind(this));
+            this.mqttClient.on('reconnect', this.onReconnect.bind(this));
+            this.mqttClient.on('offline', this.onOffline.bind(this));
+
+            // Connect to MQTT broker
+            Logger.log([ModuleName, 'info'], `Starting connection for clientId: ${this.connectionSettings.MQTT_CLIENT_ID}`);
+            this.mqttClient.connect();
+
+            await new Promise<void>((resolve) => {
+                const interval = setInterval(() => {
+                    if (this.mqttClient.connected) {
+                        clearInterval(interval);
+
+                        return resolve();
+                    }
+                }, 1000);
+            });
+
+            if (!this.mqttClient.connected) {
+                throw new Error('Unable to connect to MQTT broker');
+            }
         }
-
-        Logger.log([ModuleName, 'info'], `Initializing MQTT client`);
-        const mqttClientOptions: IClientOptions = this.createMqttClientOptions();
-
-        mqttClientOptions.manualConnect = true;
-        this.mqttClient = mqttConnect(this.connectionSettings.MQTT_HOST_NAME, mqttClientOptions);
-
-        // Attach MQTT client event handlers
-        this.mqttClient.on('connect', this.onConnect.bind(this));
-        this.mqttClient.on('disconnect', this.onDisconnect.bind(this));
-        this.mqttClient.on('message', this.onMessage.bind(this));
-        this.mqttClient.on('error', this.onError.bind(this));
-        this.mqttClient.on('close', this.onClose.bind(this));
-        this.mqttClient.on('end', this.onEnd.bind(this));
-        this.mqttClient.on('reconnect', this.onReconnect.bind(this));
-        this.mqttClient.on('offline', this.onOffline.bind(this));
-
-        // Connect to MQTT broker
-        Logger.log([ModuleName, 'info'], `Starting connection for clientId: ${this.connectionSettings.MQTT_CLIENT_ID}`);
-        this.mqttClient.connect();
-
-        await new Promise<void>((resolve) => {
-            const interval = setInterval(() => {
-                if (this.mqttClient.connected) {
-                    clearInterval(interval);
-
-                    return resolve();
-                }
-            }, 1000);
-        });
-
-        if (!this.mqttClient.connected) {
-            throw new Error('Unable to connect to MQTT broker');
+        catch (ex) {
+            Logger.log([ModuleName, 'error'], `MQTT client Getting Started error: ${ex}`);
         }
     }
 
@@ -74,7 +80,7 @@ export class SampleMqttClient {
         }
 
         if (this.connectionSettings.MQTT_USE_TLS) {
-            mqttClientOptions.protocol = 'mqtts';
+            mqttClientOptions.protocol = 'ssl';
         }
 
         if (this.connectionSettings.MQTT_CERT_FILE) {
@@ -118,9 +124,21 @@ export class SampleMqttClient {
         Logger.log([ModuleName, 'info'], 'MQTT broker connection is offline');
     }
 
-    private onError(error: Error): void {
-        Logger.log([ModuleName, 'error'], `MQTT client error: ${error.message}`);
-        Logger.log([ModuleName, 'error'], `This could be authentication error - terminating the sample`);
+    private onError(error: Error | ErrorWithReasonCode): void {
+        Logger.log([ModuleName, 'error'], `MQTT client error:`);
+
+        if ((error as ErrorWithReasonCode)?.code) {
+            Logger.log([ModuleName, 'error'], `  - reason code: ${(error as ErrorWithReasonCode).code}`);
+
+            const errors = (error as any).errors;
+            if (errors && Array.isArray(errors)) {
+                for (const subError of errors) {
+                    Logger.log([ModuleName, 'error'], `  - message: ${subError.message}`);
+                }
+            }
+        }
+
+        Logger.log([ModuleName, 'error'], `Terminating the sample...`);
 
         process.exit(1);
     }

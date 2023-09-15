@@ -14,7 +14,7 @@ async function start(): Promise<void> {
         await sampleMqttClient.connect();
     }
     catch (ex) {
-        Logger.log([ModuleName, 'error'], `MQTT client Getting Started error: ${ex}`);
+        Logger.log([ModuleName, 'error'], `MQTT client Getting Started error: ${ex.message}`);
     }
 }
 
