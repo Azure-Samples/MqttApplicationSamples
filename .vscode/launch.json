@@ -205,18 +205,19 @@
             "preLaunchTask": "build_ts_getting_started",
             "program": "${workspaceFolder}/scenarios/getting_started/TypeScript/src/index.ts",
             "args": [],
-            "cwd": "${workspaceFolder}/scenarios/getting_started/TypeScript",
+            "cwd": "${workspaceFolder}/scenarios/getting_started",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/dist/**/*.js"
+                "${workspaceFolder}/scenarios/getting_started/TypeScript/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "env": {
+                "DEBUG": "mqttjs*",
                 "HostName": "localhost"
             },
             "presentation": {

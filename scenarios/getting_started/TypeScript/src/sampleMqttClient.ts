@@ -3,6 +3,9 @@ import { ConnectionSettings } from './connectionSettings';
 import {
     ErrorWithReasonCode,
     IClientOptions,
+    IConnackPacket,
+    IDisconnectPacket,
+    IPublishPacket,
     MqttClient,
     connect as mqttConnect
 } from 'mqtt';
@@ -23,15 +26,10 @@ export class SampleMqttClient {
 
     public async connect(): Promise<void> {
         try {
-            if (!this.connectionSettings.MQTT_CLEAN_SESSION) {
-                throw new Error('This sample does not support connecting with existing sessions');
-            }
-
             Logger.log([ModuleName, 'info'], `Initializing MQTT client`);
             const mqttClientOptions: IClientOptions = this.createMqttClientOptions();
 
-            mqttClientOptions.manualConnect = true;
-            this.mqttClient = mqttConnect(this.connectionSettings.MQTT_HOST_NAME, mqttClientOptions);
+            this.mqttClient = mqttConnect(mqttClientOptions);
 
             // Attach MQTT client event handlers
             this.mqttClient.on('connect', this.onConnect.bind(this));
@@ -67,11 +65,30 @@ export class SampleMqttClient {
     }
 
     private createMqttClientOptions(): IClientOptions {
+        if (!this.connectionSettings.MQTT_CLEAN_SESSION) {
+            throw new Error('This sample does not support connecting with existing sessions');
+        }
+
+        if (!this.connectionSettings.MQTT_HOST_NAME) {
+            throw new Error('MQTT_HOST_NAME environment variable is not set');
+        }
+
+        if (this.connectionSettings.MQTT_PASSWORD && !this.connectionSettings.MQTT_USERNAME) {
+            throw new Error('MQTT_USERNAME environment variable if MQTT_PASSWORD is set');
+        }
+
         const mqttClientOptions: IClientOptions = {
             clientId: this.connectionSettings.MQTT_CLIENT_ID,
+            host: `mqtts://${this.connectionSettings.MQTT_HOST_NAME}:${this.connectionSettings.MQTT_TCP_PORT}}`,
+            hostname: this.connectionSettings.MQTT_HOST_NAME,
+            port: this.connectionSettings.MQTT_TCP_PORT,
+            keepalive: this.connectionSettings.MQTT_KEEP_ALIVE_IN_SECONDS,
+            connectTimeout: 10 * 1000,
+            rejectUnauthorized: true,
+            manualConnect: true,
             clean: this.connectionSettings.MQTT_CLEAN_SESSION,
             protocolVersion: 3,
-            protocol: 'tcp'
+            protocol: 'mqtt'
         };
 
         if (this.connectionSettings.MQTT_USERNAME) {
@@ -80,7 +97,7 @@ export class SampleMqttClient {
         }
 
         if (this.connectionSettings.MQTT_USE_TLS) {
-            mqttClientOptions.protocol = 'ssl';
+            mqttClientOptions.protocol = 'mqtts';
         }
 
         if (this.connectionSettings.MQTT_CERT_FILE) {
@@ -96,15 +113,15 @@ export class SampleMqttClient {
         return mqttClientOptions;
     }
 
-    private onConnect(): void {
+    private onConnect(_packet: IConnackPacket): void {
         Logger.log([ModuleName, 'info'], 'Connected to MQTT broker');
     }
 
-    private onDisconnect(): void {
+    private onDisconnect(_packet: IDisconnectPacket): void {
         Logger.log([ModuleName, 'info'], 'Disconnected from MQTT broker');
     }
 
-    private onMessage(topic: string, payload: Buffer): void {
+    private onMessage(topic: string, payload: Buffer, _packet: IPublishPacket): void {
         Logger.log([ModuleName, 'info'], `Received message on topic ${topic} with payload ${payload.toString('utf8')}`);
     }
 
@@ -130,10 +147,15 @@ export class SampleMqttClient {
         if ((error as ErrorWithReasonCode)?.code) {
             Logger.log([ModuleName, 'error'], `  - reason code: ${(error as ErrorWithReasonCode).code}`);
 
-            const errors = (error as any).errors;
-            if (errors && Array.isArray(errors)) {
-                for (const subError of errors) {
-                    Logger.log([ModuleName, 'error'], `  - message: ${subError.message}`);
+            if ((error as ErrorWithReasonCode)?.message) {
+                Logger.log([ModuleName, 'error'], `  - message: ${(error as ErrorWithReasonCode).message}`);
+            }
+            else {
+                const errors = (error as any).errors;
+                if (errors && Array.isArray(errors)) {
+                    for (const subError of errors) {
+                        Logger.log([ModuleName, 'error'], `  - message: ${subError.message}`);
+                    }
                 }
             }
         }
