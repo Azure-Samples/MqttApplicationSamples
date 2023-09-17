@@ -9,6 +9,7 @@ import {
     MqttClient,
     connect as mqttConnect
 } from 'mqtt';
+import * as fs from 'fs';
 
 const ModuleName = 'sampleMqttClient';
 
@@ -79,16 +80,15 @@ export class SampleMqttClient {
 
         const mqttClientOptions: IClientOptions = {
             clientId: this.connectionSettings.MQTT_CLIENT_ID,
-            host: `mqtts://${this.connectionSettings.MQTT_HOST_NAME}:${this.connectionSettings.MQTT_TCP_PORT}}`,
-            hostname: this.connectionSettings.MQTT_HOST_NAME,
+            protocol: 'mqtt',
+            host: this.connectionSettings.MQTT_HOST_NAME,
             port: this.connectionSettings.MQTT_TCP_PORT,
             keepalive: this.connectionSettings.MQTT_KEEP_ALIVE_IN_SECONDS,
             connectTimeout: 10 * 1000,
             rejectUnauthorized: true,
             manualConnect: true,
             clean: this.connectionSettings.MQTT_CLEAN_SESSION,
-            protocolVersion: 3,
-            protocol: 'mqtt'
+            protocolVersion: 5
         };
 
         if (this.connectionSettings.MQTT_USERNAME) {
@@ -101,13 +101,12 @@ export class SampleMqttClient {
         }
 
         if (this.connectionSettings.MQTT_CERT_FILE) {
-            mqttClientOptions.certPath = this.connectionSettings.MQTT_CERT_FILE;
-            mqttClientOptions.keyPath = this.connectionSettings.MQTT_KEY_FILE;
-            // mqttClientOptions.???? = this.connectionSettings.MQTT_KEY_FILE_PASSWORD;
+            mqttClientOptions.cert = fs.readFileSync(this.connectionSettings.MQTT_CERT_FILE);
+            mqttClientOptions.key = fs.readFileSync(this.connectionSettings.MQTT_KEY_FILE);
         }
 
         if (this.connectionSettings.MQTT_CA_FILE) {
-            mqttClientOptions.caPaths = [this.connectionSettings.MQTT_CA_FILE];
+            mqttClientOptions.ca = fs.readFileSync(this.connectionSettings.MQTT_CA_FILE);
         }
 
         return mqttClientOptions;
