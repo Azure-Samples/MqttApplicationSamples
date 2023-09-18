@@ -4,6 +4,7 @@ languages:
 - csharp
 - c
 - python
+- TypeScript
 name: "MQTT Application Samples"
 description: "Guidance to build Pub/Sub applications targeting MQTT Brokers."
 products:
@@ -14,7 +15,7 @@ products:
 
 | [Setup](./Setup.md) | [Getting Started](./scenarios/getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |
 
-These samples provide guidance to build Pub/Sub applications targeting MQTT Brokers in different programming languages. The samples are provided in different programming languages: C#, Python and C.
+These samples provide guidance to build Pub/Sub applications targeting MQTT Brokers in different programming languages. The samples are provided in different programming languages: C#, C, Python, and TypeScript.
 
 The instructions are provided for the following MQTT Brokers:
 - **Azure Event Grid Namespaces** 
@@ -44,6 +45,7 @@ Each language requires developer tools, such as compilers and SDKs to build and 
 - [dotnet](./mqttclients/dotnet/README.md)
 - [C](./mqttclients/c/README.md)
 - Python (TBD)
+- [TypeScript](./mqttclients/TypeScript/README.md)
 
 # Scenarios
 
@@ -58,12 +60,12 @@ Each scenario requires the following configurations:
 
 Follow the instructions in the [Prerequisites](#magic_wand-prerequisites) to configure these scenarios.
 
-| Scenario | Description | dotnet | C | python |
-| -------- | ------------|--------|---|------- |
-| [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| &check;| &check;| &check;|
-| [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | &check;| &check;| &check;|
-| [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | &check;| &check; | soon|
-| [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  |  &check;| soon| soon|
+| Scenario | Description | dotnet | C | python | python |
+| -------- | ------------|--------|---|--------|------- |
+| [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| &check;| &check;| &check;| &check;|
+| [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | &check;| &check;| &check;| &check;|
+| [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | &check;| &check; | soon| &check; 
+| [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  |  &check;| soon| soon| &check;|
 
 >note: soon: in progress and will be added soon
 
