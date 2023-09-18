@@ -205,7 +205,7 @@
             "preLaunchTask": "build_ts_getting_started",
             "program": "${workspaceFolder}/scenarios/getting_started/TypeScript/src/index.ts",
             "args": [],
-            "cwd": "${workspaceFolder}/scenarios/getting_started",
+            "cwd": "${workspaceFolder}/scenarios/getting_started/TypeScript/",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,

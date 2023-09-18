@@ -9,6 +9,7 @@ import {
     MqttClient,
     connect as mqttConnect
 } from 'mqtt';
+import { resolve as pathResolve } from 'path';
 import * as fs from 'fs';
 
 const ModuleName = 'sampleMqttClient';
@@ -113,12 +114,12 @@ export class SampleMqttClient {
             }
 
             if (this.connectionSettings.mqttCertFile) {
-                mqttClientOptions.cert = fs.readFileSync(this.connectionSettings.mqttCertFile);
-                mqttClientOptions.key = fs.readFileSync(this.connectionSettings.mqttKeyFile);
+                mqttClientOptions.cert = fs.readFileSync(pathResolve('..', this.connectionSettings.mqttCertFile));
+                mqttClientOptions.key = fs.readFileSync(pathResolve('..', this.connectionSettings.mqttKeyFile));
             }
 
             if (this.connectionSettings.mqttCaFile) {
-                mqttClientOptions.ca = fs.readFileSync(this.connectionSettings.mqttCaFile);
+                mqttClientOptions.ca = fs.readFileSync(pathResolve('..', this.connectionSettings.mqttCaFile));
             }
         }
         catch (ex) {
