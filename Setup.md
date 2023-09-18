@@ -181,3 +181,12 @@ See [c extensions](./mqttclients/c/README.md) for more details.
 ### Python
 
 Python samples have been tested with python 3.10.4, to install follow the instructions from https://www.python.org/downloads/ 
+
+### TypeScript
+
+TypeScript samples have been tested with python NodeJS version 18.16.0. Version 18 or higher is required. See https://nodejs.org.
+
+To setup each sample cd into the sample directory (e.g. ../TypeScript/getting_started) and run:
+```
+npm i
+```
