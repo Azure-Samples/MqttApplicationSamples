@@ -12,7 +12,7 @@ import {
 import { resolve as pathResolve } from 'path';
 import * as fs from 'fs';
 
-const ModuleName = 'sampleMqttClient';
+const ModuleName = 'SampleMqttClient';
 const ConnectTimeoutInSeconds = 10;
 
 export class SampleMqttClient {
@@ -22,9 +22,7 @@ export class SampleMqttClient {
         return this.mqttClient?.connected || false;
     }
 
-    public async stopSample(): Promise<void> {
-        Logger.log([ModuleName, 'error'], `Ctrl+C received: ending the session and exiting the sample...`);
-
+    public async endClientSession(): Promise<void> {
         if (this.mqttClient?.connected) {
             await this.mqttClient.endAsync(true);
         }
@@ -127,21 +125,15 @@ export class SampleMqttClient {
         }
     }
 
-    public async publish(topic: string, payload: string): Promise<number> {
-        let publishMessageId = -1;
-
+    public async publish(topic: string, payload: string): Promise<void> {
         try {
             Logger.log([ModuleName, 'info'], `Publishing to MQTT topic: ${topic}, with payload: ${payload}`);
 
-            const publishPacket = await this.mqttClient.publishAsync(topic, payload);
-
-            publishMessageId = publishPacket.messageId;
+            await this.mqttClient.publishAsync(topic, payload);
         }
         catch (ex) {
             Logger.log([ModuleName, 'error'], `MQTT client publish error: ${ex}`);
         }
-
-        return publishMessageId;
     }
 
     private onConnect(_packet: IConnackPacket): void {
