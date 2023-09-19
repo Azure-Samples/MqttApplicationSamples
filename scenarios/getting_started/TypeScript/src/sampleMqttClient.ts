@@ -118,7 +118,7 @@ export class SampleMqttClient {
         try {
             Logger.log([ModuleName, 'info'], `Subscribing to MQTT topics: ${topic}`);
 
-            await this.mqttClient.subscribeAsync('sample/+');
+            await this.mqttClient.subscribeAsync(topic);
         }
         catch (ex) {
             Logger.log([ModuleName, 'error'], `MQTT client subscribe error: ${ex}`);

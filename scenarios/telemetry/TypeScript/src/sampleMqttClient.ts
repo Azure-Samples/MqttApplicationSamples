@@ -118,22 +118,29 @@ export class SampleMqttClient {
         try {
             Logger.log([ModuleName, 'info'], `Subscribing to MQTT topics: ${topic}`);
 
-            await this.mqttClient.subscribeAsync('sample/+');
+            await this.mqttClient.subscribeAsync(topic);
         }
         catch (ex) {
             Logger.log([ModuleName, 'error'], `MQTT client subscribe error: ${ex}`);
         }
     }
 
-    public async publish(topic: string, payload: string): Promise<void> {
+    public async publish(topic: string, payload: string): Promise<number> {
+        let messageId: number = -1;
+
         try {
             Logger.log([ModuleName, 'info'], `Publishing to MQTT topic: ${topic}, with payload: ${payload}`);
 
-            await this.mqttClient.publishAsync(topic, payload);
+            // Sending QoS 1 message since we need to return a messageId
+            const packet = await this.mqttClient.publishAsync(topic, payload, { qos: 1 });
+
+            messageId = packet.messageId;
         }
         catch (ex) {
             Logger.log([ModuleName, 'error'], `MQTT client publish error: ${ex}`);
         }
+
+        return messageId;
     }
 
     private onConnect(_packet: IConnackPacket): void {

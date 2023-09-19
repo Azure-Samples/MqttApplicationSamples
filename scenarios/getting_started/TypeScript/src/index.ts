@@ -24,22 +24,6 @@ const ModuleName = 'SampleApp';
 
 let sampleApp: SampleApp;
 
-process.on('SIGINT', async () => {
-    Logger.log([ModuleName, 'error'], `SIGINT received: ending the session and exiting the sample...`);
-
-    if (sampleApp) {
-        await sampleApp.stopSample();
-    }
-});
-
-process.on('SIGTERM', async () => {
-    Logger.log([ModuleName, 'error'], `SIGTERM received: ending the session and exiting the sample...`);
-
-    if (sampleApp) {
-        await sampleApp.stopSample();
-    }
-});
-
 class SampleApp {
     private sampleMqttClient: SampleMqttClient;
 
@@ -92,6 +76,22 @@ class SampleApp {
         }
     }
 }
+
+process.on('SIGINT', async () => {
+    Logger.log([ModuleName, 'error'], `SIGINT received: ending the session and exiting the sample...`);
+
+    if (sampleApp) {
+        await sampleApp.stopSample();
+    }
+});
+
+process.on('SIGTERM', async () => {
+    Logger.log([ModuleName, 'error'], `SIGTERM received: ending the session and exiting the sample...`);
+
+    if (sampleApp) {
+        await sampleApp.stopSample();
+    }
+});
 
 void (async () => {
     sampleApp = new SampleApp();
