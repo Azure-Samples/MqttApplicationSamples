@@ -60,7 +60,7 @@ Each scenario requires the following configurations:
 
 Follow the instructions in the [Prerequisites](#magic_wand-prerequisites) to configure these scenarios.
 
-| Scenario | Description | dotnet | C | python | python |
+| Scenario | Description | dotnet | C | python | TypeScript |
 | -------- | ------------|--------|---|--------|------- |
 | [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| &check;| &check;| &check;| &check;|
 | [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | &check;| &check;| &check;| &check;|

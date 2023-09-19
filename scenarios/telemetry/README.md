@@ -283,3 +283,21 @@ python python/telemetry_producer.py --env-file="vehicle02.env"
 # from folder scenarios/telemetry
 python python/telemetry_consumer.py --env-file=map-app.env
 ```
+### TypeScript
+To setup the sample cd into the sample directory (e.g. ../telemetry/TypeScript) and install all of the dependencies by running:
+```bash
+npm i
+```
+To run the sample cd into the sample directory (e.g. ../telemetry/TypeScript and run each command below in a different shell/terminal:
+```bash
+# from folder scenarios/telemetry/TypeScript
+node ./dist/producer.js --env-file="vehicle01.env"
+```
+```bash
+# from folder scenarios/telemetry/TypeScript
+node ./dist/producer.js --env-file="vehicle02.env"
+```
+```bash
+# from folder scenarios/telemetry/TypeScript
+node ./dist/consumer.js --env-file="map-app.env"
+```

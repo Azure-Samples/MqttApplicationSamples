@@ -127,15 +127,21 @@ export class SampleMqttClient {
         }
     }
 
-    public async publish(topic: string, payload: string): Promise<void> {
+    public async publish(topic: string, payload: string): Promise<number> {
+        let publishMessageId = -1;
+
         try {
             Logger.log([ModuleName, 'info'], `Publishing to MQTT topic: ${topic}, with payload: ${payload}`);
 
-            await this.mqttClient.publishAsync(topic, payload);
+            const publishPacket = await this.mqttClient.publishAsync(topic, payload);
+
+            publishMessageId = publishPacket.messageId;
         }
         catch (ex) {
             Logger.log([ModuleName, 'error'], `MQTT client publish error: ${ex}`);
         }
+
+        return publishMessageId;
     }
 
     private onConnect(_packet: IConnackPacket): void {

@@ -20,6 +20,11 @@ export interface IConnectionSettings {
     mqttCaFile: string;
 }
 
+export interface Point {
+    x: number;
+    y: number;
+}
+
 const ModuleName = 'index';
 
 let sampleMqttClient: SampleMqttClient = null;
@@ -68,11 +73,27 @@ async function start(): Promise<void> {
         // Connect to the MQTT broker using the connection settings from the .env file
         await sampleMqttClient.connect(connectionSettings);
 
-        // Subscribe to the 'sample/+' topic
-        await sampleMqttClient.subscribe('sample/+');
-
         // Publish to the 'sample/topic1' topic
+        const topic = `vehicles/${connectionSettings.mqttClientId}/position`;
+
         await sampleMqttClient.publish('sample/topic1', 'Hello World!');
+
+        // Begin sending vehicle geolocation data to the 'vehicles/<vehicleId>/position' topic
+        const intervalId = setInterval(async () => {
+            const latMin = -90;
+            const latMax = 90;
+            const lonMin = -180;
+            const lonMax = 180;
+
+            const point: Point = {
+                x: Math.floor(Math.random() * (latMax - latMin + 1) + latMin),
+                y: Math.floor(Math.random() * (lonMax - lonMin + 1) + lonMin)
+            };
+
+            const messageId = await sampleMqttClient.publish(topic, JSON.stringify(point));
+
+            Logger.log([ModuleName, 'info'], `Publishing to topic: ${topic}, messageId: ${messageId}, with payload: ${JSON.stringify(point, null, 4)}`);
+        }, 1000 * 10);
     }
     catch (ex) {
         Logger.log([ModuleName, 'error'], `MQTT client sample error: ${ex.message}`);

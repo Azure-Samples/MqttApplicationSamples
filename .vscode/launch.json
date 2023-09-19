@@ -223,6 +223,31 @@
                 "group": "ts"
             }
         },
+        {
+            "name": "TypeScript Telemetry",
+            "type": "node",
+            "request": "launch",
+            "preLaunchTask": "build_ts_telemetry",
+            "program": "${workspaceFolder}/scenarios/telemetry/TypeScript/src/index.ts",
+            "args": [],
+            "cwd": "${workspaceFolder}/scenarios/telemetry/TypeScript/",
+            "console": "integratedTerminal",
+            "smartStep": true,
+            "showAsyncStacks": true,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/scenarios/telemetry/TypeScript/dist/**/*.js"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "HostName": "localhost"
+            },
+            "presentation": {
+                "group": "ts"
+            }
+        }
     ],
     "compounds": [
         {

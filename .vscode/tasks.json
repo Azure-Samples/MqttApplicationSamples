@@ -71,6 +71,18 @@
                 "$tsc"
             ],
             "group": "build"
+        },
+        {
+            "label": "build_ts_telemetry",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/scenarios/telemetry/TypeScript"
+            },
+            "command": "node ./node_modules/.bin/tsc -p .",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": "build"
         }
     ]
 }

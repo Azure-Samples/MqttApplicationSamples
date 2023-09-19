@@ -209,3 +209,32 @@ Run the sample using settings from an envfile. This assumes the env file is plac
 # from folder scenarios/getting_started
 python python/getting_started.py --env-file <path to .env file>
 ```
+
+### TypeScript
+To setup the sample cd into the sample directory (e.g. ../getting_started/TypeScript) and install all of the dependencies by running:
+```bash
+npm i
+```
+The sample can be run and debugged either in the [Visual Studio Code IDE](https://code.visualstudio.com/), or from the command line. This will use the `.env` file created in the steps above.
+
+To run the sample from Visual Studio Code, select the Run and Debug option from the left pane then select one of the "TypeScript ..." configurations from the Run and Debug dropdown menu. Then just use F5 or click on the green play button.
+
+To run the sample from the command line, cd into the sample directory (e.g. ../getting_started/TypeScript and run:
+```bash
+node ./dist/index.js
+```
+
+To see detailed MQTT.js debug logging configure the DEBUG environment variable before running the sample.
+
+Using Visual Studio Code, in the /.vscode/launch.json file edit the desired TypeScript configuration and add the environment variable:
+```bash
+"env": {
+    "DEBUG": "mqttjs*"
+},
+
+```
+
+Using the command line:
+```bash
+export DEBUG=mqttjs* && node ./dist/index.js
+```
