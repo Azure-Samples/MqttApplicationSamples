@@ -215,6 +215,13 @@ To setup the sample cd into the sample directory (e.g. ../getting_started/TypeSc
 ```bash
 npm i
 ```
+To build the TypeScript sample run:
+
+```bash
+# from folder scenarios/getting_started/TypeScript
+npm run build
+```
+
 The sample can be run and debugged either in the [Visual Studio Code IDE](https://code.visualstudio.com/), or from the command line. This will use the `.env` file created in the steps above.
 
 To run the sample from Visual Studio Code, select the Run and Debug option from the left pane then select one of the "TypeScript ..." configurations from the Run and Debug dropdown menu. Then just use F5 or click on the green play button.

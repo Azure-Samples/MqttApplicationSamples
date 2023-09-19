@@ -288,6 +288,12 @@ To setup the sample cd into the sample directory (e.g. ../telemetry/TypeScript) 
 ```bash
 npm i
 ```
+To build the dotnet sample run:
+
+```bash
+# from folder scenarios/telemetry/TypeScript
+npm run build
+```
 To run the sample cd into the sample directory (e.g. ../telemetry/TypeScript and run each command below in a different shell/terminal:
 ```bash
 # from folder scenarios/telemetry/TypeScript
