@@ -1,5 +1,9 @@
 import { Logger } from './logger';
 import { SampleMqttClient } from './sampleMqttClient';
+import * as grpc from '@grpc/grpc-js';
+import * as protoLoader from '@grpc/proto-loader';
+import { ProtoGrpcType } from '../proto/unlock_command';
+import { UnlockRequest } from '../proto/UnlockRequest';
 import { resolve } from 'path';
 import { Command } from 'commander';
 import { config } from 'dotenv';
@@ -60,6 +64,18 @@ class SampleApp {
 
     public async startSample(): Promise<void> {
         try {
+            const protoPath = resolve(__dirname, '..', '..', 'proto', 'unlock_command.proto');
+            const packageDefinition = protoLoader.loadSync(protoPath);
+            const proto = grpc.loadPackageDefinition(packageDefinition) as unknown as ProtoGrpcType;
+            const unlockRequest: UnlockRequest = {
+                when: {
+                    seconds: 0,
+                    nanos: 0
+                },
+                requestedFrom: 'clientId'
+            };
+
+
             Logger.log([ModuleName, 'info'], `Starting MQTT client sample}`);
 
             if (!envConfig.parsed?.MQTT_HOST_NAME) {
@@ -90,16 +106,23 @@ class SampleApp {
             // Connect to the MQTT broker using the connection settings from the .env file
             await this.sampleMqttClient.connect(connectionSettings);
 
+            const commandRequestTopic = `vehicles/${connectionSettings.mqttClientId}/command/unlock/request`;
+            const commandResonseTopic = `vehicles/${connectionSettings.mqttClientId}/command/unlock/response`;
+
             // If the environment file is 'map-app.env', we treat this app instance
-            // as the "consumer" of the vehicle telemetry data and subscribe to the
-            // 'vehicles/+/position' topic
+            // as the "client" sending the vehicle unlock command by publishing to the
+            // 'vehicles/<vehicle-id>/command/unlock/request' topic and subscribing to
+            // the 'vehicles/<vehicle-id>/command/unlock/response' topic.
             //
-            // Otherwise if the environment file is any other (e.g. vehicle01.env),
-            // we treat this app instance as the "producer" of the vehicle telemetry
-            // data and publish to the 'vehicles/<vehicle-id>/position' topic
+            // Otherwise if the environment file is any other (e.g. vehicle03.env),
+            // we treat this app instance as the "server" receiving the vehicle unlock
+            // command by subscribing to the 'vehicles/<vehicle-id>/position' topic and
+            // publishing to the 'vehicles/<vehicle-id>/command/unlock/response' topic.
 
             if (programOptions.envFile === 'map-app.env') {
-                // Subscribe to the vehicle telemetry data topic
+                // Send unlock command to the vehicle
+                await this.sampleMqttClient.publish(commandRequestTopic, 'unlock');
+
                 await this.sampleMqttClient.subscribe('vehicles/+/position');
             }
             else {

@@ -1,5 +1,5 @@
 {
-    "name": "getting-started",
+    "name": "mqttappsamples-telemetry",
     "version": "1.0.0",
     "description": "MQTT application samples - TypeScript",
     "main": "index.js",

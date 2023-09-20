@@ -216,9 +216,6 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "env": {
-                "HostName": "localhost"
-            },
             "presentation": {
                 "group": "ts"
             }
@@ -241,9 +238,28 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "env": {
-                "HostName": "localhost"
-            },
+            "presentation": {
+                "group": "ts"
+            }
+        },
+        {
+            "name": "TypeScript Commands",
+            "type": "node",
+            "request": "launch",
+            "preLaunchTask": "build_ts_commands",
+            "program": "${workspaceFolder}/scenarios/commands/TypeScript/src/index.ts",
+            "args": [],
+            "cwd": "${workspaceFolder}/scenarios/commands/TypeScript/",
+            "console": "integratedTerminal",
+            "smartStep": true,
+            "showAsyncStacks": true,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/scenarios/commands/TypeScript/dist/**/*.js"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
             "presentation": {
                 "group": "ts"
             }
