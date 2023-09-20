@@ -60,7 +60,7 @@ class SampleApp {
 
     public async startSample(): Promise<void> {
         try {
-            Logger.log([ModuleName, 'info'], `Starting MQTT client sample}`);
+            Logger.log([ModuleName, 'info'], `Starting MQTT client sample`);
 
             if (!envConfig.parsed?.MQTT_HOST_NAME) {
                 throw new Error('MQTT_HOST_NAME environment variable is not set');

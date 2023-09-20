@@ -88,7 +88,7 @@
             "label": "build_ts_commands",
             "type": "shell",
             "options": {
-                "cwd": "${workspaceFolder}/scenarios/commands/TypeScript"
+                "cwd": "${workspaceFolder}/scenarios/command/TypeScript"
             },
             "command": "node ./node_modules/.bin/tsc -p .",
             "problemMatcher": [

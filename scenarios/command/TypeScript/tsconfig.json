@@ -19,7 +19,6 @@
     "compileOnSave": true,
     "include": [
         "./src/**/*.ts",
-        "./proto/**/*.ts",
         ".eslintrc.js"
     ],
     "exclude": [

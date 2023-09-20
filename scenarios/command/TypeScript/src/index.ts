@@ -1,9 +1,6 @@
 import { Logger } from './logger';
 import { SampleMqttClient } from './sampleMqttClient';
-import * as grpc from '@grpc/grpc-js';
-import * as protoLoader from '@grpc/proto-loader';
-import { ProtoGrpcType } from '../proto/unlock_command';
-import { UnlockRequest } from '../proto/UnlockRequest';
+import { struct } from 'pb-util';
 import { resolve } from 'path';
 import { Command } from 'commander';
 import { config } from 'dotenv';
@@ -64,19 +61,10 @@ class SampleApp {
 
     public async startSample(): Promise<void> {
         try {
-            const protoPath = resolve(__dirname, '..', '..', 'proto', 'unlock_command.proto');
-            const packageDefinition = protoLoader.loadSync(protoPath);
-            const proto = grpc.loadPackageDefinition(packageDefinition) as unknown as ProtoGrpcType;
-            const unlockRequest: UnlockRequest = {
-                when: {
-                    seconds: 0,
-                    nanos: 0
-                },
-                requestedFrom: 'clientId'
-            };
+            const structValue = struct.encode({ foo: 'bar' });
+            const decodedStruct = struct.decode(structValue);
 
-
-            Logger.log([ModuleName, 'info'], `Starting MQTT client sample}`);
+            Logger.log([ModuleName, 'info'], `Starting MQTT client sample`);
 
             if (!envConfig.parsed?.MQTT_HOST_NAME) {
                 throw new Error('MQTT_HOST_NAME environment variable is not set');
@@ -107,7 +95,7 @@ class SampleApp {
             await this.sampleMqttClient.connect(connectionSettings);
 
             const commandRequestTopic = `vehicles/${connectionSettings.mqttClientId}/command/unlock/request`;
-            const commandResonseTopic = `vehicles/${connectionSettings.mqttClientId}/command/unlock/response`;
+            // const commandResonseTopic = `vehicles/${connectionSettings.mqttClientId}/command/unlock/response`;
 
             // If the environment file is 'map-app.env', we treat this app instance
             // as the "client" sending the vehicle unlock command by publishing to the

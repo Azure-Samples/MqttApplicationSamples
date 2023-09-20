@@ -247,15 +247,15 @@
             "type": "node",
             "request": "launch",
             "preLaunchTask": "build_ts_commands",
-            "program": "${workspaceFolder}/scenarios/commands/TypeScript/src/index.ts",
+            "program": "${workspaceFolder}/scenarios/command/TypeScript/src/index.ts",
             "args": [],
-            "cwd": "${workspaceFolder}/scenarios/commands/TypeScript/",
+            "cwd": "${workspaceFolder}/scenarios/command/TypeScript/",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/scenarios/commands/TypeScript/dist/**/*.js"
+                "${workspaceFolder}/scenarios/command/TypeScript/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"
