@@ -2,19 +2,29 @@
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
 using System.Text;
+using Azure.Identity;
+using Azure.Core;
 
 //System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
 
-MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars();
-Console.WriteLine($"Connecting to {cs}");
+//MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars();
+//Console.WriteLine($"Connecting to {cs}");
 
+// Create client
 IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
-byte[] auth = Encoding.UTF8.GetBytes(File.ReadAllText("auth.json"));
+string hostname = "<Event Grid Mqtt Hostname Here>";
+
+// Create JWT
+var defaultCredential = new DefaultAzureCredential();
+var tokenRequestContext = new TokenRequestContext(new string[] { "https://eventgrid.azure.net/" });
+AccessToken jwt = defaultCredential.GetToken(tokenRequestContext);
 
 MqttClientConnectResult connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder()
-    .WithConnectionSettings(cs)
+    .WithClientId("sample_client")
+    .WithTcpServer(hostname, 8883)
     .WithProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion.V500)
-    .WithAuthentication("OAUTH2-JWT", auth)
+    .WithAuthentication("OAUTH2-JWT", Encoding.UTF8.GetBytes(jwt.Token))
+    .WithTlsOptions(new MqttClientTlsOptions() { UseTls = true })
     .Build());
 
 Console.WriteLine($"Client Connected: {mqttClient.IsConnected} with CONNACK: {connAck.ResultCode}");
@@ -29,3 +39,9 @@ MqttClientPublishResult puback = await mqttClient.PublishStringAsync("sample/top
 Console.WriteLine(puback.ReasonString);
 
 Console.ReadLine();
+
+// TODO -- app authentication
+// TODO -- mqtt client extensions?
+// TODO -- test which params are needed (e.g., tls, username)
+// TODO -- catch mqtt autnetication failed exceptions and gracefully exit
+// MSAL -- borwser flow authentication

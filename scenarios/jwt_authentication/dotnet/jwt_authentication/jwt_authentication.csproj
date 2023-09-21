@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,5 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.10.1" />
+    <PackageReference Include="MQTTnet" Version="4.3.1.873" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MQTTnet.Client.Extensions">
+      <HintPath>..\..\..\..\mqttclients\dotnet\MQTTnet.Client.Extensions\bin\Debug\net7.0\MQTTnet.Client.Extensions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>
