@@ -23,7 +23,7 @@ public class AlertConsumer<T>
             MqttTopicFilterCompareResult res = MqttTopicFilterComparer.Compare(topic, _topicPattern);
             if (res == MqttTopicFilterCompareResult.IsMatch)
             {
-                T alert = _serializer.FromBytes<T>(m.ApplicationMessage.Payload);
+                T alert = _serializer.FromBytes<T>(m.ApplicationMessage.PayloadSegment.Array!);
                 OnAlert?.Invoke(alert);
             }
             return Task.CompletedTask;
