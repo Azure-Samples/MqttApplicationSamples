@@ -57,11 +57,11 @@ This sample involves configuring Event Grid per the specifications in [getting_s
 6. Select the `Review and Create` tab and then `Create`.
 7. **NOTE:** It is possible that your Azure account may not have room for more custom role assignments. In this instance the current workaround is to create a free Azure account and complete this process while logged in from there.
 
-## :triangular_ruler: Configure Event Grid Namespaces
+## :triangular_ruler: Configure Event Grid Namespaces (Skip if [getting_started](../getting_started) has already been properly configured)
 
 Ensure to create an Event Grid namespace by following the steps in [setup](../setup).  Event Grid namespace requires registering the client, and the topic spaces to authorize the publish/subscribe permissions.
 
-### Create the Client
+### Create the Client (Skip if [getting_started](../getting_started) has already been properly configured)
 
 We will use the SubjectMatchesAuthenticationName validation scheme for `sample_client`. Instructions for how to do this can be found in [getting_started](../getting_started). If this has already been done once, it does not have to be done again (unless using a different Azure account).
 
