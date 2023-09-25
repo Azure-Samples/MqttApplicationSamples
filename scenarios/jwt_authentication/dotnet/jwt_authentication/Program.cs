@@ -11,9 +11,12 @@ string hostname = "<Event Grid Mqtt Hostname Here>";
 
 // Create JWT
 var defaultCredential = new DefaultAzureCredential();
+
+// Sets the audience field of the JWT to Event Grid
 var tokenRequestContext = new TokenRequestContext(new string[] { "https://eventgrid.azure.net/" });
 AccessToken jwt = defaultCredential.GetToken(tokenRequestContext);
 
+// Required to use port 8883: https://learn.microsoft.com/azure/event-grid/mqtt-support#code-samples
 MqttClientConnectResult connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder()
     .WithClientId("sample_client")
     .WithTcpServer(hostname, 8883)
