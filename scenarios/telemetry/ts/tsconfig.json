@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "../ts/built",
+        "outDir": "./built",
         "module": "CommonJS",
         "moduleResolution": "node",
         "target": "ES6",
@@ -10,7 +10,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "typeRoots": [
-            "../ts/node_modules/@types"
+            "node_modules/@types"
         ],
         "lib": [
             "ES6"
@@ -18,10 +18,10 @@
     },
     "compileOnSave": true,
     "include": [
-        "../ts/src/**/*.ts",
-        "../ts/.eslintrc.js"
+        "./src/**/*.ts",
+        ".eslintrc.js"
     ],
     "exclude": [
-        "../ts/node_modules"
+        "node_modules"
     ]
 }

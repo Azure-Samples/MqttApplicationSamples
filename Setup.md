@@ -186,7 +186,7 @@ Python samples have been tested with python 3.10.4, to install follow the instru
 
 TypeScript samples have been tested with NodeJS version 18.16.0. Version 18 or higher is required. See https://nodejs.org. The samples are written using the [MQTT.js library](https://www.npmjs.com/package/mqtt).
 
-To setup each sample cd into the sample directory (e.g. ../getting_started/TypeScript) and install all of the dependencies by running:
+To setup each sample cd into the sample directory (e.g. ../getting_started/ts) and install all of the dependencies by running:
 ```bash
 npm i
 ```
@@ -194,9 +194,9 @@ The samples can be run and debugged either in the [Visual Studio Code IDE](https
 
 To run the sample from Visual Studio Code, select the Run and Debug option from the left pane then select one of the "TypeScript ..." configurations from the Run and Debug dropdown menu. Then just use F5 or click on the green play button.
 
-To run the sample from the command line, cd into the sample directory (e.g. ../getting_started/TypeScript and run:
+To run the sample from the command line, cd into the sample directory (e.g. ../getting_started/ts and run:
 ```bash
-node ./dist/index.js
+node ./built/index.js
 ```
 
 To see detailed MQTT.js debug logging configure the DEBUG environment variable before running the sample.
@@ -211,5 +211,5 @@ Using Visual Studio Code, in the /.vscode/launch.json file edit the desired Type
 
 Using the command line:
 ```bash
-export DEBUG=mqttjs* && node ./dist/index.js
+export DEBUG=mqttjs* && node ./built/index.js
 ```
