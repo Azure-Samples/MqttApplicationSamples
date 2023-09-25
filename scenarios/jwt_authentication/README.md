@@ -6,9 +6,10 @@ This scenario showcases how to authenticate to Azure Event Grid via JWT authenti
 
 The sample provides step by step instructions on how to perform following tasks:
 
-- Create a Json Web Token, which is used to authenticate to Event Grid.
 - Create the resources including client, topic spaces, permission bindings
 - Use $all client group, which is the default client group with all the clients in a namespace, to authorize publish and subscribe access in permission bindings
+- Create a custom role assignment on the Azure Portal to access Event Grid via Json Web Token (JWT) authentication.
+- Create a JWT, which is used to authenticate to Event Grid.
 - Connect with MQTT 5.0.0
   - Configure connection settings such as KeepAlive and CleanSession
 - Publish messages to a topic
@@ -24,7 +25,7 @@ To keep the scenario simple, a single client called "sample_client" publishes an
 
 ##  :lock: Configure the Json Web Token and AAD Role Assignments
 
-1. Modify the JSON file `auth.json`, found in `./dotnet/jwt_authentication/` with a subscription Id:
+1. Modify the following JSON snippet by adding an Azure subscription Id:
 
 ```json
 { 
@@ -47,9 +48,12 @@ To keep the scenario simple, a single client called "sample_client" publishes an
     } 
 } 
 ```
-2. In the Azure portal, go to your Resource Group and open the Access control (IAM) page. 
-3. Click Add and then click Add custom role. This opens the custom roles editor. 
-4. 
+2. Copy the modified snippet and save it locally.
+3. In the Azure portal, go to your Resource Group that contains Event Grid and open the Access control (IAM) page. 
+4. Click Add and then click Add custom role. This opens the custom roles editor. 
+5. On the `Basics` tab, select `Start from JSON`, and upload the modified JSON file you saved locally.
+6. Select the `Review and Create` tab and then `Create`.
+7. **NOTE:** It is possible that your Azure account may not have room for more custom role assignments. In this instance the current workaround is to create a free Azure account and complete this process while logged in from there.
 
 ## :triangular_ruler: Configure Event Grid Namespaces
 
@@ -57,94 +61,10 @@ Ensure to create an Event Grid namespace by following the steps in [setup](../se
 
 ### Create the Client
 
-We will use the SubjectMatchesAuthenticationName validation scheme for `sample_client` to create the client from the portal or with the script:
-
-```bash
-# from folder scenarios/getting_started
-source ../../az.env
-
-az resource create --id "$res_id/clients/sample_client" --properties '{
-    "authenticationName": "sample_client",
-    "state": "Enabled",
-    "clientCertificateAuthentication": {
-        "validationScheme": "SubjectMatchesAuthenticationName"
-    },
-    "attributes": {
-        "type": "sample-client"
-    },
-    "description": "This is a test publisher client"
-}'
-```
+We will use the SubjectMatchesAuthenticationName validation scheme for `sample_client`. Instructions for how to do this can be found in [getting_started](../getting_started). If this has already been done once, it does not have to be done again (unless using a different Azure account).
 
 ### Create topic spaces and permission bindings
-Run the commands to create the "samples" topic space, and the two permission bindings that provide publish and subscribe access to $all client group on the samples topic space.
-
-```bash
-# from folder scenarios/getting_started
-source ../../az.env
-
-az resource create --id "$res_id/topicSpaces/samples" --properties '{
-    "topicTemplates": ["sample/#"]
-}'
-
-az resource create --id "$res_id/permissionBindings/samplesPub" --properties '{
-    "clientGroupName":"$all",
-    "topicSpaceName":"samples",
-    "permission":"Publisher"
-}'
-
-az resource create --id "$res_id/permissionBindings/samplesSub" --properties '{
-    "clientGroupName":"$all",
-    "topicSpaceName":"samples",
-    "permission":"Subscriber"
-}'
-```
-
-### Create the .env file with connection details
-
-The required `.env` files can be configured manually, we provide the script below as a reference to create those files, as they are ignored from git.
-
-```bash
-# from folder scenarios/getting_started
-source ../../az.env
-host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
-
-echo "MQTT_HOST_NAME=$host_name" > .env
-echo "MQTT_USERNAME=sample_client" >> .env
-echo "MQTT_CLIENT_ID=sample_client" >> .env
-echo "MQTT_CERT_FILE=sample_client.pem" >> .env
-echo "MQTT_KEY_FILE=sample_client.key" >> .env
-```
-
-## :fly: Configure Mosquitto
-
-To establish the TLS connection, the CA needs to be trusted, most MQTT clients allow to specify the ca trust chain as part of the connection, to create a chain file with the root and the intermediate use:
-
-```bash
-# from folder _mosquitto
-cat ~/.step/certs/root_ca.crt ~/.step/certs/intermediate_ca.crt > chain.pem
-cp chain.pem ../scenarios/getting_started
-```
-The `chain.pem` is used by mosquitto via the `cafile` settings to authenticate X509 client connections.
-
-```bash
-# from folder scenarios/getting_started
-echo "MQTT_HOST_NAME=localhost" > .env
-echo "MQTT_CLIENT_ID=sample_client" >> .env
-echo "MQTT_CERT_FILE=sample_client.pem" >> .env
-echo "MQTT_KEY_FILE=sample_client.key" >> .env
-echo "MQTT_CA_FILE=chain.pem" >> .env
-```
-
-To use mosquitto without certificates
-
-```bash
-# from folder scenarios/getting_started
-echo "MQTT_HOST_NAME=localhost" > .env
-echo "MQTT_TCP_PORT=1883" >> .env
-echo "MQTT_USE_TLS=false" >> .env
-echo "MQTT_CLIENT_ID=sample_client" >> .env
-```
+Run the commands to create the "samples" topic space, and the two permission bindings that provide publish and subscribe access to $all client group on the samples topic space. As for above, the instructions to do this are part of [getting_started](../getting_started) and do not have to be repeated if they have already been done in the Azure account being used to run this sample.
 
 ## :game_die: Run the Sample
 
@@ -155,13 +75,12 @@ All samples are designed to be executed from the root scenario folder.
 To build the dotnet sample run:
 
 ```bash
-# from folder scenarios/getting_started
-dotnet build dotnet/getting_started.sln 
+# from folder scenarios/jwt_authenticaton
+dotnet build dotnet/jwt_authentication.sln 
 ```
 
 To run the dotnet sample:
 
 ```bash
- dotnet/getting_started/bin/Debug/net7.0/getting_started
+ dotnet/jwt_authentication/bin/Debug/net7.0/jwt_authentication
 ```
-(this will use the `.env` file created before)
