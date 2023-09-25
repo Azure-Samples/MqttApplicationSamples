@@ -17,54 +17,34 @@ namespace MQTTnet.Client.Extensions
             return ValidateChain(certValArgs, caCerts);
         }
 
-        internal static bool ValidateChain(MqttClientCertificateValidationEventArgs certValArgs, X509Certificate2Collection caChain)
+        internal static bool ValidateChain(MqttClientCertificateValidationEventArgs cvArgs, X509Certificate2Collection caChain)
         {
-            if (certValArgs.SslPolicyErrors == SslPolicyErrors.None)
+            if (cvArgs.SslPolicyErrors == SslPolicyErrors.None)
             {
                 return true;
             }
 
-            Trace.TraceError($"SslPolicyErrors: '{certValArgs.SslPolicyErrors}'");
-            Trace.TraceWarning($"Loaded {caChain.Count} certs ");
-            caChain.ToList().ForEach(c => Trace.TraceWarning(c.Subject));
-
-            List<SslPolicyErrors> sslErrors = Enum.GetValues<SslPolicyErrors>().Where(e => certValArgs.SslPolicyErrors.HasFlag(e)).ToList();
-            bool valid = false;
-
-            foreach (SslPolicyErrors sslError in sslErrors)
+            if (cvArgs.SslPolicyErrors == SslPolicyErrors.RemoteCertificateChainErrors)
             {
-                if (sslError == SslPolicyErrors.RemoteCertificateChainErrors)
-                {
-                    bool chainValidated = false;
-                    X509Chain chain = new();
-                    chain.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
-                    chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-                    chain.ChainPolicy.VerificationTime = DateTime.UtcNow;
-                    chain.ChainPolicy.UrlRetrievalTimeout = new TimeSpan(0, 0, 10);
-                    chain.ChainPolicy.CustomTrustStore.AddRange(caChain);
-                    chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+                bool chainValidated = false;
 
-                    X509Certificate cert = certValArgs.Certificate;
-                    X509Certificate2 x5092 = new(cert);
-                    chainValidated = chain.Build(x5092);
-                    if (chainValidated == false)
-                    {
-                        Trace.TraceError($"Error validating TLS chain for cert: '{cert.Subject}' issued by '{cert.Issuer}'");
-                        chain.ChainStatus.ToList().ForEach(s => Trace.TraceError(s.StatusInformation));
-                    }
-                    valid = chainValidated;
-                }
-                if (sslError == SslPolicyErrors.RemoteCertificateNotAvailable)
-                {
-                    return false;
-                }
+                cvArgs.Chain.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
+                cvArgs.Chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                cvArgs.Chain.ChainPolicy.VerificationTime = DateTime.UtcNow;
+                cvArgs.Chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+                cvArgs.Chain.ChainPolicy.CustomTrustStore.AddRange(caChain);
 
-                if (sslError == SslPolicyErrors.RemoteCertificateNameMismatch)
+                X509Certificate cert = cvArgs.Certificate;
+                X509Certificate2 x5092 = new(cert);
+                chainValidated = cvArgs.Chain.Build(x5092);
+                if (chainValidated == false)
                 {
-                    return false;
+                    Trace.TraceError($"Error validating TLS chain for cert: '{cert.Subject}' issued by '{cert.Issuer}'");
+                    cvArgs.Chain.ChainStatus.ToList().ForEach(s => Trace.TraceError(s.StatusInformation));
                 }
+                return chainValidated;
             }
-            return valid;
+            return false;
         }
     }
 }
