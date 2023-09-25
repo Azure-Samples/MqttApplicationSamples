@@ -22,6 +22,8 @@ To keep the scenario simple, a single client called "sample_client" publishes an
 |sample_client|publisher|publish|sample/topic1|
 |sample_client|subscriber|subscribe|sample/+|
 
+## Prerequisites
+This sample involves configuring Event Grid per the specifications in [getting_started](../getting_started). If that sample has not already been set up and run, it should be done before moving onto this one.
 
 ##  :lock: Configure the Json Web Token and AAD Role Assignments
 
