@@ -5,11 +5,6 @@ using System.Text;
 using Azure.Identity;
 using Azure.Core;
 
-//System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
-
-//MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars();
-//Console.WriteLine($"Connecting to {cs}");
-
 // Create client
 IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
 string hostname = "<Event Grid Mqtt Hostname Here>";
@@ -39,9 +34,3 @@ MqttClientPublishResult puback = await mqttClient.PublishStringAsync("sample/top
 Console.WriteLine(puback.ReasonString);
 
 Console.ReadLine();
-
-// TODO -- app authentication
-// TODO -- mqtt client extensions?
-// TODO -- test which params are needed (e.g., tls, username)
-// TODO -- catch mqtt autnetication failed exceptions and gracefully exit
-// MSAL -- borwser flow authentication
