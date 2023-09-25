@@ -16,7 +16,7 @@ var defaultCredential = new DefaultAzureCredential();
 var tokenRequestContext = new TokenRequestContext(new string[] { "https://eventgrid.azure.net/" });
 AccessToken jwt = defaultCredential.GetToken(tokenRequestContext);
 
-// Required to use port 8883: https://learn.microsoft.com/azure/event-grid/mqtt-support#code-samples
+// Required to use port 8883: https://learn.microsoft.com/azure/event-grid/mqtt-support
 MqttClientConnectResult connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder()
     .WithClientId("sample_client")
     .WithTcpServer(hostname, 8883)
