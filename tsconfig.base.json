@@ -4,20 +4,16 @@
         "module": "CommonJS",
         "moduleResolution": "node",
         "declaration": true,
-        "strict": true,
         "incremental": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "rootDir": "./src",
-        "outDir": "./built",
-        "composite": true,
         "sourceMap": true,
+        "strict": false,
+        "strictNullChecks": true,
         "noImplicitAny": true,
         "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "strictPropertyInitialization": false,
-        "useUnknownInCatchVariables": false
+        "noUnusedParameters": true
     },
-    "compileOnSave": true
+    "compileOnSave": true,
 }

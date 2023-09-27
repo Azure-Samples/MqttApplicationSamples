@@ -1,18 +1,17 @@
-import { Logger } from './logger';
-import { SampleMqttClient } from './sampleMqttClient';
+import {
+    Logger,
+    ConnectionSettings,
+    SampleMqttClient
+} from '@mqttapplicationsamples/mqttjsclientextensions';
 import { resolve } from 'path';
 import { Command } from 'commander';
-import { config } from 'dotenv';
 
 // Parse command line arguments to get the environment file path
 const programCommands = new Command();
 programCommands
     .requiredOption('-e, --env-file <envFile>', 'Environment filepath')
     .parse(process.argv);
-
-// Load environment variables from .env file using the dotenv package
 const programOptions = programCommands.opts();
-const envConfig = config({ path: resolve(__dirname, `../../${programOptions.envFile}`) });
 
 const ModuleName = 'SampleApp';
 const VehicleTelemetryPublishIntervalInSeconds = 3;
@@ -39,7 +38,7 @@ class GeoJsonPoint {
         this.coordinates[1] = y;
     }
 
-    public type: string = 'Point';
+    public type = 'Point';
     public coordinates: number[] = [0, 0];
 }
 
@@ -62,33 +61,13 @@ class SampleApp {
         try {
             Logger.log([ModuleName, 'info'], `Starting MQTT client sample`);
 
-            if (!envConfig.parsed?.MQTT_HOST_NAME) {
-                throw new Error('MQTT_HOST_NAME environment variable is not set');
-            }
-
-            if (envConfig.parsed?.MQTT_PASSWORD && !envConfig.parsed?.MQTT_USERNAME) {
-                throw new Error('MQTT_USERNAME environment variable is required if MQTT_PASSWORD is set');
-            }
-
-            const connectionSettings: IConnectionSettings = {
-                mqttHostname: envConfig.parsed?.MQTT_HOST_NAME || '',
-                mqttTcpPort: Number(envConfig.parsed?.MQTT_TCP_PORT) || 8883,
-                mqttUseTls: Boolean(envConfig.parsed?.MQTT_USE_TLS === undefined ? true : envConfig.parsed?.MQTT_USE_TLS),
-                mqttCleanSession: Boolean(envConfig.parsed?.MQTT_CLEAN_SESSION === undefined ? true : envConfig.parsed?.MQTT_CLEAN_SESSION),
-                mqttKeepAliveInSeconds: Number(envConfig.parsed?.MQTT_KEEP_ALIVE_IN_SECONDS) || 30,
-                mqttClientId: envConfig.parsed?.MQTT_CLIENT_ID || '',
-                mqttUsername: envConfig.parsed?.MQTT_USERNAME || '',
-                mqttPassword: envConfig.parsed?.MQTT_PASSWORD || '',
-                mqttCertFile: envConfig.parsed?.MQTT_CERT_FILE || '',
-                mqttKeyFile: envConfig.parsed?.MQTT_KEY_FILE || '',
-                mqttCaFile: envConfig.parsed?.MQTT_CA_FILE || ''
-            };
+            const cs = ConnectionSettings.createFromEnvVars(resolve(__dirname, `../../${programOptions.envFile}`));
 
             // Create the SampleMqttClient instance, this wraps the MQTT.js client
             this.sampleMqttClient = new SampleMqttClient();
 
             // Connect to the MQTT broker using the connection settings from the .env file
-            await this.sampleMqttClient.connect(connectionSettings);
+            await this.sampleMqttClient.connect(cs);
 
             // If the environment file is 'map-app.env', we treat this app instance
             // as the "consumer" of the vehicle telemetry data and subscribe to the
@@ -104,7 +83,7 @@ class SampleApp {
             }
             else {
                 // Start sending vehicle telemetry data to the 'vehicles/<vehicle-id>/position' topic
-                const vehiclePublishTopic = `vehicles/${connectionSettings.mqttClientId}/position`;
+                const vehiclePublishTopic = `vehicles/${cs.clientId}/position`;
 
                 this.vehicleTelemetryPublishIntervalId = setInterval(async () => {
                     const latMin = -90;

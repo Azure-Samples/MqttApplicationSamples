@@ -1,4 +1,3 @@
-import { resolve } from 'path';
 import { config } from 'dotenv';
 
 enum AuthType {
@@ -6,6 +5,7 @@ enum AuthType {
     Basic = 'Basic'
 }
 
+const defaultHostname = 'localhost';
 const defaultKeepAliveInSeconds = 30;
 const defaultCleanSession = true;
 const defaultTcpPort = 8883;
@@ -13,22 +13,22 @@ const defaultUseTls = true;
 const defaultDisableCrl = false;
 
 export class ConnectionSettings {
-    private _hostname: string = '';
-    private _clientId: string = '';
-    private _certFile: string = '';
-    private _keyFile: string = '';
+    private _hostname = '';
+    private _clientId = '';
+    private _certFile = '';
+    private _keyFile = '';
     private _keyFilePassword = '';
-    private _username: string = '';
-    private _password: string = '';
+    private _username = '';
+    private _password = '';
     private _keepAliveInSeconds: number = defaultKeepAliveInSeconds;
     private _cleanSession: boolean = defaultCleanSession;
     private _tcpPort: number = defaultTcpPort;
     private _useTls: boolean = defaultUseTls;
-    private _caFile: string = '';
+    private _caFile = '';
     private _disableCrl: boolean = defaultDisableCrl;
 
-    private constructor(hostname: string) {
-        this._hostname = hostname;
+    private constructor() {
+        this._hostname = defaultHostname;
         this._tcpPort = defaultTcpPort;
         this._keepAliveInSeconds = defaultKeepAliveInSeconds;
         this._useTls = defaultUseTls;
@@ -40,7 +40,7 @@ export class ConnectionSettings {
         return ConnectionSettings.parseConnectionString(connectionString);
     }
 
-    public static createFromEnvVars(envFilePath: string = '.env'): ConnectionSettings {
+    public static createFromEnvVars(envFilePath = '.env'): ConnectionSettings {
         // Load environment variables from .env file using the dotenv package
         const envConfig = config({ path: envFilePath });
 
@@ -52,7 +52,7 @@ export class ConnectionSettings {
             throw new Error('MQTT_USERNAME environment variable is required if MQTT_PASSWORD is set');
         }
 
-        const cs = new ConnectionSettings(envConfig.parsed?.MQTT_HOST_NAME);
+        const cs = new ConnectionSettings();
 
         cs.tcpPort = Number(envConfig.parsed?.MQTT_TCP_PORT) || 8883;
         cs.useTls = Boolean(envConfig.parsed?.MQTT_USE_TLS === undefined ? true : envConfig.parsed?.MQTT_USE_TLS);
@@ -68,8 +68,8 @@ export class ConnectionSettings {
         return cs;
     }
 
-    public static parseConnectionString(connectionString: string): ConnectionSettings {
-        const cs = new ConnectionSettings(connectionString);
+    public static parseConnectionString(_connectionString: string): ConnectionSettings {
+        const cs = new ConnectionSettings();
 
         // cs.tcpPort = Number(envConfig.parsed?.MQTT_TCP_PORT) || 8883;
         // cs.useTls = Boolean(envConfig.parsed?.MQTT_USE_TLS === undefined ? true : envConfig.parsed?.MQTT_USE_TLS);
