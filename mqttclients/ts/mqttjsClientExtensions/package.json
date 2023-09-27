@@ -1,0 +1,17 @@
+{
+    "name": "@mqttapplicationsamples/mqttjsclientextensions",
+    "version": "1.0.0",
+    "description": "Extension methods to configure MQTTjs",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc --build",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "mqtt",
+        "iot",
+        "azure"
+    ],
+    "author": "Microsoft Corporation",
+    "license": "MIT"
+}

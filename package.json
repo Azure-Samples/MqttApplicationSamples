@@ -1,0 +1,37 @@
+{
+    "name": "mqttapplicationsamples",
+    "version": "1.0.0",
+    "description": "Guidance to build Pub/Sub applications targeting MQTT Brokers.",
+    "scripts": {
+        "build": "tsc --build --verbose",
+        "eslint": "eslint .",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "mqtt",
+        "iot",
+        "azure"
+    ],
+    "author": "Microsoft Corporation",
+    "license": "MIT",
+    "private": true,
+    "workspaces": [
+        "mqttclients/ts/mqttjsClientExtensions",
+        "scenarios/getting_started/ts",
+        "scenarios/command/ts",
+        "scenarios/telemetry/ts"
+    ],
+    "dependencies": {
+        "commander": "^11.0.0",
+        "dotenv": "^16.3.1",
+        "mqtt": "^5.0.5"
+    },
+    "devDependencies": {
+        "@types/mqtt": "^2.5.0",
+        "@types/node": "^20.7.0",
+        "@typescript-eslint/eslint-plugin": "^6.7.3",
+        "@typescript-eslint/parser": "^6.7.3",
+        "eslint": "^8.50.0",
+        "typescript": "^5.2.2"
+    }
+}

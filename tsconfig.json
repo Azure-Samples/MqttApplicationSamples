@@ -1,0 +1,22 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "rootDir": "./src",
+        "outDir": "./dist"
+    },
+    "files": [],
+    "references": [
+        {
+            "path": "./mqttclients/ts/mqttjsClientExtensions"
+        },
+        {
+            "path": "./scenarios/getting_started/ts"
+        },
+        {
+            "path": "./scenarios/telemetry/ts"
+        },
+        {
+            "path": "./scenarios/command/ts"
+        }
+    ]
+}

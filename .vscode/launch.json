@@ -203,15 +203,16 @@
             "type": "node",
             "request": "launch",
             "preLaunchTask": "build_ts_getting_started",
-            "program": "${workspaceFolder}/scenarios/getting_started/TypeScript/src/index.ts",
+            "program": "${workspaceFolder}/scenarios/getting_started/ts/src/index.ts",
             "args": [],
-            "cwd": "${workspaceFolder}/scenarios/getting_started/TypeScript/",
+            "cwd": "${workspaceFolder}/scenarios/getting_started/ts/",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/scenarios/getting_started/TypeScript/dist/**/*.js"
+                "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
+                "${workspaceFolder}/scenarios/getting_started/ts/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"
@@ -225,15 +226,16 @@
             "type": "node",
             "request": "launch",
             "preLaunchTask": "build_ts_telemetry",
-            "program": "${workspaceFolder}/scenarios/telemetry/TypeScript/src/index.ts",
+            "program": "${workspaceFolder}/scenarios/telemetry/ts/src/index.ts",
             "args": [],
-            "cwd": "${workspaceFolder}/scenarios/telemetry/TypeScript/",
+            "cwd": "${workspaceFolder}/scenarios/telemetry/ts/",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/scenarios/telemetry/TypeScript/dist/**/*.js"
+                "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
+                "${workspaceFolder}/scenarios/telemetry/ts/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"
@@ -247,15 +249,16 @@
             "type": "node",
             "request": "launch",
             "preLaunchTask": "build_ts_commands",
-            "program": "${workspaceFolder}/scenarios/command/TypeScript/src/index.ts",
+            "program": "${workspaceFolder}/scenarios/command/ts/src/index.ts",
             "args": [],
-            "cwd": "${workspaceFolder}/scenarios/command/TypeScript/",
+            "cwd": "${workspaceFolder}/scenarios/command/ts/",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/scenarios/command/TypeScript/dist/**/*.js"
+                "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
+                "${workspaceFolder}/scenarios/command/ts/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"

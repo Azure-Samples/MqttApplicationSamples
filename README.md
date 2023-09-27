@@ -45,7 +45,7 @@ Each language requires developer tools, such as compilers and SDKs to build and 
 - [dotnet](./mqttclients/dotnet/README.md)
 - [C](./mqttclients/c/README.md)
 - Python (TBD)
-- [TypeScript](./mqttclients/TypeScript/README.md)
+- [TypeScript](./mqttclients/ts/README.md)
 
 # Scenarios
 

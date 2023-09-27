@@ -211,14 +211,14 @@ python python/getting_started.py --env-file <path to .env file>
 ```
 
 ### TypeScript
-To setup the sample cd into the sample directory (e.g. ../getting_started/TypeScript) and install all of the dependencies by running:
+To setup the sample cd into the sample directory (e.g. ../getting_started/ts) and install all of the dependencies by running:
 ```bash
 npm i
 ```
 To build the TypeScript sample run:
 
 ```bash
-# from folder scenarios/getting_started/TypeScript
+# from folder scenarios/getting_started/ts
 npm run build
 ```
 
@@ -226,7 +226,7 @@ The sample can be run and debugged either in the [Visual Studio Code IDE](https:
 
 To run the sample from Visual Studio Code, select the Run and Debug option from the left pane then select one of the "TypeScript ..." configurations from the Run and Debug dropdown menu. Then just use F5 or click on the green play button.
 
-To run the sample from the command line, cd into the sample directory (e.g. ../getting_started/TypeScript and run:
+To run the sample from the command line, cd into the sample directory (e.g. ../getting_started/ts and run:
 ```bash
 node ./dist/index.js
 ```
