@@ -196,7 +196,7 @@ To run the sample from Visual Studio Code, select the Run and Debug option from 
 
 To run the sample from the command line, cd into the sample directory (e.g. ../getting_started/ts and run:
 ```bash
-node ./built/index.js
+node ./dist/index.js
 ```
 
 To see detailed MQTT.js debug logging configure the DEBUG environment variable before running the sample.
@@ -211,5 +211,5 @@ Using Visual Studio Code, in the /.vscode/launch.json file edit the desired Type
 
 Using the command line:
 ```bash
-export DEBUG=mqttjs* && node ./built/index.js
+export DEBUG=mqttjs* && node ./dist/index.js
 ```

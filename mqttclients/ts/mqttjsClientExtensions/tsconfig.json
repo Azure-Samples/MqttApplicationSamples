@@ -10,7 +10,7 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "rootDir": "./src",
-        "outDir": "./built",
+        "outDir": "./dist",
         "composite": true,
         "sourceMap": true,
         "noImplicitAny": true,

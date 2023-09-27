@@ -2,7 +2,7 @@
     "name": "@mqttapplicationsamples/commands",
     "version": "1.0.0",
     "description": "Request-response messaging pattern - TypeScript",
-    "main": "built/index.js",
+    "main": "dist/index.js",
     "scripts": {
         "build": "tsc --build",
         "test": "echo \"Error: no test specified\" && exit 1"

@@ -211,7 +211,8 @@
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/scenarios/getting_started/ts/built/**/*.js"
+                "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
+                "${workspaceFolder}/scenarios/getting_started/ts/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"
@@ -233,7 +234,8 @@
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/scenarios/telemetry/ts/built/**/*.js"
+                "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
+                "${workspaceFolder}/scenarios/telemetry/ts/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"
@@ -255,7 +257,8 @@
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/scenarios/command/ts/built/**/*.js"
+                "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
+                "${workspaceFolder}/scenarios/command/ts/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"
