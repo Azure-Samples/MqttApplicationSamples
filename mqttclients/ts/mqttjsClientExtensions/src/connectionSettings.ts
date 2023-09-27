@@ -13,7 +13,7 @@ const defaultUseTls = true;
 const defaultDisableCrl = false;
 
 export class ConnectionSettings {
-    private _hostname = '';
+    private _hostname = defaultHostname;
     private _clientId = '';
     private _certFile = '';
     private _keyFile = '';
@@ -26,15 +26,6 @@ export class ConnectionSettings {
     private _useTls: boolean = defaultUseTls;
     private _caFile = '';
     private _disableCrl: boolean = defaultDisableCrl;
-
-    private constructor() {
-        this._hostname = defaultHostname;
-        this._tcpPort = defaultTcpPort;
-        this._keepAliveInSeconds = defaultKeepAliveInSeconds;
-        this._useTls = defaultUseTls;
-        this._disableCrl = defaultDisableCrl;
-        this._cleanSession = defaultCleanSession;
-    }
 
     public static fromConnectionString(connectionString: string): ConnectionSettings {
         return ConnectionSettings.parseConnectionString(connectionString);
@@ -54,16 +45,17 @@ export class ConnectionSettings {
 
         const cs = new ConnectionSettings();
 
-        cs.tcpPort = Number(envConfig.parsed?.MQTT_TCP_PORT) || 8883;
-        cs.useTls = Boolean(envConfig.parsed?.MQTT_USE_TLS === undefined ? true : envConfig.parsed?.MQTT_USE_TLS);
-        cs.cleanSession = Boolean(envConfig.parsed?.MQTT_CLEAN_SESSION === undefined ? true : envConfig.parsed?.MQTT_CLEAN_SESSION);
-        cs.keepAliveInSeconds = Number(envConfig.parsed?.MQTT_KEEP_ALIVE_IN_SECONDS) || 30;
-        cs.clientId = envConfig.parsed?.MQTT_CLIENT_ID || '';
-        cs.username = envConfig.parsed?.MQTT_USERNAME || '';
-        cs.password = envConfig.parsed?.MQTT_PASSWORD || '';
-        cs.certFile = envConfig.parsed?.MQTT_CERT_FILE || '';
-        cs.keyFile = envConfig.parsed?.MQTT_KEY_FILE || '';
-        cs.caFile = envConfig.parsed?.MQTT_CA_FILE || '';
+        cs._hostname = envConfig.parsed?.MQTT_HOST_NAME || defaultHostname;
+        cs._tcpPort = Number(envConfig.parsed?.MQTT_TCP_PORT) || defaultTcpPort;
+        cs._useTls = Boolean(envConfig.parsed?.MQTT_USE_TLS === undefined ? defaultUseTls : envConfig.parsed?.MQTT_USE_TLS);
+        cs._cleanSession = Boolean(envConfig.parsed?.MQTT_CLEAN_SESSION === undefined ? defaultCleanSession : envConfig.parsed?.MQTT_CLEAN_SESSION);
+        cs._keepAliveInSeconds = Number(envConfig.parsed?.MQTT_KEEP_ALIVE_IN_SECONDS) || defaultKeepAliveInSeconds;
+        cs._clientId = envConfig.parsed?.MQTT_CLIENT_ID || '';
+        cs._username = envConfig.parsed?.MQTT_USERNAME || '';
+        cs._password = envConfig.parsed?.MQTT_PASSWORD || '';
+        cs._certFile = envConfig.parsed?.MQTT_CERT_FILE || '';
+        cs._keyFile = envConfig.parsed?.MQTT_KEY_FILE || '';
+        cs._caFile = envConfig.parsed?.MQTT_CA_FILE || '';
 
         return cs;
     }

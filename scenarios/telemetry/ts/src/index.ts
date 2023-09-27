@@ -49,7 +49,7 @@ class SampleApp {
     public async stopSample(): Promise<void> {
         if (this.vehicleTelemetryPublishIntervalId) {
             clearInterval(this.vehicleTelemetryPublishIntervalId);
-            this.vehicleTelemetryPublishIntervalId = null;
+            this.vehicleTelemetryPublishIntervalId = null as any;
         }
 
         if (this.sampleMqttClient?.connected) {

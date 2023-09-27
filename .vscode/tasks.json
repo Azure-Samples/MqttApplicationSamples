@@ -66,7 +66,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/scenarios/getting_started/ts"
             },
-            "command": "node ./node_modules/.bin/tsc -p .",
+            "command": "node ${workspaceFolder}/node_modules/.bin/tsc -p .",
             "problemMatcher": [
                 "$tsc"
             ],
@@ -78,7 +78,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/scenarios/telemetry/ts"
             },
-            "command": "node ./node_modules/.bin/tsc -p .",
+            "command": "node ${workspaceFolder}/node_modules/.bin/tsc -p .",
             "problemMatcher": [
                 "$tsc"
             ],
@@ -90,7 +90,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/scenarios/command/ts"
             },
-            "command": "node ./node_modules/.bin/tsc -p .",
+            "command": "node ${workspaceFolder}/node_modules/.bin/tsc -p .",
             "problemMatcher": [
                 "$tsc"
             ],
