@@ -1,5 +1,5 @@
 import { Logger } from './logger';
-import { ConnectionSettings } from './connectionSettings';
+import { MqttConnectionSettings } from './mqttConnectionSettings';
 import {
     ErrorWithReasonCode,
     IClientOptions,
@@ -17,9 +17,9 @@ const ConnectTimeoutInSeconds = 10;
 
 export class SampleMqttClient {
     private mqttClient: MqttClient;
-    private connectionSettings: ConnectionSettings;
+    private connectionSettings: MqttConnectionSettings;
 
-    constructor(connectionSettings: ConnectionSettings) {
+    constructor(connectionSettings: MqttConnectionSettings) {
         this.connectionSettings = connectionSettings;
     }
 
@@ -99,7 +99,7 @@ export class SampleMqttClient {
         }
     }
 
-    private createMqttClientOptions(connectionSettings: ConnectionSettings): IClientOptions {
+    private createMqttClientOptions(connectionSettings: MqttConnectionSettings): IClientOptions {
         const mqttClientOptions: IClientOptions = {
             clientId: connectionSettings.clientId,
             protocol: 'mqtt',
