@@ -17,6 +17,11 @@ const ConnectTimeoutInSeconds = 10;
 
 export class SampleMqttClient {
     private mqttClient: MqttClient;
+    private connectionSettings: ConnectionSettings;
+
+    constructor(connectionSettings: ConnectionSettings) {
+        this.connectionSettings = connectionSettings;
+    }
 
     public get connected(): boolean {
         return this.mqttClient?.connected || false;
@@ -28,11 +33,11 @@ export class SampleMqttClient {
         }
     }
 
-    public async connect(connectionSettings: ConnectionSettings): Promise<void> {
+    public async connect(): Promise<void> {
         try {
             Logger.log([ModuleName, 'info'], `Initializing MQTT client`);
 
-            const mqttClientOptions: IClientOptions = this.createMqttClientOptions(connectionSettings);
+            const mqttClientOptions: IClientOptions = this.createMqttClientOptions(this.connectionSettings);
 
             this.mqttClient = mqttConnect(mqttClientOptions);
 

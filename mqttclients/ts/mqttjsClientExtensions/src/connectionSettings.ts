@@ -35,6 +35,10 @@ export class ConnectionSettings {
         // Load environment variables from .env file using the dotenv package
         const envConfig = config({ path: envFilePath });
 
+        if (envConfig.error) {
+            throw new Error(envConfig.error.message);
+        }
+
         if (!envConfig.parsed?.MQTT_HOST_NAME) {
             throw new Error('MQTT_HOST_NAME environment variable is not set');
         }
