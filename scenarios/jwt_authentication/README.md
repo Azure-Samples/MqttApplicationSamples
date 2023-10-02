@@ -86,3 +86,18 @@ To run the dotnet sample:
 ```bash
  dotnet/jwt_authentication/bin/Debug/net7.0/jwt_authentication
 ```
+
+## Connecting over WebSocket
+To connect using WebSockets, modify client's `ConnectAsync()` call as follows:
+```csharp
+MqttClientConnectResult connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder()
+    .WithClientId("sample_client")
+    //.WithTcpServer(hostname, 8883)
+    .WithWebSocketServer(b => b.WithUri($"{hostname}:443/mqtt"))
+    .WithProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion.V500)
+    .WithAuthentication("OAUTH2-JWT", Encoding.UTF8.GetBytes(jwt.Token))
+    .WithTlsOptions(new MqttClientTlsOptions() { UseTls = true })
+    .Build());
+```
+
+Note that it is required to use port 443 for websocket connections. To learn more about this flow visit the [documentation](https://learn.microsoft.com/azure/event-grid/mqtt-support#connection-flow).
