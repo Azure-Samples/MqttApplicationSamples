@@ -77,11 +77,13 @@ export class SampleMqttClient {
         }
     }
 
-    public async subscribe(topic: string): Promise<void> {
+    public async subscribe(topic: string, qos: QoS): Promise<void> {
         try {
             Logger.log([ModuleName, 'info'], `Subscribing to MQTT topics: ${topic}`);
 
-            await this.mqttClient.subscribeAsync(topic);
+            await this.mqttClient.subscribeAsync(topic, {
+                qos: qos
+            });
         }
         catch (ex) {
             Logger.log([ModuleName, 'error'], `MQTT client subscribe error: ${ex.message}`);
