@@ -2,13 +2,29 @@ package main
 
 import (
 	"fmt"
-	//"github.com/eclipse/paho.golang/paho"
+	"os"
+
+	mqtt "github.com/eclipse/paho.golang/paho"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	fmt.Println("hello from go!")
+
+	// Load connection settings via environment variables
+	godotenv.Load("../.env")
+
+	clientConfig := mqtt.ClientConfig{
+		ClientID: os.Getenv("MQTT_CLIENT_ID"),
+	}
+
+	connectPacket := mqtt.Connect{
+		Username: os.Getenv("MQTT_USERNAME"),
+	}
+
+	client := mqtt.NewClient(clientConfig)
+	client.Connect()
 }
-// find env file
 
 // initialize client
 
