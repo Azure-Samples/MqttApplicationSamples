@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"io"
@@ -12,6 +13,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/eclipse/paho.golang/autopaho"
 	"github.com/eclipse/paho.golang/paho"
 	"github.com/joho/godotenv"
 )
@@ -29,6 +31,7 @@ func main() {
 	retained := flag.Bool("retained", false, "Are the messages sent with the retained flag")
 	clientId := os.Getenv("MQTT_CLIENT_ID")
 	username := os.Getenv("MQTT_USERNAME")
+	password := "YPC/ETXxvltLdv+hHupUCczQSc8Te4wtwSHx1P49Qxs="
 	flag.Parse()
 
 	conn, err := net.Dial("tcp", *server)
@@ -36,26 +39,44 @@ func main() {
 		log.Fatalf("Failed to connect to %s: %s", *server, err)
 	}
 
-	c := paho.NewClient(paho.ClientConfig{
-		Conn: conn,
-	})
+	tlsConfig := tls.Config{
+		Certificates: nil,
+	}
+
+	clientConfig := autopaho.ClientConfig{
+		TlsCfg: &tlsConfig,
+		ClientConfig: paho.ClientConfig{
+			Conn: conn,
+		},
+	}
+
+	// TODO -- make into autopaho?
+	c := paho.NewClient(clientConfig)
+
+	properties := paho.ConnectProperties{
+		AuthData:   nil,
+		AuthMethod: "Intermediate01",
+	}
 
 	cp := &paho.Connect{
 		KeepAlive:  30,
 		ClientID:   clientId,
 		CleanStart: true,
+		Properties: &properties,
 		Username:   username,
-		Password:   nil,
+		Password:   []byte(password),
 	}
 
 	cp.UsernameFlag = true
 
 	log.Println(cp.UsernameFlag)
 
+	// TODO - fix
 	ca, err := c.Connect(context.Background(), cp)
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	if ca.ReasonCode != 0 {
 		log.Fatalf("Failed to connect to %s : %d - %s", *server, ca.ReasonCode, ca.Properties.ReasonString)
 	}
