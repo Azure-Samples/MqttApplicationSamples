@@ -32,7 +32,7 @@ namespace MQTTnet.Client.Extensions
                 cvArgs.Chain.ChainPolicy.CustomTrustStore.AddRange(caChain);
                 Trace.TraceWarning("Validating TLS with chain:\n\t" + string.Join("\n\t",cvArgs.Chain.ChainPolicy.CustomTrustStore.Select(c => c.Subject)));
 
-                cvArgs.Chain.ChainPolicy.VerificationFlags = X509VerificationFlags.IgnoreEndRevocationUnknown;
+                cvArgs.Chain.ChainPolicy.VerificationFlags = X509VerificationFlags.IgnoreEndRevocationUnknown | X509VerificationFlags.IgnoreCertificateAuthorityRevocationUnknown;
                 Trace.TraceWarning($"Chain validation configured with verification flags:\n\t{cvArgs.Chain.ChainPolicy.VerificationFlags}");
 
                 chainValidated = cvArgs.Chain.Build(new X509Certificate2(cvArgs.Certificate));
