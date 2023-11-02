@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"crypto/tls"
-	"crypto/x509"
 	"fmt"
 	"log"
 	"net/url"
@@ -25,11 +24,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	caCert, _ := os.ReadFile("../chain.pem")
-	caCertPool := x509.NewCertPool()
-	caCertPool.AppendCertsFromPEM(caCert)
+	/*
+		caCert, _ := os.ReadFile("../chain.pem")
+		caCertPool := x509.NewCertPool()
+		caCertPool.AppendCertsFromPEM(caCert)
+	*/
 
-	u, err := url.Parse("mqtt://npatilsen-eventgrid.westus2-1.ts.eventgrid.azure.net:8883")
+	u, err := url.Parse("mqtts://npatilsen-eventgrid.westus2-1.ts.eventgrid.azure.net:8883")
 	if err != nil {
 		panic(err)
 	}
@@ -37,16 +38,19 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
+	// TODO -- determine if client or root cas here
 	cfg := &tls.Config{
 		Certificates: []tls.Certificate{cert},
-		RootCAs:      caCertPool,
+		//ClientAuth:   tls.RequireAndVerifyClientCert,
+		//RootCAs:      caCertPool,
+		//ClientCAs:    caCertPool,
 	}
 
 	clientConfig := autopaho.ClientConfig{
-		BrokerUrls:     []*url.URL{u},
-		TlsCfg:         cfg,
-		KeepAlive:      20,
-		ConnectTimeout: 10,
+		BrokerUrls: []*url.URL{u},
+		TlsCfg:     cfg,
+		KeepAlive:  20,
+		//ConnectTimeout: 10,
 		OnConnectionUp: func(cm *autopaho.ConnectionManager, connAck *paho.Connack) {
 			fmt.Println("mqtt connection up")
 			if _, err := cm.Subscribe(context.Background(), &paho.Subscribe{
@@ -74,6 +78,8 @@ func main() {
 			},
 		},
 	}
+
+	clientConfig.SetUsernamePassword("sample_client", nil)
 
 	fmt.Println("attempting to connect")
 	c, err := autopaho.NewConnection(ctx, clientConfig) // starts process; will reconnect until context cancelled
