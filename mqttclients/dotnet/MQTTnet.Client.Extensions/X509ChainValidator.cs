@@ -6,7 +6,6 @@ namespace MQTTnet.Client.Extensions
 {
     internal static class X509ChainValidator
     {
-
         internal static bool ValidateChain(MqttClientCertificateValidationEventArgs certValArgs, string caCertFile = "")
         {
             X509Certificate2Collection caCerts = new();
@@ -27,23 +26,25 @@ namespace MQTTnet.Client.Extensions
             if (cvArgs.SslPolicyErrors == SslPolicyErrors.RemoteCertificateChainErrors)
             {
                 bool chainValidated = false;
-
-                cvArgs.Chain.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
-                cvArgs.Chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-                cvArgs.Chain.ChainPolicy.VerificationTime = DateTime.UtcNow;
+                cvArgs.Chain.Reset();
                 cvArgs.Chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+                
                 cvArgs.Chain.ChainPolicy.CustomTrustStore.AddRange(caChain);
+                Trace.TraceWarning("Validating TLS with chain:\n\t" + string.Join("\n\t",cvArgs.Chain.ChainPolicy.CustomTrustStore.Select(c => c.Subject)));
 
-                X509Certificate cert = cvArgs.Certificate;
-                X509Certificate2 x5092 = new(cert);
-                chainValidated = cvArgs.Chain.Build(x5092);
+                cvArgs.Chain.ChainPolicy.VerificationFlags = X509VerificationFlags.IgnoreEndRevocationUnknown;
+                Trace.TraceWarning($"Chain validation configured with verification flags:\n\t{cvArgs.Chain.ChainPolicy.VerificationFlags}");
+
+                chainValidated = cvArgs.Chain.Build(new X509Certificate2(cvArgs.Certificate));
                 if (chainValidated == false)
                 {
-                    Trace.TraceError($"Error validating TLS chain for cert: '{cert.Subject}' issued by '{cert.Issuer}'");
-                    cvArgs.Chain.ChainStatus.ToList().ForEach(s => Trace.TraceError(s.StatusInformation));
+                    Trace.TraceError($"Error validating TLS chain for cert: '{cvArgs.Certificate.Subject}' issued by '{cvArgs.Certificate.Issuer}'");
+                    cvArgs.Chain.ChainStatus.ToList().ForEach(s => Trace.TraceError("  " + s.StatusInformation));
                 }
                 return chainValidated;
+
             }
+            Trace.TraceError("RemoteCertificateValidation Errors: " + cvArgs.SslPolicyErrors);
             return false;
         }
     }
