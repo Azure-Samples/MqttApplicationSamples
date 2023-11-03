@@ -23,7 +23,6 @@ func main() {
 	clientId := os.Getenv("MQTT_CLIENT_ID")
 	certFile := os.Getenv("MQTT_CERT_FILE")
 	keyFile := os.Getenv("MQTT_KEY_FILE")
-	topic := "sample/+"
 
 	// Load certificates
 	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", certFile), fmt.Sprintf("../%s", keyFile))
@@ -51,7 +50,7 @@ func main() {
 			fmt.Println("mqtt connection up")
 			if _, err := cm.Subscribe(context.Background(), &paho.Subscribe{
 				Subscriptions: []paho.SubscribeOptions{
-					{Topic: topic, QoS: 1},
+					{Topic: "sample/+", QoS: 1},
 				},
 			}); err != nil {
 				fmt.Printf("failed to subscribe (%s). This is likely to mean no messages will be received!\n", err)
@@ -89,11 +88,11 @@ func main() {
 
 	fmt.Println("Connection established")
 
-	// Publish
+	// Publish a test message
 	if _, err = c.Publish(ctx, &paho.Publish{
 		QoS:     1,
-		Topic:   topic,
-		Payload: []byte("Hello, from Go!"),
+		Topic:   "sample/topic1",
+		Payload: []byte("TestMessage"),
 	}); err != nil {
 		panic(err)
 	}
