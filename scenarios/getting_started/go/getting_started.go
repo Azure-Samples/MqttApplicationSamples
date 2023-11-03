@@ -12,25 +12,26 @@ import (
 
 	"github.com/eclipse/paho.golang/autopaho"
 	"github.com/eclipse/paho.golang/paho"
-	//"github.com/joho/godotenv"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	fmt.Println("hello from go!")
+	// Load environment variables
+	godotenv.Load("../.env")
+	hostname := os.Getenv("MQTT_HOST_NAME")
+	username := os.Getenv("MQTT_USERNAME")
+	clientId := os.Getenv("MQTT_CLIENT_ID")
+	certFile := os.Getenv("MQTT_CERT_FILE")
+	keyFile := os.Getenv("MQTT_KEY_FILE")
+	topic := "sample/+"
 
 	// Load certificates
-	cert, err := tls.LoadX509KeyPair("../sample_client.pem", "../sample_client.key")
+	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", certFile), fmt.Sprintf("../%s", keyFile))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	/*
-		caCert, _ := os.ReadFile("../chain.pem")
-		caCertPool := x509.NewCertPool()
-		caCertPool.AppendCertsFromPEM(caCert)
-	*/
-
-	u, err := url.Parse("mqtts://npatilsen-eventgrid.westus2-1.ts.eventgrid.azure.net:8883")
+	u, err := url.Parse(fmt.Sprintf("mqtts://%s:8883", hostname))
 	if err != nil {
 		panic(err)
 	}
@@ -38,24 +39,19 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	// TODO -- determine if client or root cas here
 	cfg := &tls.Config{
 		Certificates: []tls.Certificate{cert},
-		//ClientAuth:   tls.RequireAndVerifyClientCert,
-		//RootCAs:      caCertPool,
-		//ClientCAs:    caCertPool,
 	}
 
 	clientConfig := autopaho.ClientConfig{
 		BrokerUrls: []*url.URL{u},
 		TlsCfg:     cfg,
-		KeepAlive:  20,
-		//ConnectTimeout: 10,
+		KeepAlive:  30,
 		OnConnectionUp: func(cm *autopaho.ConnectionManager, connAck *paho.Connack) {
 			fmt.Println("mqtt connection up")
 			if _, err := cm.Subscribe(context.Background(), &paho.Subscribe{
 				Subscriptions: []paho.SubscribeOptions{
-					{Topic: "sample/+", QoS: 1},
+					{Topic: topic, QoS: 1},
 				},
 			}); err != nil {
 				fmt.Printf("failed to subscribe (%s). This is likely to mean no messages will be received!\n", err)
@@ -64,7 +60,7 @@ func main() {
 		},
 		OnConnectError: func(err error) { fmt.Printf("error whilst attempting connection: %s\n", err) },
 		ClientConfig: paho.ClientConfig{
-			ClientID: "sample_client",
+			ClientID: clientId,
 			Router: paho.NewSingleHandlerRouter(func(m *paho.Publish) {
 				fmt.Printf("received message on topic %s; body: %s (retain: %t)\n", m.Topic, m.Payload, m.Retain)
 			}),
@@ -79,9 +75,9 @@ func main() {
 		},
 	}
 
-	clientConfig.SetUsernamePassword("sample_client", nil)
+	clientConfig.SetUsernamePassword(username, nil)
 
-	fmt.Println("attempting to connect")
+	fmt.Println("Attempting to connect")
 	c, err := autopaho.NewConnection(ctx, clientConfig) // starts process; will reconnect until context cancelled
 	if err != nil {
 		panic(err)
@@ -91,17 +87,16 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println("connection successful!")
+	fmt.Println("Connection established")
 
 	// Publish
 	if _, err = c.Publish(ctx, &paho.Publish{
 		QoS:     1,
-		Topic:   "sample/+",
-		Payload: []byte("TestMessage"),
+		Topic:   topic,
+		Payload: []byte("Hello, from Go!"),
 	}); err != nil {
 		panic(err)
 	}
-	fmt.Println("published!!!")
 
 	<-ctx.Done() // Wait for user to trigger exit
 	fmt.Println("signal caught - exiting")
