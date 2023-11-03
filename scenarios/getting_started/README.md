@@ -209,3 +209,11 @@ Run the sample using settings from an envfile. This assumes the env file is plac
 # from folder scenarios/getting_started
 python python/getting_started.py --env-file <path to .env file>
 ```
+
+### Go
+
+```bash
+cd ./go/
+go mod tidy # ensures packages are installed
+go run ./getting_started.go
+```
