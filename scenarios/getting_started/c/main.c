@@ -56,9 +56,8 @@ int main(int argc, char* argv[])
   struct mosquitto* mosq;
   int result = MOSQ_ERR_SUCCESS;
 
-  mqtt_client_obj obj;
+  mqtt_client_obj obj = { 0 };
   obj.mqtt_version = MQTT_VERSION;
-  obj.handle_message = NULL;
 
   if ((mosq = mqtt_client_init(true, argv[1], on_connect_with_subscribe, &obj)) == NULL)
   {
