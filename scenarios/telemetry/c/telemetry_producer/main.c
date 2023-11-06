@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
 
   mqtt_client_obj obj;
   obj.mqtt_version = MQTT_VERSION;
+  obj.handle_message = NULL;
 
   if ((mosq = mqtt_client_init(true, argv[1], NULL, &obj)) == NULL)
   {
