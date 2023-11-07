@@ -1,28 +1,18 @@
-﻿using MQTTnet;
+﻿using Azure.Core;
+using Azure.Identity;
+using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
 using System.Text;
-using Azure.Identity;
-using Azure.Core;
 
-// Create client
-IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
-string hostname = "<Event Grid Mqtt Hostname Here>";
+MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars();
 
-// Create JWT
 var defaultCredential = new DefaultAzureCredential();
+AccessToken jwt = defaultCredential.GetToken(new TokenRequestContext(new string[] { "https://eventgrid.azure.net/.default" }));
 
-// Sets the audience field of the JWT to Event Grid
-var tokenRequestContext = new TokenRequestContext(new string[] { "https://eventgrid.azure.net/" });
-AccessToken jwt = defaultCredential.GetToken(tokenRequestContext);
-
-// Required to use port 8883: https://learn.microsoft.com/azure/event-grid/mqtt-support
+IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
 MqttClientConnectResult connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder()
-    .WithClientId("sample_client")
-    .WithTcpServer(hostname, 8883)
-    .WithProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion.V500)
-    .WithAuthentication("OAUTH2-JWT", Encoding.UTF8.GetBytes(jwt.Token))
-    .WithTlsOptions(new MqttClientTlsOptions() { UseTls = true })
+    .WithJWT(cs, Encoding.UTF8.GetBytes(jwt.Token))
     .Build());
 
 Console.WriteLine($"Client Connected: {mqttClient.IsConnected} with CONNACK: {connAck.ResultCode}");
