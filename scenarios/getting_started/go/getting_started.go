@@ -5,12 +5,10 @@ import (
 	"crypto/tls"
 	"fmt"
 	"log"
-	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/eclipse/paho.golang/autopaho"
 	"github.com/eclipse/paho.golang/paho"
 	"github.com/joho/godotenv"
 )
@@ -23,15 +21,21 @@ func main() {
 	clientId := os.Getenv("MQTT_CLIENT_ID")
 	certFile := os.Getenv("MQTT_CERT_FILE")
 	keyFile := os.Getenv("MQTT_KEY_FILE")
-	keepAlive := 30
+	//keepAlive := 30
 
 	// Load certificates
+	fmt.Println("Loading certificates")
 	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", certFile), fmt.Sprintf("../%s", keyFile))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	u, err := url.Parse(fmt.Sprintf("mqtts://%s:8883", hostname))
+	cfg := &tls.Config{
+		Certificates: []tls.Certificate{cert},
+	}
+
+	fmt.Println("Dialing Eventgrid")
+	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:8883", hostname), cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -39,64 +43,53 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	cfg := &tls.Config{
-		Certificates: []tls.Certificate{cert},
-	}
-
-	clientConfig := autopaho.ClientConfig{
-		BrokerUrls: []*url.URL{u},
-		TlsCfg:     cfg,
-		KeepAlive:  keepAlive,
-		OnConnectionUp: func(cm *autopaho.ConnectionManager, connAck *paho.Connack) {
-			fmt.Println("mqtt connection up")
-			if _, err := cm.Subscribe(context.Background(), &paho.Subscribe{
-				Subscriptions: []paho.SubscribeOptions{
-					{Topic: "sample/+", QoS: 1},
-				},
-			}); err != nil {
-				fmt.Printf("failed to subscribe (%s). This is likely to mean no messages will be received!\n", err)
+	fmt.Println("Creating Paho client")
+	c := paho.NewClient(paho.ClientConfig{
+		Conn: conn,
+		Router: paho.NewSingleHandlerRouter(func(m *paho.Publish) {
+			fmt.Printf("received message on topic %s; body: %s (retain: %t)\n", m.Topic, m.Payload, m.Retain)
+		}),
+		OnClientError: func(err error) { fmt.Printf("server requested disconnect: %s\n", err) },
+		OnServerDisconnect: func(d *paho.Disconnect) {
+			if d.Properties != nil {
+				fmt.Printf("server requested disconnect: %s\n", d.Properties.ReasonString)
+			} else {
+				fmt.Printf("server requested disconnect; reason code: %d\n", d.ReasonCode)
 			}
-			fmt.Println("mqtt subscription made")
 		},
-		OnConnectError: func(err error) { fmt.Printf("error whilst attempting connection: %s\n", err) },
-		ClientConfig: paho.ClientConfig{
-			ClientID: clientId,
-			Router: paho.NewSingleHandlerRouter(func(m *paho.Publish) {
-				fmt.Printf("received message on topic %s; body: %s (retain: %t)\n", m.Topic, m.Payload, m.Retain)
-			}),
-			OnClientError: func(err error) { fmt.Printf("server requested disconnect: %s\n", err) },
-			OnServerDisconnect: func(d *paho.Disconnect) {
-				if d.Properties != nil {
-					fmt.Printf("server requested disconnect: %s\n", d.Properties.ReasonString)
-				} else {
-					fmt.Printf("server requested disconnect; reason code: %d\n", d.ReasonCode)
-				}
-			},
-		},
-	}
+	})
 
-	clientConfig.SetUsernamePassword(username, nil)
+	cp := &paho.Connect{
+		KeepAlive:    30,
+		ClientID:     clientId,
+		CleanStart:   true,
+		Username:     username,
+		UsernameFlag: true,
+		Password:     nil,
+	}
 
 	fmt.Println("Attempting to connect")
-	c, err := autopaho.NewConnection(ctx, clientConfig) // starts process; will reconnect until context cancelled
+	ca, err := c.Connect(ctx, cp)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
-	// Wait for the connection to come up
-	if err = c.AwaitConnection(ctx); err != nil {
-		panic(err)
+	if ca.ReasonCode != 0 {
+		log.Fatalf("Failed to connect to %s : %d - %s", hostname, ca.ReasonCode, ca.Properties.ReasonString)
 	}
 
-	fmt.Println("Connection established")
+	fmt.Println("Connection successful")
+	c.Subscribe(ctx, &paho.Subscribe{
+		Subscriptions: []paho.SubscribeOptions{
+			{Topic: "sample/+", QoS: byte(1)},
+		},
+	})
 
-	// Publish a test message
-	if _, err = c.Publish(ctx, &paho.Publish{
-		QoS:     1,
+	c.Publish(context.Background(), &paho.Publish{
 		Topic:   "sample/topic1",
-		Payload: []byte("TestMessage"),
-	}); err != nil {
-		panic(err)
-	}
+		QoS:     byte(1),
+		Retain:  false,
+		Payload: []byte("hello world"),
+	})
 
 	<-ctx.Done() // Wait for user to trigger exit
 	fmt.Println("signal caught - exiting")
