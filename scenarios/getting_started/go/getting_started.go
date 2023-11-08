@@ -21,7 +21,7 @@ func main() {
 	clientId := os.Getenv("MQTT_CLIENT_ID")
 	certFile := os.Getenv("MQTT_CERT_FILE")
 	keyFile := os.Getenv("MQTT_KEY_FILE")
-	//keepAlive := 30
+	keepAlive := uint16(30)
 
 	// Load certificates
 	fmt.Println("Loading certificates")
@@ -60,7 +60,7 @@ func main() {
 	})
 
 	cp := &paho.Connect{
-		KeepAlive:    30,
+		KeepAlive:    keepAlive,
 		ClientID:     clientId,
 		CleanStart:   true,
 		Username:     username,
@@ -77,7 +77,7 @@ func main() {
 		log.Fatalf("Failed to connect to %s : %d - %s", hostname, ca.ReasonCode, ca.Properties.ReasonString)
 	}
 
-	fmt.Println("Connection successful")
+	fmt.Printf("Connection successful")
 	c.Subscribe(ctx, &paho.Subscribe{
 		Subscriptions: []paho.SubscribeOptions{
 			{Topic: "sample/+", QoS: byte(1)},
