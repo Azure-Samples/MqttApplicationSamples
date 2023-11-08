@@ -13,19 +13,33 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type MqttConnectionSettings struct {
+	Hostname  string
+	TcpPort   int
+	UseTls    bool
+	CaFile    string
+	KeepAlive uint16
+	ClientId  string
+	Username  string
+	KeyFile   string
+}
+
 func main() {
-	// Load environment variables
+	// Load connection settings
 	godotenv.Load("../.env")
-	hostname := os.Getenv("MQTT_HOST_NAME")
-	username := os.Getenv("MQTT_USERNAME")
-	clientId := os.Getenv("MQTT_CLIENT_ID")
-	certFile := os.Getenv("MQTT_CERT_FILE")
-	keyFile := os.Getenv("MQTT_KEY_FILE")
-	keepAlive := uint16(30)
+	cs := MqttConnectionSettings{
+		Hostname:  os.Getenv("MQTT_HOST_NAME"),
+		TcpPort:   8883,
+		Username:  os.Getenv("MQTT_USERNAME"),
+		ClientId:  os.Getenv("MQTT_CLIENT_ID"),
+		CaFile:    os.Getenv("MQTT_CERT_FILE"),
+		KeepAlive: 30,
+		KeyFile:   os.Getenv("MQTT_KEY_FILE"),
+	}
 
 	// Load certificates
 	fmt.Println("Loading certificates")
-	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", certFile), fmt.Sprintf("../%s", keyFile))
+	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", cs.CaFile), fmt.Sprintf("../%s", cs.KeyFile))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,7 +49,7 @@ func main() {
 	}
 
 	fmt.Println("Dialing Eventgrid")
-	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:8883", hostname), cfg)
+	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", cs.Hostname, cs.TcpPort), cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -60,10 +74,10 @@ func main() {
 	})
 
 	cp := &paho.Connect{
-		KeepAlive:    keepAlive,
-		ClientID:     clientId,
+		KeepAlive:    cs.KeepAlive,
+		ClientID:     cs.ClientId,
 		CleanStart:   true,
-		Username:     username,
+		Username:     cs.Username,
 		UsernameFlag: true,
 		Password:     nil,
 	}
@@ -74,7 +88,7 @@ func main() {
 		log.Fatalln(err)
 	}
 	if ca.ReasonCode != 0 {
-		log.Fatalf("Failed to connect to %s : %d - %s", hostname, ca.ReasonCode, ca.Properties.ReasonString)
+		log.Fatalf("Failed to connect to %s : %d - %s", cs.Hostname, ca.ReasonCode, ca.Properties.ReasonString)
 	}
 
 	fmt.Printf("Connection successful")
