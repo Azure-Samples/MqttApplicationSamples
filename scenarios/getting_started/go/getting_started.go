@@ -23,6 +23,7 @@ func main() {
 	clientId := os.Getenv("MQTT_CLIENT_ID")
 	certFile := os.Getenv("MQTT_CERT_FILE")
 	keyFile := os.Getenv("MQTT_KEY_FILE")
+	keepAlive := 30
 
 	// Load certificates
 	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", certFile), fmt.Sprintf("../%s", keyFile))
@@ -45,7 +46,7 @@ func main() {
 	clientConfig := autopaho.ClientConfig{
 		BrokerUrls: []*url.URL{u},
 		TlsCfg:     cfg,
-		KeepAlive:  30,
+		KeepAlive:  keepAlive,
 		OnConnectionUp: func(cm *autopaho.ConnectionManager, connAck *paho.Connack) {
 			fmt.Println("mqtt connection up")
 			if _, err := cm.Subscribe(context.Background(), &paho.Subscribe{
