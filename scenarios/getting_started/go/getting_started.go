@@ -10,7 +10,6 @@ import (
 	"syscall"
 
 	"github.com/eclipse/paho.golang/paho"
-	"github.com/joho/godotenv"
 )
 
 type MqttConnectionSettings struct {
@@ -26,16 +25,8 @@ type MqttConnectionSettings struct {
 
 func main() {
 	// Load connection settings
-	godotenv.Load("../.env")
-	cs := MqttConnectionSettings{
-		Hostname:  os.Getenv("MQTT_HOST_NAME"),
-		TcpPort:   8883,
-		Username:  os.Getenv("MQTT_USERNAME"),
-		ClientId:  os.Getenv("MQTT_CLIENT_ID"),
-		CaFile:    os.Getenv("MQTT_CERT_FILE"),
-		KeepAlive: 30,
-		KeyFile:   os.Getenv("MQTT_KEY_FILE"),
-	}
+
+	cs := ConnectionSettings.loadConnectionSettings("../.env")
 
 	// Load certificates
 	fmt.Println("Loading certificates")
