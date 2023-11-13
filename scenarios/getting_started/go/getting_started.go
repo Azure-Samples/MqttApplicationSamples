@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,14 +16,9 @@ import (
 	"github.com/eclipse/paho.golang/paho"
 )
 
-func main() {
-	// Load connection settings
-	var cs ConnectionSettings.MqttConnectionSettings = ConnectionSettings.LoadConnectionSettings("../.env")
-	fmt.Println(cs.CaFile)
-	fmt.Println(cs.KeyFile)
-	// Load certificates
+func getTlsConnection(certFile string, keyFile string, caFile string, hostname string, TcpPort int) *tls.Conn {
 	fmt.Println("Loading certificates")
-	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", cs.CertFile), fmt.Sprintf("../%s", cs.KeyFile))
+	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", certFile), fmt.Sprintf("../%s", keyFile))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,18 +27,34 @@ func main() {
 		Certificates: []tls.Certificate{cert},
 	}
 
-	fmt.Println("Dialing Eventgrid")
-	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", cs.Hostname, cs.TcpPort), cfg)
+	if caFile != "" {
+		ca, err := os.ReadFile(fmt.Sprintf("../%s", caFile))
+		if err != nil {
+			panic(err)
+		}
+
+		caCertPool := x509.NewCertPool()
+		caCertPool.AppendCertsFromPEM(ca)
+		cfg.RootCAs = caCertPool
+	}
+
+	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", hostname, TcpPort), cfg)
 	if err != nil {
 		panic(err)
 	}
+
+	return conn
+}
+
+func main() {
+	// Load connection settings
+	var cs ConnectionSettings.MqttConnectionSettings = ConnectionSettings.LoadConnectionSettings("../.env")
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	fmt.Println("Creating Paho client")
 	c := paho.NewClient(paho.ClientConfig{
-		Conn: conn,
 		Router: paho.NewSingleHandlerRouter(func(m *paho.Publish) {
 			fmt.Printf("received message on topic %s; body: %s (retain: %t)\n", m.Topic, m.Payload, m.Retain)
 		}),
@@ -55,13 +68,30 @@ func main() {
 		},
 	})
 
+	if cs.UseTls {
+		c.Conn = getTlsConnection(cs.CertFile, cs.KeyFile, cs.CaFile, cs.Hostname, cs.TcpPort)
+	} else {
+		conn, err := net.Dial("tcp", cs.Hostname)
+		if err != nil {
+			panic(err)
+		}
+		c.Conn = conn
+	}
+
 	cp := &paho.Connect{
-		KeepAlive:    cs.KeepAlive,
-		ClientID:     cs.ClientId,
-		CleanStart:   true,
-		Username:     cs.Username,
-		UsernameFlag: true,
-		Password:     nil,
+		KeepAlive:  cs.KeepAlive,
+		ClientID:   cs.ClientId,
+		CleanStart: cs.CleanSession,
+	}
+
+	if cs.Username != "" {
+		cp.Username = cs.Username
+		cp.UsernameFlag = true
+	}
+
+	if cs.Password != "" {
+		cp.Password = []byte(cs.Password)
+		cp.PasswordFlag = true
 	}
 
 	fmt.Println("Attempting to connect")
