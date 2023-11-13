@@ -69,7 +69,6 @@ func LoadConnectionSettings(path string) MqttConnectionSettings {
 	for i := 0; i < len(mqttSettingNames); i++ {
 		name := mqttSettingNames[i]
 		value := os.Getenv(name)
-
 		// If var is not set, check if it has a default value
 		if value == "" && defaults[name] != "" {
 			value = defaults[name]

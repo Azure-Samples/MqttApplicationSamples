@@ -14,24 +14,14 @@ import (
 	"github.com/eclipse/paho.golang/paho"
 )
 
-type MqttConnectionSettings struct {
-	Hostname  string
-	TcpPort   int
-	UseTls    bool
-	CaFile    string
-	KeepAlive uint16
-	ClientId  string
-	Username  string
-	KeyFile   string
-}
-
 func main() {
 	// Load connection settings
-	cs := ConnectionSettings.LoadConnectionSettings("../.env")
-	fmt.Println(cs)
+	var cs ConnectionSettings.MqttConnectionSettings = ConnectionSettings.LoadConnectionSettings("../.env")
+	fmt.Println(cs.CaFile)
+	fmt.Println(cs.KeyFile)
 	// Load certificates
 	fmt.Println("Loading certificates")
-	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", cs.CaFile), fmt.Sprintf("../%s", cs.KeyFile))
+	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", cs.CertFile), fmt.Sprintf("../%s", cs.KeyFile))
 	if err != nil {
 		log.Fatal(err)
 	}
