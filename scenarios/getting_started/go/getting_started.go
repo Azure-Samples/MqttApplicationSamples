@@ -48,7 +48,11 @@ func getTlsConnection(certFile string, keyFile string, caFile string, hostname s
 
 func main() {
 	// Load connection settings
-	var cs ConnectionSettings.MqttConnectionSettings = ConnectionSettings.LoadConnectionSettings("../.env")
+	if len(os.Args) <= 1 {
+		panic("Please specify path to environment variables")
+	}
+
+	var cs ConnectionSettings.MqttConnectionSettings = ConnectionSettings.LoadConnectionSettings(os.Args[1])
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
