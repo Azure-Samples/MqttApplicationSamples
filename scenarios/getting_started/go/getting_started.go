@@ -75,7 +75,7 @@ func main() {
 	if cs.UseTls {
 		c.Conn = getTlsConnection(cs.CertFile, cs.KeyFile, cs.CaFile, cs.Hostname, cs.TcpPort)
 	} else {
-		conn, err := net.Dial("tcp", cs.Hostname)
+		conn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", cs.Hostname, cs.TcpPort))
 		if err != nil {
 			panic(err)
 		}
