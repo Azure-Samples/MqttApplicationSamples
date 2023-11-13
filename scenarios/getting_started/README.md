@@ -213,7 +213,6 @@ python python/getting_started.py --env-file <path to .env file>
 ### Go
 
 ```bash
-cd ./go/
-go mod tidy # ensures packages are installed
+# from folder scenarios/getting_started
 go run ./getting_started.go <path to env file>
 ```

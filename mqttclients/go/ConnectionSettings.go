@@ -73,7 +73,7 @@ func GetTlsConnection(cs MqttConnectionSettings) *tls.Conn {
 			log.Fatal("Password protected key files are not supported at this time.")
 		}
 
-		cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", cs.CertFile), fmt.Sprintf("../%s", cs.KeyFile))
+		cert, err := tls.LoadX509KeyPair(cs.CertFile, cs.KeyFile)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -82,7 +82,7 @@ func GetTlsConnection(cs MqttConnectionSettings) *tls.Conn {
 	}
 
 	if cs.CaFile != "" {
-		ca, err := os.ReadFile(fmt.Sprintf("../%s", cs.CaFile))
+		ca, err := os.ReadFile(cs.CaFile)
 		if err != nil {
 			panic(err)
 		}
