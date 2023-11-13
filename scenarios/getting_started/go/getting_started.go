@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"mqttapplicationsamples/ConnectionSettings"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"mqttapplicationsamples/ConnectionSettings"
 
 	"github.com/eclipse/paho.golang/paho"
 )
@@ -24,7 +23,6 @@ func main() {
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
-
 	fmt.Println("Creating Paho client")
 	c := paho.NewClient(paho.ClientConfig{
 		Router: paho.NewSingleHandlerRouter(func(m *paho.Publish) {
