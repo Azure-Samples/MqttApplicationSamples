@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/tls"
-	"crypto/x509"
 	"fmt"
 	"log"
 	"net"
@@ -15,36 +13,6 @@ import (
 
 	"github.com/eclipse/paho.golang/paho"
 )
-
-func getTlsConnection(certFile string, keyFile string, caFile string, hostname string, TcpPort int) *tls.Conn {
-	fmt.Println("Loading certificates")
-	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", certFile), fmt.Sprintf("../%s", keyFile))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cfg := &tls.Config{
-		Certificates: []tls.Certificate{cert},
-	}
-
-	if caFile != "" {
-		ca, err := os.ReadFile(fmt.Sprintf("../%s", caFile))
-		if err != nil {
-			panic(err)
-		}
-
-		caCertPool := x509.NewCertPool()
-		caCertPool.AppendCertsFromPEM(ca)
-		cfg.RootCAs = caCertPool
-	}
-
-	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", hostname, TcpPort), cfg)
-	if err != nil {
-		panic(err)
-	}
-
-	return conn
-}
 
 func main() {
 	// Load connection settings
@@ -73,7 +41,7 @@ func main() {
 	})
 
 	if cs.UseTls {
-		c.Conn = getTlsConnection(cs.CertFile, cs.KeyFile, cs.CaFile, cs.Hostname, cs.TcpPort)
+		c.Conn = ConnectionSettings.GetTlsConnection(cs)
 	} else {
 		conn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", cs.Hostname, cs.TcpPort))
 		if err != nil {
@@ -98,7 +66,7 @@ func main() {
 		cp.PasswordFlag = true
 	}
 
-	fmt.Println("Attempting to connect")
+	fmt.Printf("Attempting to connect to %s\n", cs.Hostname)
 	ca, err := c.Connect(ctx, cp)
 	if err != nil {
 		log.Fatalln(err)

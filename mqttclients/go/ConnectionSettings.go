@@ -1,6 +1,10 @@
 package ConnectionSettings
 
 import (
+	"crypto/tls"
+	"crypto/x509"
+	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -58,6 +62,42 @@ func parseBoolValue(value string) bool {
 		panic(err)
 	}
 	return parsed
+}
+
+func GetTlsConnection(cs MqttConnectionSettings) *tls.Conn {
+
+	cfg := &tls.Config{}
+
+	if cs.CertFile != "" && cs.KeyFile != "" {
+		if cs.KeyFilePassword != "" {
+			log.Fatal("Password protected key files are not supported at this time.")
+		}
+
+		cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", cs.CertFile), fmt.Sprintf("../%s", cs.KeyFile))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		cfg.Certificates = []tls.Certificate{cert}
+	}
+
+	if cs.CaFile != "" {
+		ca, err := os.ReadFile(fmt.Sprintf("../%s", cs.CaFile))
+		if err != nil {
+			panic(err)
+		}
+
+		caCertPool := x509.NewCertPool()
+		caCertPool.AppendCertsFromPEM(ca)
+		cfg.RootCAs = caCertPool
+	}
+
+	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", cs.Hostname, cs.TcpPort), cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	return conn
 }
 
 func LoadConnectionSettings(path string) MqttConnectionSettings {
