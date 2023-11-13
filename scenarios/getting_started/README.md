@@ -215,5 +215,5 @@ python python/getting_started.py --env-file <path to .env file>
 ```bash
 cd ./go/
 go mod tidy # ensures packages are installed
-go run ./getting_started.go
+go run ./getting_started.go <path to env file>
 ```

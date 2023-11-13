@@ -44,6 +44,7 @@ Each language requires developer tools, such as compilers and SDKs to build and 
 - [dotnet](./mqttclients/dotnet/README.md)
 - [C](./mqttclients/c/README.md)
 - Python (TBD)
+- [Go](./mqttclients/go/README.md)
 
 # Scenarios
 
@@ -58,12 +59,12 @@ Each scenario requires the following configurations:
 
 Follow the instructions in the [Prerequisites](#magic_wand-prerequisites) to configure these scenarios.
 
-| Scenario | Description | dotnet | C | python |
-| -------- | ------------|--------|---|------- |
-| [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| &check;| &check;| &check;|
-| [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | &check;| &check;| &check;|
-| [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | &check;| &check; | soon|
-| [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  |  &check;| soon| soon|
+| Scenario | Description | dotnet | C | python | go |
+| -------- | ------------|--------|---|------- | -- |
+| [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| &check;| &check;| &check;| &check; |
+| [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | &check;| &check;| &check;| soon | 
+| [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | &check;| &check; | soon | soon |
+| [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  |  &check;| soon| soon| soon |
 
 >note: soon: in progress and will be added soon
 
