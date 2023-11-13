@@ -60,7 +60,7 @@ func parseBoolValue(value string) bool {
 	return parsed
 }
 
-func loadConnectionSettings(path string) MqttConnectionSettings {
+func LoadConnectionSettings(path string) MqttConnectionSettings {
 	godotenv.Load(path)
 	cs := MqttConnectionSettings{}
 	envVars := make(map[string]string)
