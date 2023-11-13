@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"../../../mqttclients/go/connectionsettings"
 	"github.com/eclipse/paho.golang/paho"
 )
 
@@ -25,9 +26,8 @@ type MqttConnectionSettings struct {
 
 func main() {
 	// Load connection settings
-
-	cs := ConnectionSettings.loadConnectionSettings("../.env")
-
+	cs := connectionsettings.LoadConnectionSettings("../.env")
+	fmt.Println(cs)
 	// Load certificates
 	fmt.Println("Loading certificates")
 	cert, err := tls.LoadX509KeyPair(fmt.Sprintf("../%s", cs.CaFile), fmt.Sprintf("../%s", cs.KeyFile))
