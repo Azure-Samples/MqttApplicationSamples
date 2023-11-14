@@ -209,3 +209,19 @@ Run the sample using settings from an envfile. This assumes the env file is plac
 # from folder scenarios/getting_started
 python python/getting_started.py --env-file <path to .env file>
 ```
+
+### Go
+
+To build the Go sample run:
+
+```bash
+# from folder scenarios/getting_started
+$GOROOT/bin/go build -C go/ -o bin/
+```
+
+Run the sample using settings from an envfile
+
+```bash
+# from folder scenarios/getting_started
+ go/bin/getting_started .env
+```
