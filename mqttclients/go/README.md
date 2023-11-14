@@ -6,3 +6,7 @@ Samples import the code from `ConnectionSettings.go`, which includes the struct 
 ```bash
 go run ./program.go <path-to-env-file>
 ```
+
+## Relevant Libraries
+- MQTT V5 [Paho Client for Go](https://github.com/eclipse/paho.golang)
+- [Godotenv](https://github.com/joho/godotenv) to load environment variables
