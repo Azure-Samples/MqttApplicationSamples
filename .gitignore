@@ -14,6 +14,7 @@
 *.so
 *.dylib
 *.out
+bin/
 launchSettings.json
 
 # User-specific files
