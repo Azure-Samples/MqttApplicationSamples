@@ -8,6 +8,7 @@
 *.pem
 *.crt
 *.env
+*.exe
 launchSettings.json
 
 # User-specific files
