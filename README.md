@@ -15,7 +15,12 @@ products:
 
 | [Setup](./Setup.md) | [Getting Started](./scenarios/getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |
 
-These samples provide guidance to build Pub/Sub applications targeting MQTT Brokers in different programming languages. The samples are provided in different programming languages: C#, Python, C, and Go.
+These samples provide guidance to build Pub/Sub applications targeting MQTT Brokers in different programming languages. The samples are provided in different programming languages: 
+
+- C#
+- C
+- Go
+- Python
 
 The instructions are provided for the following MQTT Brokers:
 - **Azure Event Grid Namespaces** 
@@ -44,8 +49,8 @@ Each language requires developer tools, such as compilers and SDKs to build and 
 
 - [dotnet](./mqttclients/dotnet/README.md)
 - [C](./mqttclients/c/README.md)
-- Python (TBD)
 - [Go](./mqttclients/go/README.md)
+- Python (TBD)
 
 # Scenarios
 

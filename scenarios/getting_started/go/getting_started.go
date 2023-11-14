@@ -64,7 +64,7 @@ func main() {
 		cp.PasswordFlag = true
 	}
 
-	fmt.Printf("Attempting to connect to %s\n", cs.Hostname)
+	fmt.Printf("Attempting to connect to %s:%d\n", cs.Hostname, cs.TcpPort)
 	ca, err := c.Connect(ctx, cp)
 	if err != nil {
 		log.Fatalln(err)
