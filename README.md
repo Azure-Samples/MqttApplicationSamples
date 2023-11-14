@@ -4,6 +4,7 @@ languages:
 - csharp
 - c
 - python
+- go
 name: "MQTT Application Samples"
 description: "Guidance to build Pub/Sub applications targeting MQTT Brokers."
 products:
@@ -14,7 +15,7 @@ products:
 
 | [Setup](./Setup.md) | [Getting Started](./scenarios/getting_started/) | [Telemetry](./scenarios/telemetry/) | [Command](./scenarios/command/) |
 
-These samples provide guidance to build Pub/Sub applications targeting MQTT Brokers in different programming languages. The samples are provided in different programming languages: C#, Python and C.
+These samples provide guidance to build Pub/Sub applications targeting MQTT Brokers in different programming languages. The samples are provided in different programming languages: C#, Python, C, and Go.
 
 The instructions are provided for the following MQTT Brokers:
 - **Azure Event Grid Namespaces** 
