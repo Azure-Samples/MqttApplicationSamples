@@ -210,6 +210,21 @@ Run the sample using settings from an envfile. This assumes the env file is plac
 python python/getting_started.py --env-file <path to .env file>
 ```
 
+### Go
+
+To build the Go sample run:
+
+```bash
+# from folder scenarios/getting_started
+$GOROOT/bin/go build -C go/ -o bin/
+```
+
+Run the sample using settings from an envfile
+
+```bash
+# from folder scenarios/getting_started
+ go/bin/getting_started .env
+```
 ### TypeScript
 To setup the sample cd into the TypeScript scenario directory (e.g. ../getting_started/ts) and install all of the dependencies by running:
 ```bash
