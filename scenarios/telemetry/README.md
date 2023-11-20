@@ -284,7 +284,7 @@ python python/telemetry_producer.py --env-file="vehicle02.env"
 python python/telemetry_consumer.py --env-file=map-app.env
 ```
 ### TypeScript
-To setup the sample cd into the sample directory (e.g. ../telemetry/ts) and install all of the dependencies by running:
+To setup the sample cd into the TypeScript scenario directory (e.g. ../telemetry/ts) and install all of the dependencies by running:
 ```bash
 npm i
 ```
@@ -294,7 +294,7 @@ To build the dotnet sample run:
 # from folder scenarios/telemetry/ts
 npm run build
 ```
-To run the sample cd into the sample directory (e.g. ../telemetry/ts and run each command below in a different shell/terminal:
+To run the sample cd into the TypeScript scenario directory (e.g. ../telemetry/ts and run each command below in a different shell/terminal:
 ```bash
 # from folder scenarios/telemetry/ts
 node ./dist/producer.js --env-file="vehicle01.env"

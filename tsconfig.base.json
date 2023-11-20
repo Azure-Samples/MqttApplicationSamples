@@ -4,6 +4,7 @@
         "module": "CommonJS",
         "moduleResolution": "node",
         "declaration": true,
+        "declarationMap": true,
         "incremental": true,
         "esModuleInterop": true,
         "skipLibCheck": true,

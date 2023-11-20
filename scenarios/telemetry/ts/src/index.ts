@@ -1,6 +1,6 @@
 import {
     Logger,
-    ConnectionSettings,
+    MqttConnectionSettings,
     SampleMqttClient
 } from '@mqttapplicationsamples/mqttjsclientextensions';
 import { resolve } from 'path';
@@ -61,13 +61,13 @@ class SampleApp {
         try {
             Logger.log([ModuleName, 'info'], `Starting MQTT client sample`);
 
-            const cs = ConnectionSettings.createFromEnvVars(resolve(__dirname, `../../${programOptions.envFile}`));
+            const cs = MqttConnectionSettings.createFromEnvVars(resolve(__dirname, `../../${programOptions.envFile}`));
 
             // Create the SampleMqttClient instance, this wraps the MQTT.js client
-            this.sampleMqttClient = new SampleMqttClient();
+            this.sampleMqttClient = new SampleMqttClient(cs);
 
             // Connect to the MQTT broker using the connection settings from the .env file
-            await this.sampleMqttClient.connect(cs);
+            await this.sampleMqttClient.connect();
 
             // If the environment file is 'map-app.env', we treat this app instance
             // as the "consumer" of the vehicle telemetry data and subscribe to the

@@ -184,17 +184,25 @@ Python samples have been tested with python 3.10.4, to install follow the instru
 
 ### TypeScript
 
-TypeScript samples have been tested with NodeJS version 18.16.0. Version 18 or higher is required. See https://nodejs.org. The samples are written using the [MQTT.js library](https://www.npmjs.com/package/mqtt).
+TypeScript samples have been tested with NodeJS version 18.16.0 and NPM version 9.5.1. Version 18 or higher of NodeJS and version 8 or higher of NPM is required. See https://nodejs.org. The samples are written using the [MQTT.js library](https://www.npmjs.com/package/mqtt).
 
-To setup each sample cd into the sample directory (e.g. ../getting_started/ts) and install all of the dependencies by running:
+The TypeScript samples are built using [TypeScript ESLint](https://typescript-eslint.io/blog/announcing-typescript-eslint-v6/) for Visual Studio Code and [TypeScript project references](https://www.typescriptlang.org/docs/handbook/project-references.html). This allows abstracted client and utility classes to be separate dependent projects of the main example scenario projects.
+
+To setup the initial project references and build the dependencies run the following commands from the main repository root directory:
+```bash
+npm i
+npm run build
+```
+
+To setup each sample cd into the TypeScript scenario directory (e.g. ../getting_started/ts) and install all of the dependencies by running:
 ```bash
 npm i
 ```
-The samples can be run and debugged either in the [Visual Studio Code IDE](https://code.visualstudio.com/), or from the command line.
+Each of the samples can be run and debugged either from [Visual Studio Code](https://code.visualstudio.com/), or from the command line.
 
 To run the sample from Visual Studio Code, select the Run and Debug option from the left pane then select one of the "TypeScript ..." configurations from the Run and Debug dropdown menu. Then just use F5 or click on the green play button.
 
-To run the sample from the command line, cd into the sample directory (e.g. ../getting_started/ts and run:
+To run the sample from the command line, cd into the TypeScript scenario directory (e.g. ../getting_started/ts and run:
 ```bash
 node ./dist/index.js
 ```

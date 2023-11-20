@@ -1,5 +1,5 @@
 import { Logger } from './logger';
-import { ConnectionSettings } from './connectionSettings';
+import { MqttConnectionSettings } from './mqttConnectionSettings';
 import {
     ErrorWithReasonCode,
     IClientOptions,
@@ -17,6 +17,11 @@ const ConnectTimeoutInSeconds = 10;
 
 export class SampleMqttClient {
     private mqttClient: MqttClient;
+    private connectionSettings: MqttConnectionSettings;
+
+    constructor(connectionSettings: MqttConnectionSettings) {
+        this.connectionSettings = connectionSettings;
+    }
 
     public get connected(): boolean {
         return this.mqttClient?.connected || false;
@@ -28,11 +33,11 @@ export class SampleMqttClient {
         }
     }
 
-    public async connect(connectionSettings: ConnectionSettings): Promise<void> {
+    public async connect(): Promise<void> {
         try {
             Logger.log([ModuleName, 'info'], `Initializing MQTT client`);
 
-            const mqttClientOptions: IClientOptions = this.createMqttClientOptions(connectionSettings);
+            const mqttClientOptions: IClientOptions = this.createMqttClientOptions(this.connectionSettings);
 
             this.mqttClient = mqttConnect(mqttClientOptions);
 
@@ -72,11 +77,13 @@ export class SampleMqttClient {
         }
     }
 
-    public async subscribe(topic: string): Promise<void> {
+    public async subscribe(topic: string, qos: QoS): Promise<void> {
         try {
             Logger.log([ModuleName, 'info'], `Subscribing to MQTT topics: ${topic}`);
 
-            await this.mqttClient.subscribeAsync(topic);
+            await this.mqttClient.subscribeAsync(topic, {
+                qos: qos
+            });
         }
         catch (ex) {
             Logger.log([ModuleName, 'error'], `MQTT client subscribe error: ${ex.message}`);
@@ -94,7 +101,7 @@ export class SampleMqttClient {
         }
     }
 
-    private createMqttClientOptions(connectionSettings: ConnectionSettings): IClientOptions {
+    private createMqttClientOptions(connectionSettings: MqttConnectionSettings): IClientOptions {
         const mqttClientOptions: IClientOptions = {
             clientId: connectionSettings.clientId,
             protocol: 'mqtt',

@@ -227,7 +227,10 @@
             "request": "launch",
             "preLaunchTask": "build_ts_telemetry",
             "program": "${workspaceFolder}/scenarios/telemetry/ts/src/index.ts",
-            "args": [],
+            "args": [
+                "--env-file",
+                "vehicle01.env"
+            ],
             "cwd": "${workspaceFolder}/scenarios/telemetry/ts/",
             "console": "integratedTerminal",
             "smartStep": true,

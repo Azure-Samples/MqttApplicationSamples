@@ -1,10 +1,11 @@
 import {
     Logger,
-    ConnectionSettings,
+    MqttConnectionSettings,
     SampleMqttClient
 } from '@mqttapplicationsamples/mqttjsclientextensions';
 import { resolve } from 'path';
 import { Command } from 'commander';
+// import * as protobuf from 'protobufjs';
 
 // Parse command line arguments to get the environment file path
 const programCommands = new Command();
@@ -49,13 +50,13 @@ class SampleApp {
         try {
             Logger.log([ModuleName, 'info'], `Starting MQTT client sample`);
 
-            const cs = ConnectionSettings.createFromEnvVars(resolve(__dirname, '../../.env'));
+            const cs = MqttConnectionSettings.createFromEnvVars(resolve(__dirname, '../../.env'));
 
             // Create the SampleMqttClient instance, this wraps the MQTT.js client
-            this.sampleMqttClient = new SampleMqttClient();
+            this.sampleMqttClient = new SampleMqttClient(cs);
 
             // Connect to the MQTT broker using the connection settings from the .env file
-            await this.sampleMqttClient.connect(cs);
+            await this.sampleMqttClient.connect();
 
             const commandRequestTopic = `vehicles/${cs.clientId}/command/unlock/request`;
             // const commandResonseTopic = `vehicles/${connectionSettings.mqttClientId}/command/unlock/response`;

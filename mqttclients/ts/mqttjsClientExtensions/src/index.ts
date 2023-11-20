@@ -1,9 +1,9 @@
 import { Logger } from './logger';
-import { ConnectionSettings } from './connectionSettings';
+import { MqttConnectionSettings } from './mqttConnectionSettings';
 import { SampleMqttClient } from './sampleMqttClient';
 
 export {
     Logger,
-    ConnectionSettings,
+    MqttConnectionSettings,
     SampleMqttClient
 };
