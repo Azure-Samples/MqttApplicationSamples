@@ -13,9 +13,7 @@ class SampleApp {
     private sampleMqttClient: SampleMqttClient;
 
     public async stopSample(): Promise<void> {
-        if (this.sampleMqttClient?.connected) {
-            await this.sampleMqttClient.endClientSession();
-        }
+        await this.sampleMqttClient.endClientSession();
     }
 
     public async startSample(): Promise<void> {
@@ -31,7 +29,7 @@ class SampleApp {
             await this.sampleMqttClient.connect();
 
             // Subscribe to the 'sample/+' topic
-            await this.sampleMqttClient.subscribe('sample/+');
+            await this.sampleMqttClient.subscribe('sample/+', 1);
 
             // Publish to the 'sample/topic1' topic
             await this.sampleMqttClient.publish('sample/topic1', 'Hello World!');

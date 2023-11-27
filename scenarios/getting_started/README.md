@@ -248,12 +248,9 @@ node ./dist/index.js
 
 To see detailed MQTT.js debug logging configure the DEBUG environment variable before running the sample.
 
-Using Visual Studio Code, in the /.vscode/launch.json file edit the desired TypeScript configuration and add the environment variable:
+Using Visual Studio Code, simply add another entry to the .env file:
 ```bash
-"env": {
-    "DEBUG": "mqttjs*"
-},
-
+DEBUG=mqttjs*
 ```
 
 Using the command line:

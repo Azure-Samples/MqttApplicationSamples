@@ -7,9 +7,6 @@
     "files": [],
     "references": [
         {
-            "path": "./mqttclients/ts/mqttjsClientExtensions"
-        },
-        {
             "path": "./scenarios/getting_started/ts"
         },
         {

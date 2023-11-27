@@ -75,7 +75,7 @@ class SampleApp {
                 // Send unlock command to the vehicle
                 await this.sampleMqttClient.publish(commandRequestTopic, 'unlock');
 
-                await this.sampleMqttClient.subscribe('vehicles/+/position');
+                await this.sampleMqttClient.subscribe('vehicles/+/position', 1);
             }
             else {
                 // Start sending vehicle telemetry data to the 'vehicles/<vehicle-id>/position' topic

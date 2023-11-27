@@ -4,5 +4,13 @@
         "composite": true,
         "rootDir": "./src",
         "outDir": "./dist"
-    }
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "references": [
+        {
+            "path": "../../../mqttclients/ts/mqttjsClientExtensions"
+        }
+    ]
 }

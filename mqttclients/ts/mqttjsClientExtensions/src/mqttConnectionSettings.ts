@@ -1,9 +1,15 @@
 import { config } from 'dotenv';
+import { IClientOptions } from 'mqtt';
+import * as fs from 'fs';
+import { resolve as pathResolve } from 'path';
 
 enum AuthType {
     X509 = 'X509',
     Basic = 'Basic'
 }
+
+// const ModuleName = 'MqttConnectionSettings';
+const ConnectTimeoutInSeconds = 10;
 
 const defaultHostname = 'localhost';
 const defaultKeepAliveInSeconds = 30;
@@ -31,8 +37,44 @@ export class MqttConnectionSettings {
         this._hostname = hostname;
     }
 
+    public get hostname(): string {
+        return this._hostname;
+    }
+
+    public get auth(): AuthType {
+        return this.certFile ? AuthType.X509 : AuthType.Basic;
+    }
+
     public static fromConnectionString(connectionString: string): MqttConnectionSettings {
-        return MqttConnectionSettings.parseConnectionString(connectionString);
+        let cs: MqttConnectionSettings;
+
+        try {
+            const csElements = connectionString.split(';');
+            const csMap = new Map<string, string>();
+            for (const element of csElements) {
+                const [key, value] = element.split('=');
+                csMap.set(key, value);
+            }
+            const csObj = Object.fromEntries(csMap);
+
+            cs = new MqttConnectionSettings(csObj.HostName);
+            cs.clientId = csObj?.ClientId ?? '';
+            cs.keyFile = csObj?.KeyFile ?? '';
+            cs.certFile = csObj?.CertFile ?? '';
+            cs.username = csObj?.Username ?? '';
+            cs.password = csObj?.Password ?? '';
+            cs.keepAliveInSeconds = Number(csObj?.KeepAliveInSeconds ?? defaultKeepAliveInSeconds);
+            cs.cleanSession = Boolean(csObj?.CleanSession === undefined ? defaultCleanSession : csObj?.CleanSession);
+            cs.tcpPort = Number(csObj?.TcpPort ?? defaultTcpPort);
+            cs.useTls = Boolean(csObj?.UseTls === undefined ? defaultUseTls : csObj?.UseTls);
+            cs.caFile = csObj?.CaFile ?? '';
+            cs.disableCrl = Boolean(csObj?.DisableCrl === undefined ? defaultDisableCrl : csObj?.DisableCrl);
+        }
+        catch (ex) {
+            throw new Error(`Error while parsing connection string: ${ex.message}`);
+        }
+
+        return cs;
     }
 
     public static createFromEnvVars(envFilePath = '.env'): MqttConnectionSettings {
@@ -68,43 +110,43 @@ export class MqttConnectionSettings {
         return cs;
     }
 
-    public static parseConnectionString(connectionString: string): MqttConnectionSettings {
-        let cs: MqttConnectionSettings;
+    public static createMqttClientOptions(cs: MqttConnectionSettings): IClientOptions {
+        const mqttClientOptions: IClientOptions = {
+            clientId: cs.clientId,
+            protocol: 'mqtt',
+            host: cs.hostname,
+            port: cs.tcpPort,
+            keepalive: cs.keepAliveInSeconds,
+            connectTimeout: ConnectTimeoutInSeconds * 1000,
+            rejectUnauthorized: true,
+            manualConnect: true,
+            clean: cs.cleanSession,
+            protocolVersion: 5
+        };
 
         try {
-            const csElements = connectionString.split(';');
-            const csMap = new Map<string, string>();
-            for (const element of csElements) {
-                const [key, value] = element.split('=');
-                csMap.set(key, value);
+            if (cs.username) {
+                mqttClientOptions.username = cs.username;
+                mqttClientOptions.password = cs.password;
             }
-            const csObj = Object.fromEntries(csMap);
 
-            cs = new MqttConnectionSettings(csObj.HostName);
-            cs.clientId = csObj?.ClientId ?? '';
-            cs.keyFile = csObj?.KeyFile ?? '';
-            cs.certFile = csObj?.CertFile ?? '';
-            cs.username = csObj?.Username ?? '';
-            cs.password = csObj?.Password ?? '';
-            cs.keepAliveInSeconds = Number(csObj?.KeepAliveInSeconds ?? defaultKeepAliveInSeconds);
-            cs.cleanSession = Boolean(csObj?.CleanSession === undefined ? defaultCleanSession : csObj?.CleanSession);
-            cs.tcpPort = Number(csObj?.TcpPort ?? defaultTcpPort);
-            cs.useTls = Boolean(csObj?.UseTls === undefined ? defaultUseTls : csObj?.UseTls);
-            cs.caFile = csObj?.CaFile ?? '';
-            cs.disableCrl = Boolean(csObj?.DisableCrl === undefined ? defaultDisableCrl : csObj?.DisableCrl);
+            if (cs.useTls) {
+                mqttClientOptions.protocol = 'mqtts';
+            }
+
+            if (cs.certFile) {
+                mqttClientOptions.cert = fs.readFileSync(pathResolve('..', cs.certFile));
+                mqttClientOptions.key = fs.readFileSync(pathResolve('..', cs.keyFile));
+            }
+
+            if (cs.caFile) {
+                mqttClientOptions.ca = fs.readFileSync(pathResolve('..', cs.caFile));
+            }
         }
         catch (ex) {
-            throw new Error(`Error while parsing connection string: ${ex.message}`);
+            throw new Error(`Error while creating client options: ${ex.message}`);
         }
 
-        return cs;
-    }
-
-    public get hostname(): string {
-        return this._hostname;
-    }
-
-    public get auth(): AuthType {
-        return this.certFile ? AuthType.X509 : AuthType.Basic;
+        return mqttClientOptions;
     }
 }

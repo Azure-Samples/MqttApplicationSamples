@@ -79,7 +79,7 @@ class SampleApp {
 
             if (programOptions.envFile === 'map-app.env') {
                 // Subscribe to the vehicle telemetry data topic
-                await this.sampleMqttClient.subscribe('vehicles/+/position');
+                await this.sampleMqttClient.subscribe('vehicles/+/position', 1);
             }
             else {
                 // Start sending vehicle telemetry data to the 'vehicles/<vehicle-id>/position' topic

@@ -24,7 +24,8 @@
     "dependencies": {
         "commander": "^11.0.0",
         "dotenv": "^16.3.1",
-        "mqtt": "^5.0.5"
+        "mqtt": "^5.0.5",
+        "mqtt-packet": "^9.0.0"
     },
     "devDependencies": {
         "@types/mqtt": "^2.5.0",

@@ -214,6 +214,7 @@
             "preLaunchTask": "build_ts_getting_started",
             "program": "${workspaceFolder}/scenarios/getting_started/ts/src/index.ts",
             "args": [],
+            "envFile": "${workspaceFolder}/scenarios/getting_started/.env",
             "cwd": "${workspaceFolder}/scenarios/getting_started/ts/",
             "console": "integratedTerminal",
             "smartStep": true,
