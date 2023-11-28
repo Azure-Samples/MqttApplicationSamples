@@ -13,8 +13,7 @@
         "strict": false,
         "strictNullChecks": true,
         "noImplicitAny": false,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true
+        "noUnusedLocals": true
     },
     "compileOnSave": true,
 }

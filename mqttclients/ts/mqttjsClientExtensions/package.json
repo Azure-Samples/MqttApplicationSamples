@@ -13,5 +13,9 @@
         "azure"
     ],
     "author": "Microsoft Corporation",
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "pino": "^8.16.2",
+        "pino-pretty": "^10.2.3"
+    }
 }

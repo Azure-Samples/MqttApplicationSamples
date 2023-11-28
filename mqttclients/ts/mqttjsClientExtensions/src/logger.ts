@@ -1,8 +1,18 @@
-export class Logger {
-    public static log(tags: string[], message: string): void {
-        const tagsMessage = (tags && Array.isArray(tags)) ? `[${tags.join(', ')}]` : '[]';
+import Pino from 'pino';
 
-        // eslint-disable-next-line no-console
-        console.log(`[${new Date().toTimeString()}] [${tagsMessage}] ${message}`);
+export const logger = Pino({
+    transport: {
+        target: 'pino-pretty',
+        options: {
+            colorize: true,
+            messageFormat: '[{tags}] {msg}',
+            translateTime: 'SYS:yyyy-mm-dd"T"HH:MM:sso',
+            ignore: 'pid,hostname,tags,msg'
+        }
+    },
+    serializers: {
+        tags: (tags: string[]) => {
+            return `${tags}`;
+        }
     }
-}
+});

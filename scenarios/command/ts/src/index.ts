@@ -1,5 +1,5 @@
 import {
-    Logger,
+    logger,
     MqttConnectionSettings,
     SampleMqttClient
 } from '@mqttapplicationsamples/mqttjsclientextensions';
@@ -41,22 +41,22 @@ class SampleApp {
             this.vehicleTelemetryPublishIntervalId = null as any;
         }
 
-        if (this.sampleMqttClient?.connected) {
-            await this.sampleMqttClient.endClientSession();
+        if (this.sampleMqttClient) {
+            await this.sampleMqttClient.mqttClient.endAsync(true);
         }
     }
 
     public async startSample(): Promise<void> {
         try {
-            Logger.log([ModuleName, 'info'], `Starting MQTT client sample`);
+            logger.info({ tags: [ModuleName] }, `Starting MQTT client sample`);
 
             const cs = MqttConnectionSettings.createFromEnvVars(resolve(__dirname, '../../.env'));
 
             // Create the SampleMqttClient instance, this wraps the MQTT.js client
-            this.sampleMqttClient = new SampleMqttClient(cs);
+            this.sampleMqttClient = SampleMqttClient.createFromConnectionSettings(cs);
 
             // Connect to the MQTT broker using the connection settings from the .env file
-            await this.sampleMqttClient.connect();
+            await this.sampleMqttClient.connectAsync();
 
             const commandRequestTopic = `vehicles/${cs.clientId}/command/unlock/request`;
             // const commandResonseTopic = `vehicles/${connectionSettings.mqttClientId}/command/unlock/response`;
@@ -73,9 +73,15 @@ class SampleApp {
 
             if (programOptions.envFile === 'map-app.env') {
                 // Send unlock command to the vehicle
-                await this.sampleMqttClient.publish(commandRequestTopic, 'unlock');
+                await this.sampleMqttClient.mqttClient.publishAsync(commandRequestTopic, 'unlock');
 
-                await this.sampleMqttClient.subscribe('vehicles/+/position', 1);
+                const topic = 'vehicles/+/position';
+
+                logger.info({ tags: [ModuleName] }, `Subscribing to MQTT topics: ${topic}`);
+
+                await this.sampleMqttClient.mqttClient.subscribeAsync(topic, {
+                    qos: 1
+                });
             }
             else {
                 // Start sending vehicle telemetry data to the 'vehicles/<vehicle-id>/position' topic
@@ -92,20 +98,22 @@ class SampleApp {
                     const vehiclePosition = new GeoJsonPoint(lat, lon);
                     const payload = JSON.stringify(vehiclePosition);
 
-                    const messageId = await this.sampleMqttClient.publish(vehiclePublishTopic, payload);
+                    const publishPacket = await this.sampleMqttClient.mqttClient.publishAsync(vehiclePublishTopic, payload, {
+                        qos: 1
+                    });
 
-                    Logger.log([ModuleName, 'info'], `Publishing vehicle geolocation data - messageId: ${messageId}, topic ${vehiclePublishTopic}, payload: ${payload}`);
+                    logger.info({ tags: [ModuleName] }, `Publishing vehicle geolocation data - messageId: ${publishPacket?.messageId ?? -1}, topic ${vehiclePublishTopic}, payload: ${payload}`);
                 }, 1000 * VehicleTelemetryPublishIntervalInSeconds);
             }
         }
         catch (ex) {
-            Logger.log([ModuleName, 'error'], `MQTT client sample error: ${ex.message}`);
+            logger.error({ tags: [ModuleName] }, `MQTT client sample error: ${ex.message}`);
         }
     }
 }
 
 process.on('SIGINT', async () => {
-    Logger.log([ModuleName, 'error'], `SIGINT received: ending the session and exiting the sample...`);
+    logger.error({ tags: [ModuleName] }, `SIGINT received: ending the session and exiting the sample...`);
 
     if (sampleApp) {
         await sampleApp.stopSample();
@@ -113,7 +121,7 @@ process.on('SIGINT', async () => {
 });
 
 process.on('SIGTERM', async () => {
-    Logger.log([ModuleName, 'error'], `SIGTERM received: ending the session and exiting the sample...`);
+    logger.error({ tags: [ModuleName] }, `SIGTERM received: ending the session and exiting the sample...`);
 
     if (sampleApp) {
         await sampleApp.stopSample();
