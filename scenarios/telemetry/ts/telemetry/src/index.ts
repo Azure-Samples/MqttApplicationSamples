@@ -5,21 +5,32 @@ import {
 } from '@mqttapplicationsamples/mqttjsclientextensions';
 import { resolve } from 'path';
 import { Command } from 'commander';
-// import * as protobuf from 'protobufjs';
 
 // Parse command line arguments to get the environment file path
 const programCommands = new Command();
 programCommands
     .requiredOption('-e, --env-file <envFile>', 'Environment filepath')
     .parse(process.argv);
-
-// Load environment variables from .env file using the dotenv package
 const programOptions = programCommands.opts();
 
 const ModuleName = 'SampleApp';
 const VehicleTelemetryPublishIntervalInSeconds = 3;
 
 let sampleApp: SampleApp;
+
+export interface IConnectionSettings {
+    mqttHostname: string;
+    mqttTcpPort: number;
+    mqttUseTls: boolean;
+    mqttCleanSession: boolean;
+    mqttKeepAliveInSeconds: number;
+    mqttClientId: string;
+    mqttUsername: string;
+    mqttPassword: string;
+    mqttCertFile: string;
+    mqttKeyFile: string;
+    mqttCaFile: string;
+}
 
 class GeoJsonPoint {
     constructor(x: number, y: number) {
@@ -50,7 +61,7 @@ class SampleApp {
         try {
             logger.info({ tags: [ModuleName] }, `Starting MQTT client sample`);
 
-            const cs = MqttConnectionSettings.createFromEnvVars(resolve(__dirname, '../../.env'));
+            const cs = MqttConnectionSettings.createFromEnvVars(resolve(__dirname, `../../../${programOptions.envFile}`));
 
             // Create the SampleMqttClient instance, this wraps the MQTT.js client
             this.sampleMqttClient = SampleMqttClient.createFromConnectionSettings(cs);
@@ -58,23 +69,15 @@ class SampleApp {
             // Connect to the MQTT broker using the connection settings from the .env file
             await this.sampleMqttClient.connectAsync();
 
-            const commandRequestTopic = `vehicles/${cs.clientId}/command/unlock/request`;
-            // const commandResonseTopic = `vehicles/${connectionSettings.mqttClientId}/command/unlock/response`;
-
             // If the environment file is 'map-app.env', we treat this app instance
-            // as the "client" sending the vehicle unlock command by publishing to the
-            // 'vehicles/<vehicle-id>/command/unlock/request' topic and subscribing to
-            // the 'vehicles/<vehicle-id>/command/unlock/response' topic.
+            // as the "consumer" of the vehicle telemetry data and subscribe to the
+            // 'vehicles/+/position' topic
             //
-            // Otherwise if the environment file is any other (e.g. vehicle03.env),
-            // we treat this app instance as the "server" receiving the vehicle unlock
-            // command by subscribing to the 'vehicles/<vehicle-id>/position' topic and
-            // publishing to the 'vehicles/<vehicle-id>/command/unlock/response' topic.
+            // Otherwise if the environment file is any other (e.g. vehicle01.env),
+            // we treat this app instance as the "producer" of the vehicle telemetry
+            // data and publish to the 'vehicles/<vehicle-id>/position' topic
 
             if (programOptions.envFile === 'map-app.env') {
-                // Send unlock command to the vehicle
-                await this.sampleMqttClient.mqttClient.publishAsync(commandRequestTopic, 'unlock');
-
                 const topic = 'vehicles/+/position';
 
                 logger.info({ tags: [ModuleName] }, `Subscribing to MQTT topics: ${topic}`);

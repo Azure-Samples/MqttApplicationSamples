@@ -7,13 +7,16 @@
     "files": [],
     "references": [
         {
-            "path": "./scenarios/getting_started/ts"
+            "path": "./scenarios/getting_started/ts/gettingStarted"
         },
         {
-            "path": "./scenarios/telemetry/ts"
+            "path": "./scenarios/telemetry/ts/telemetry"
         },
         {
-            "path": "./scenarios/command/ts"
+            "path": "./scenarios/command/ts/command"
+        },
+        {
+            "path": "./scenarios/alert/ts/alert"
         }
     ]
 }

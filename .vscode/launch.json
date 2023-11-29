@@ -212,17 +212,17 @@
             "type": "node",
             "request": "launch",
             "preLaunchTask": "build_ts_getting_started",
-            "program": "${workspaceFolder}/scenarios/getting_started/ts/src/index.ts",
+            "program": "${workspaceFolder}/scenarios/getting_started/ts/gettingStarted/src/index.ts",
             "args": [],
             "envFile": "${workspaceFolder}/scenarios/getting_started/.env",
-            "cwd": "${workspaceFolder}/scenarios/getting_started/ts/",
+            "cwd": "${workspaceFolder}/scenarios/getting_started/ts/gettingStarted",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
-                "${workspaceFolder}/scenarios/getting_started/ts/dist/**/*.js"
+                "${workspaceFolder}/scenarios/getting_started/ts/gettingStarted/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"
@@ -236,19 +236,19 @@
             "type": "node",
             "request": "launch",
             "preLaunchTask": "build_ts_telemetry",
-            "program": "${workspaceFolder}/scenarios/telemetry/ts/src/index.ts",
+            "program": "${workspaceFolder}/scenarios/telemetry/ts/telemetry/src/index.ts",
             "args": [
                 "--env-file",
                 "vehicle01.env"
             ],
-            "cwd": "${workspaceFolder}/scenarios/telemetry/ts/",
+            "cwd": "${workspaceFolder}/scenarios/telemetry/ts/telemetry",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
-                "${workspaceFolder}/scenarios/telemetry/ts/dist/**/*.js"
+                "${workspaceFolder}/scenarios/telemetry/ts/telemetry/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"
@@ -258,20 +258,43 @@
             }
         },
         {
-            "name": "TypeScript Commands",
+            "name": "TypeScript Command",
             "type": "node",
             "request": "launch",
-            "preLaunchTask": "build_ts_commands",
-            "program": "${workspaceFolder}/scenarios/command/ts/src/index.ts",
+            "preLaunchTask": "build_ts_command",
+            "program": "${workspaceFolder}/scenarios/command/ts/command/src/index.ts",
             "args": [],
-            "cwd": "${workspaceFolder}/scenarios/command/ts/",
+            "cwd": "${workspaceFolder}/scenarios/command/ts/command",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
-                "${workspaceFolder}/scenarios/command/ts/dist/**/*.js"
+                "${workspaceFolder}/scenarios/command/ts/command/dist/**/*.js"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "presentation": {
+                "group": "ts"
+            }
+        },
+        {
+            "name": "TypeScript Alert",
+            "type": "node",
+            "request": "launch",
+            "preLaunchTask": "build_ts_alert",
+            "program": "${workspaceFolder}/scenarios/alert/ts/alert/src/index.ts",
+            "args": [],
+            "cwd": "${workspaceFolder}/scenarios/alert/ts/alert",
+            "console": "integratedTerminal",
+            "smartStep": true,
+            "showAsyncStacks": true,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
+                "${workspaceFolder}/scenarios/alert/ts/alert/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"

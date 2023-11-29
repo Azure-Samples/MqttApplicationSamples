@@ -64,7 +64,7 @@
             "label": "build_ts_getting_started",
             "type": "shell",
             "options": {
-                "cwd": "${workspaceFolder}/scenarios/getting_started/ts"
+                "cwd": "${workspaceFolder}/scenarios/getting_started/ts/gettingStarted"
             },
             "command": "node ${workspaceFolder}/node_modules/.bin/tsc -p .",
             "problemMatcher": [
@@ -76,7 +76,7 @@
             "label": "build_ts_telemetry",
             "type": "shell",
             "options": {
-                "cwd": "${workspaceFolder}/scenarios/telemetry/ts"
+                "cwd": "${workspaceFolder}/scenarios/telemetry/ts/telemetry"
             },
             "command": "node ${workspaceFolder}/node_modules/.bin/tsc -p .",
             "problemMatcher": [
@@ -85,10 +85,22 @@
             "group": "build"
         },
         {
-            "label": "build_ts_commands",
+            "label": "build_ts_command",
             "type": "shell",
             "options": {
-                "cwd": "${workspaceFolder}/scenarios/command/ts"
+                "cwd": "${workspaceFolder}/scenarios/command/ts/command"
+            },
+            "command": "node ${workspaceFolder}/node_modules/.bin/tsc -p .",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "build_ts_alert",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/scenarios/alert/ts/alert"
             },
             "command": "node ${workspaceFolder}/node_modules/.bin/tsc -p .",
             "problemMatcher": [

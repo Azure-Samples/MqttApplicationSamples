@@ -1,6 +1,5 @@
 import { MqttClient } from 'mqtt';
 
-
 export class TelemetryConsumer<T> {
     private mqttClient: MqttClient;
 

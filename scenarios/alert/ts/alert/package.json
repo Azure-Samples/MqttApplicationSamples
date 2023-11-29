@@ -1,7 +1,7 @@
 {
-    "name": "@mqttapplicationsamples/commands",
+    "name": "@mqttapplicationsamples/alert",
     "version": "1.0.0",
-    "description": "Request-response messaging pattern - TypeScript",
+    "description": "Fanout messages to multiple subscribers as an alert - TypeScript",
     "main": "dist/index.js",
     "scripts": {
         "build": "tsc --build",
@@ -15,7 +15,6 @@
     "author": "Microsoft Corporation",
     "license": "MIT",
     "dependencies": {
-        "@mqttapplicationsamples/mqttjsclientextensions": "^1.0.0",
-        "protobufjs": "^7.2.5"
+        "@mqttapplicationsamples/mqttjsclientextensions": "^1.0.0"
     }
 }

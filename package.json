@@ -17,9 +17,10 @@
     "private": true,
     "workspaces": [
         "mqttclients/ts/mqttjsClientExtensions",
-        "scenarios/getting_started/ts",
-        "scenarios/command/ts",
-        "scenarios/telemetry/ts"
+        "scenarios/getting_started/ts/gettingStarted",
+        "scenarios/telemetry/ts/telemetry",
+        "scenarios/command/ts/command",
+        "scenarios/alert/ts/alert"
     ],
     "dependencies": {
         "commander": "^11.0.0",
@@ -27,7 +28,6 @@
         "mqtt": "^5.0.5"
     },
     "devDependencies": {
-        "@types/mqtt": "^2.5.0",
         "@types/node": "^20.7.0",
         "@typescript-eslint/eslint-plugin": "^6.7.3",
         "@typescript-eslint/parser": "^6.7.3",

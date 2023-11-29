@@ -135,8 +135,8 @@ export class MqttConnectionSettings {
             }
 
             if (cs.certFile) {
-                mqttClientOptions.cert = fs.readFileSync(pathResolve('..', cs.certFile));
-                mqttClientOptions.key = fs.readFileSync(pathResolve('..', cs.keyFile));
+                mqttClientOptions.cert = fs.readFileSync(pathResolve('../..', cs.certFile));
+                mqttClientOptions.key = fs.readFileSync(pathResolve('../..', cs.keyFile));
             }
 
             if (cs.caFile) {

@@ -2,7 +2,6 @@ import {
     IConnackPacket,
     IPublishPacket
 } from 'mqtt';
-
 import {
     logger,
     MqttConnectionSettings,
@@ -27,7 +26,7 @@ class SampleApp {
         try {
             logger.info({ tags: [ModuleName] }, `Starting MQTT client sample`);
 
-            const cs = MqttConnectionSettings.createFromEnvVars(resolve(__dirname, '../../.env'));
+            const cs = MqttConnectionSettings.createFromEnvVars(resolve(__dirname, '../../../.env'));
 
             // Create the SampleMqttClient instance, this wraps the MQTT.js client
             this.sampleMqttClient = SampleMqttClient.createFromConnectionSettings(cs);
