@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.10.3" />
-    <PackageReference Include="MQTTnet" Version="4.3.1.873" />
+    <PackageReference Include="MQTTnet" Version="4.3.2.933" />
   </ItemGroup>
 
   <ItemGroup>
