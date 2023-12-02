@@ -9,7 +9,6 @@ import {
     SampleMqttClient,
     TelemetryProducer
 } from '@mqttapplicationsamples/mqttjsclientextensions';
-import { resolve } from 'path';
 import { Command } from 'commander';
 import { PositionTelemetryProducer } from './positionTelemetryProducer';
 
@@ -20,7 +19,7 @@ programCommands
     .parse(process.argv);
 const programOptions = programCommands.opts();
 
-const ModuleName = 'SampleApp';
+const ModuleName = 'TelemetryProducerApp';
 const VehicleTelemetryPublishIntervalInSeconds = 3;
 
 let sampleApp: SampleApp;

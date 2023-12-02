@@ -21,17 +21,15 @@ export class TelemetryConsumer<T> {
     }
 
     public async startAsync(): Promise<void> {
-        this.mqttClient.on('message', this.onMessageAsync.bind(this));
+        this.mqttClient.on('message', (topic: string, payload: Buffer, _packet: IPublishPacket) => {
+            if (mqttMatches(this.topicPattern, topic)) {
+                const segments = topic.split('/');
+                const msg = new TelemetryMessage<T>(segments[1], this.serializer.fromBytes<T>(payload));
+
+                void this.onTelemetryReceived(msg);
+            }
+        });
 
         await this.mqttClient.subscribeAsync(this.topicPattern, { qos: 1 });
-    }
-
-    private async onMessageAsync(topic: string, payload: Buffer, _packet: IPublishPacket): Promise<void> {
-        if (mqttMatches(this.topicPattern, topic)) {
-            const segments = topic.split('/');
-            const msg = new TelemetryMessage<T>(segments[1], this.serializer.fromBytes<T>(payload));
-
-            await this.onTelemetryReceived(msg);
-        }
     }
 }

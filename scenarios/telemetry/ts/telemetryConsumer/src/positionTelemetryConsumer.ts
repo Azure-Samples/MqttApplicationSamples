@@ -4,11 +4,11 @@ import {
 import {
     GeoJsonPoint,
     Utf8JsonSerializer,
-    TelemetryProducer,
+    TelemetryConsumer
 } from '@mqttapplicationsamples/mqttjsclientextensions';
 
-export class PositionTelemetryProducer extends TelemetryProducer<GeoJsonPoint> {
+export class PositionTelemetryConsumer extends TelemetryConsumer<GeoJsonPoint> {
     constructor(mqttClient: MqttClient) {
-        super(mqttClient, new Utf8JsonSerializer(), "vehicles/{clientId}/position");
+        super(mqttClient, new Utf8JsonSerializer(), "vehicles/+/position");
     }
 }
