@@ -10,7 +10,10 @@
             "path": "./scenarios/getting_started/ts/gettingStarted"
         },
         {
-            "path": "./scenarios/telemetry/ts/telemetry"
+            "path": "./scenarios/telemetry/ts/telemetryProducer"
+        },
+        {
+            "path": "./scenarios/telemetry/ts/telemetryConsumer"
         },
         {
             "path": "./scenarios/command/ts/command"

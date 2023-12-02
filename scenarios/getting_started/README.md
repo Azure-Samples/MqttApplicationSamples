@@ -231,19 +231,19 @@ To setup the sample cd into the TypeScript scenario directory (e.g. ../getting_s
 npm i
 ```
 To build the TypeScript sample run:
-
 ```bash
-# from folder scenarios/getting_started/ts
-npm run build
+# from folder scenarios/getting_started
+npm run build --prefix ./ts/gettingStarted
 ```
 
 The sample can be run and debugged either in the [Visual Studio Code IDE](https://code.visualstudio.com/), or from the command line. This will use the `.env` file created in the steps above.
 
-To run the sample from Visual Studio Code, select the Run and Debug option from the left pane then select one of the "TypeScript ..." configurations from the Run and Debug dropdown menu. Then just use F5 or click on the green play button.
+To run the sample from Visual Studio Code, select the Run and Debug option from the left pane then select the "TypeScript Getting Started" configuration from the Run and Debug dropdown menu. Then just use F5 or click on the green play button.
 
-To run the sample from the command line, cd into the TypeScript scenario directory (e.g. ../getting_started/ts and run:
+To run the sample from the command line:
 ```bash
-node ./dist/index.js
+# from folder scenarios/getting_started
+node ./ts/gettingStarted/dist/index.js --env-file .env
 ```
 
 To see detailed MQTT.js debug logging configure the DEBUG environment variable before running the sample.
@@ -255,5 +255,5 @@ DEBUG=mqttjs*
 
 Using the command line:
 ```bash
-export DEBUG=mqttjs* && node ./dist/index.js
+export DEBUG=mqttjs* && node ./ts/gettingStarted/dist/index.js --env-file .env
 ```

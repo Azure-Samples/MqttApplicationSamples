@@ -18,14 +18,17 @@
     "workspaces": [
         "mqttclients/ts/mqttjsClientExtensions",
         "scenarios/getting_started/ts/gettingStarted",
-        "scenarios/telemetry/ts/telemetry",
+        "scenarios/telemetry/ts/telemetryproducer",
+        "scenarios/telemetry/ts/telemetryconsumer",
         "scenarios/command/ts/command",
         "scenarios/alert/ts/alert"
     ],
     "dependencies": {
         "commander": "^11.0.0",
         "dotenv": "^16.3.1",
-        "mqtt": "^5.0.5"
+        "mqtt": "^5.0.5",
+        "mqtt-packet": "^9.0.0",
+        "un": "^0.0.0"
     },
     "devDependencies": {
         "@types/node": "^20.7.0",

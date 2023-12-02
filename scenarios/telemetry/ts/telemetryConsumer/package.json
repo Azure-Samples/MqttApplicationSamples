@@ -1,7 +1,7 @@
 {
-    "name": "@mqttapplicationsamples/mqttjsclientextensions",
+    "name": "@mqttapplicationsamples/telemetryconsumer",
     "version": "1.0.0",
-    "description": "Extensions and utilities to use with MQTTjs",
+    "description": "Consumer topic for multiple producers - TypeScript",
     "main": "dist/index.js",
     "scripts": {
         "build": "tsc --build",
@@ -15,9 +15,6 @@
     "author": "Microsoft Corporation",
     "license": "MIT",
     "dependencies": {
-        "mqtt-match": "^3.0.0",
-        "mqtt-pattern": "^2.1.0",
-        "pino": "^8.16.2",
-        "pino-pretty": "^10.2.3"
+        "@mqttapplicationsamples/mqttjsclientextensions": "^1.0.0"
     }
 }

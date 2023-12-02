@@ -288,26 +288,28 @@ To setup the sample cd into the TypeScript scenario directory (e.g. ../telemetry
 ```bash
 npm i
 ```
-To build the TypeScript sample run:
 
+To build the TypeScript sample run:
 ```bash
 # from folder scenarios/telemetry/ts
-npm run build
+npm run build --prefix ./ts/telemetryProducer && npm run build --prefix ./ts/telemetryProducer
 ```
-To run the sample cd into the TypeScript scenario directory (e.g. ../telemetry/ts and run each command below in a different shell/terminal:
+
+To run the dotnet sample execute each line below in a different shell/terminal:
 ```bash
-# from folder scenarios/telemetry/ts
-node ./dist/index.js --env-file="vehicle01.env"
-```
-```bash
-# from folder scenarios/telemetry/ts
-node ./dist/index.js --env-file="vehicle02.env"
+# from folder scenarios/telemetry
+node ./ts/telemetryProducer/dist/index.js --env-file vehicle01.env
 ```
 ```bash
-# from folder scenarios/telemetry/ts
-node ./dist/index.js --env-file="map-app.env"
+# from folder scenarios/telemetry
+node ./ts/telemetryProducer/dist/index.js --env-file vehicle02.env
 ```
+```bash
+# from folder scenarios/telemetry
+node ./ts/telemetryConsumer/dist/index.js --env-file mapp-app.env
+```
+
 To see detailed MQTT.js debug logging configure the DEBUG environment variable before running the sample.
 ```bash
-export DEBUG=mqttjs* && node ./dist/...
+export DEBUG=mqttjs* && node ...
 ```

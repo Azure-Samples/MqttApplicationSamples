@@ -1,13 +1,17 @@
 import {
     IConnackPacket,
-    IPublishPacket
+    IDisconnectPacket
 } from 'mqtt';
 import {
     logger,
+    GeoJsonPoint,
     MqttConnectionSettings,
-    SampleMqttClient
+    SampleMqttClient,
+    TelemetryProducer
 } from '@mqttapplicationsamples/mqttjsclientextensions';
+import { resolve } from 'path';
 import { Command } from 'commander';
+import { PositionTelemetryProducer } from './positionTelemetryProducer';
 
 // Parse command line arguments to get the environment file path
 const programCommands = new Command();
@@ -17,21 +21,24 @@ programCommands
 const programOptions = programCommands.opts();
 
 const ModuleName = 'SampleApp';
+const VehicleTelemetryPublishIntervalInSeconds = 3;
 
 let sampleApp: SampleApp;
 
 class SampleApp {
-    private sampleMqttClient: SampleMqttClient;
+    private sampleMqttClient: SampleMqttClient = null as any;
 
     public async stopSample(): Promise<void> {
         if (this.sampleMqttClient) {
             await this.sampleMqttClient.mqttClient.endAsync(true);
+
+            this.sampleMqttClient = null as any;
         }
     }
 
     public async startSample(): Promise<void> {
         try {
-            logger.info({ tags: [ModuleName] }, `Starting MQTT client sample`);
+            logger.info({ tags: [ModuleName] }, `Starting MQTT client telemetry producer`);
 
             const cs = MqttConnectionSettings.createFromEnvVars(programOptions.envFile);
 
@@ -39,24 +46,31 @@ class SampleApp {
             this.sampleMqttClient = SampleMqttClient.createFromConnectionSettings(cs);
 
             this.sampleMqttClient.mqttClient.on('connect', this.onConnect.bind(this));
-            this.sampleMqttClient.mqttClient.on('message', this.onMessage.bind(this));
+            this.sampleMqttClient.mqttClient.on('disconnect', this.onDisconnect.bind(this));
 
             // Connect to the MQTT broker using the connection settings from the .env file
             await this.sampleMqttClient.connectAsync();
 
-            const subscribeTopic = 'sample/+';
+            const telemetryProducer = new PositionTelemetryProducer(this.sampleMqttClient.mqttClient);
 
-            logger.info({ tags: [ModuleName] }, `Subscribing to MQTT topic: ${subscribeTopic}`);
+            // Start sending vehicle telemetry data to the 'vehicles/<vehicle-id>/position' topic
+            const vehiclePublishTopic = `vehicles/${cs.clientId}/position`;
 
-            await this.sampleMqttClient.mqttClient.subscribeAsync(subscribeTopic, {
-                qos: 1
-            });
+            while (this.sampleMqttClient) {
+                const latMin = -90;
+                const latMax = 90;
+                const lonMin = -180;
+                const lonMax = 180;
 
-            const publishTopic = 'sample/topic1';
+                const lat = Math.floor(Math.random() * (latMax - latMin + 1) + latMin);
+                const lon = Math.floor(Math.random() * (lonMax - lonMin + 1) + lonMin);
 
-            logger.info({ tags: [ModuleName] }, `Publishing to MQTT topic: ${publishTopic}`);
+                const pubAck = await telemetryProducer.SendTelemetryAsync(new GeoJsonPoint(lat, lon), 1);
 
-            await this.sampleMqttClient.mqttClient.publishAsync('sample/topic1', 'Hello World!');
+                logger.info({ tags: [ModuleName] }, `Message published on topic '${pubAck.topic}' and mid ${pubAck?.messageId ?? -1}`);
+
+                await new Promise((resolve) => setTimeout(resolve, 1000 * VehicleTelemetryPublishIntervalInSeconds));
+            }
         }
         catch (ex) {
             logger.error({ tags: [ModuleName] }, `MQTT client sample error: ${ex.message}`);
@@ -67,8 +81,8 @@ class SampleApp {
         logger.info({ tags: [ModuleName] }, `Client Connected: ${this.sampleMqttClient.mqttClient.connected} with CONNACK: ${connAck.reasonCode}`);
     }
 
-    private onMessage(topic: string, payload: Buffer, _packet: IPublishPacket): void {
-        logger.info({ tags: [ModuleName] }, `Received message on topic: '${topic}' with content: '${payload.toString('utf8')}'`);
+    private onDisconnect(packet: IDisconnectPacket): void {
+        logger.info({ tags: [ModuleName] }, `Mqtt client disconnected with reason: ${packet.reasonCode}`);
     }
 }
 

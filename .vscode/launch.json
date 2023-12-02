@@ -213,9 +213,11 @@
             "request": "launch",
             "preLaunchTask": "build_ts_getting_started",
             "program": "${workspaceFolder}/scenarios/getting_started/ts/gettingStarted/src/index.ts",
-            "args": [],
-            "envFile": "${workspaceFolder}/scenarios/getting_started/.env",
-            "cwd": "${workspaceFolder}/scenarios/getting_started/ts/gettingStarted",
+            "args": [
+                "--env-file",
+                ".env"
+            ],
+            "cwd": "${workspaceFolder}/scenarios/getting_started",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,
@@ -232,23 +234,49 @@
             }
         },
         {
-            "name": "TypeScript Telemetry",
+            "name": "TypeScript Telemetry Producer",
             "type": "node",
             "request": "launch",
-            "preLaunchTask": "build_ts_telemetry",
-            "program": "${workspaceFolder}/scenarios/telemetry/ts/telemetry/src/index.ts",
+            "preLaunchTask": "build_ts_telemetryproducer",
+            "program": "${workspaceFolder}/scenarios/telemetry/ts/telemetryProducer/src/index.ts",
             "args": [
                 "--env-file",
                 "vehicle01.env"
             ],
-            "cwd": "${workspaceFolder}/scenarios/telemetry/ts/telemetry",
+            "cwd": "${workspaceFolder}/scenarios/telemetry",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
-                "${workspaceFolder}/scenarios/telemetry/ts/telemetry/dist/**/*.js"
+                "${workspaceFolder}/scenarios/telemetry/ts/telemetryProducer/dist/**/*.js"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "presentation": {
+                "group": "ts"
+            }
+        },
+        {
+            "name": "TypeScript Telemetry Consumer",
+            "type": "node",
+            "request": "launch",
+            "preLaunchTask": "build_ts_telemetryconsumer",
+            "program": "${workspaceFolder}/scenarios/telemetry/ts/telemetryConsumer/src/index.ts",
+            "args": [
+                "--env-file",
+                "map-app.env"
+            ],
+            "cwd": "${workspaceFolder}/scenarios/telemetry",
+            "console": "integratedTerminal",
+            "smartStep": true,
+            "showAsyncStacks": true,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/mqttclients/ts/mqttjsClientExtensions/dist/**/*.js",
+                "${workspaceFolder}/scenarios/telemetry/ts/telemetryConsumer/dist/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"
@@ -264,7 +292,7 @@
             "preLaunchTask": "build_ts_command",
             "program": "${workspaceFolder}/scenarios/command/ts/command/src/index.ts",
             "args": [],
-            "cwd": "${workspaceFolder}/scenarios/command/ts/command",
+            "cwd": "${workspaceFolder}/scenarios/command",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,
@@ -287,7 +315,7 @@
             "preLaunchTask": "build_ts_alert",
             "program": "${workspaceFolder}/scenarios/alert/ts/alert/src/index.ts",
             "args": [],
-            "cwd": "${workspaceFolder}/scenarios/alert/ts/alert",
+            "cwd": "${workspaceFolder}/scenarios/alert",
             "console": "integratedTerminal",
             "smartStep": true,
             "showAsyncStacks": true,

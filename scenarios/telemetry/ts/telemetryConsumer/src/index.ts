@@ -1,4 +1,9 @@
 import {
+    IConnackPacket,
+    IDisconnectPacket,
+    IPublishPacket
+} from 'mqtt';
+import {
     logger,
     MqttConnectionSettings,
     SampleMqttClient
@@ -17,20 +22,6 @@ const ModuleName = 'SampleApp';
 const VehicleTelemetryPublishIntervalInSeconds = 3;
 
 let sampleApp: SampleApp;
-
-export interface IConnectionSettings {
-    mqttHostname: string;
-    mqttTcpPort: number;
-    mqttUseTls: boolean;
-    mqttCleanSession: boolean;
-    mqttKeepAliveInSeconds: number;
-    mqttClientId: string;
-    mqttUsername: string;
-    mqttPassword: string;
-    mqttCertFile: string;
-    mqttKeyFile: string;
-    mqttCaFile: string;
-}
 
 class GeoJsonPoint {
     constructor(x: number, y: number) {
@@ -59,12 +50,15 @@ class SampleApp {
 
     public async startSample(): Promise<void> {
         try {
-            logger.info({ tags: [ModuleName] }, `Starting MQTT client sample`);
+            logger.info({ tags: [ModuleName] }, `Starting MQTT client telemetry consumer`);
 
             const cs = MqttConnectionSettings.createFromEnvVars(resolve(__dirname, `../../../${programOptions.envFile}`));
 
             // Create the SampleMqttClient instance, this wraps the MQTT.js client
             this.sampleMqttClient = SampleMqttClient.createFromConnectionSettings(cs);
+
+            this.sampleMqttClient.mqttClient.on('connect', this.onConnect.bind(this));
+            this.sampleMqttClient.mqttClient.on('message', this.onMessage.bind(this));
 
             // Connect to the MQTT broker using the connection settings from the .env file
             await this.sampleMqttClient.connectAsync();
@@ -112,6 +106,18 @@ class SampleApp {
         catch (ex) {
             logger.error({ tags: [ModuleName] }, `MQTT client sample error: ${ex.message}`);
         }
+    }
+
+    private onConnect(connAck: IConnackPacket): void {
+        logger.info({ tags: [ModuleName] }, `Client Connected: ${this.sampleMqttClient.mqttClient.connected} with CONNACK: ${connAck.reasonCode}`);
+    }
+
+    private onMessage(topic: string, payload: Buffer, _packet: IPublishPacket): void {
+        logger.info({ tags: [ModuleName] }, `Received message on topic: '${topic}' with content: '${payload.toString('utf8')}'`);
+    }
+
+    private onDisconnect(packet: IDisconnectPacket): void {
+        logger.info({ tags: [ModuleName] }, `Mqtt client disconnected with reason: ${packet.reasonCode}`);
     }
 }
 

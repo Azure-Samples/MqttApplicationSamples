@@ -73,10 +73,22 @@
             "group": "build"
         },
         {
-            "label": "build_ts_telemetry",
+            "label": "build_ts_telemetryproducer",
             "type": "shell",
             "options": {
-                "cwd": "${workspaceFolder}/scenarios/telemetry/ts/telemetry"
+                "cwd": "${workspaceFolder}/scenarios/telemetry/ts/telemetryProducer"
+            },
+            "command": "node ${workspaceFolder}/node_modules/.bin/tsc -p .",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "build_ts_telemetryconsumer",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/scenarios/telemetry/ts/telemetryConsumer"
             },
             "command": "node ${workspaceFolder}/node_modules/.bin/tsc -p .",
             "problemMatcher": [

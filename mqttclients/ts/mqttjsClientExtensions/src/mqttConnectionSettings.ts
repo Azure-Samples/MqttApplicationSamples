@@ -1,7 +1,6 @@
 import { config } from 'dotenv';
 import { IClientOptions } from 'mqtt';
 import * as fs from 'fs';
-import { resolve as pathResolve } from 'path';
 
 enum AuthType {
     X509 = 'X509',
@@ -135,12 +134,12 @@ export class MqttConnectionSettings {
             }
 
             if (cs.certFile) {
-                mqttClientOptions.cert = fs.readFileSync(pathResolve('../..', cs.certFile));
-                mqttClientOptions.key = fs.readFileSync(pathResolve('../..', cs.keyFile));
+                mqttClientOptions.cert = fs.readFileSync(cs.certFile);
+                mqttClientOptions.key = fs.readFileSync(cs.keyFile);
             }
 
             if (cs.caFile) {
-                mqttClientOptions.ca = fs.readFileSync(pathResolve('..', cs.caFile));
+                mqttClientOptions.ca = fs.readFileSync(cs.caFile);
             }
         }
         catch (ex) {
