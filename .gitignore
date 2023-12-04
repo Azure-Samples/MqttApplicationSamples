@@ -8,6 +8,12 @@
 *.pem
 *.crt
 *.env
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
 launchSettings.json
 
 # User-specific files
