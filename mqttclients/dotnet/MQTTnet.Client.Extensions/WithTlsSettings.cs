@@ -15,7 +15,10 @@ public static partial class MqttNetExtensions
 
             if (!string.IsNullOrEmpty(cs.CaFile))
             {
-                tlsParams.WithCertificateValidationHandler(ea => X509ChainValidator.ValidateChain(ea, cs.CaFile!));
+                X509Certificate2Collection chain = new X509Certificate2Collection();
+                chain.ImportFromPemFile(cs.CaFile);
+                tlsParams.WithTrustChain(chain);
+                tlsParams.WithRevocationMode(X509RevocationMode.NoCheck);
             }
 
             if (!string.IsNullOrEmpty(cs.CertFile) && !string.IsNullOrEmpty(cs.KeyFile))
