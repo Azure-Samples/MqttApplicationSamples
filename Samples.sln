@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "command_client", "scenarios
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "command_server", "scenarios\command\dotnet\command_server\command_server.csproj", "{02032E52-AF7C-4EA2-A6A9-18AF88346B1E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "jwt_authentication", "scenarios\jwt_authentication\dotnet\jwt_authentication\jwt_authentication.csproj", "{58C793B7-59BD-455E-AA8B-D23A8AB49EBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{02032E52-AF7C-4EA2-A6A9-18AF88346B1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02032E52-AF7C-4EA2-A6A9-18AF88346B1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02032E52-AF7C-4EA2-A6A9-18AF88346B1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58C793B7-59BD-455E-AA8B-D23A8AB49EBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58C793B7-59BD-455E-AA8B-D23A8AB49EBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58C793B7-59BD-455E-AA8B-D23A8AB49EBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58C793B7-59BD-455E-AA8B-D23A8AB49EBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

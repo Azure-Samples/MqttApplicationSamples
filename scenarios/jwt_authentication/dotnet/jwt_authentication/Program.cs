@@ -9,13 +9,13 @@ MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars();
 
 IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
 MqttClientConnectResult connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder()
-    .WithJWT(cs, GetToken, mqttClient, TimeSpan.FromMinutes(60))
+    .WithJWT(cs, GetToken, mqttClient, TimeSpan.FromHours(1))
     .Build());
 
 Console.WriteLine($"Client Connected: {mqttClient.IsConnected} with CONNACK: {connAck.ResultCode} with auth method {mqttClient.Options.AuthenticationMethod}");
 
-mqttClient.ApplicationMessageReceivedAsync += async m => await Console.Out.WriteAsync(m.PacketIdentifier.ToString() + ".");
-   // $"Received message on topic: '{m.ApplicationMessage.Topic}' with content: {m.ApplicationMessage.ConvertPayloadToString()}");
+mqttClient.ApplicationMessageReceivedAsync += m => Console.Out.WriteLineAsync(
+   $"Received message on topic: '{m.ApplicationMessage.Topic}' with content: {m.ApplicationMessage.ConvertPayloadToString()}");
 
 MqttClientSubscribeResult suback = await mqttClient.SubscribeAsync("sample/+", MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
 suback.Items.ToList().ForEach(s => Console.WriteLine($"subscribed to '{s.TopicFilter.Topic}'  with '{s.ResultCode}'"));
@@ -24,7 +24,7 @@ int counter = 0;
 while (true)
 {
     MqttClientPublishResult puback = await mqttClient.PublishStringAsync("sample/topic1", "hello world!" + counter++, MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
-    await Task.Delay(100);
+    await Task.Delay(10000);
 }    
 
 static byte[] GetToken()
