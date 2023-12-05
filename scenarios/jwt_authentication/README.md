@@ -27,10 +27,14 @@ Event Grid namespaces supports JWT authentication for Managed Identities and Ser
 To create the service principal and the secret using the Azure CLI:
 
 ```bash
-clientId=(az ad app create --display-name "MyMqttApp" -query AppId -o tsv)
-
+clientId=$(az ad app create --display-name "MyMqttSamplesApp" --query appId -o tsv)
+spId=$(az ad sp create --id $clientId --query id -o tsv)
 az ad app credential reset --id $clientId --append
 ```
+
+take note of the appId, password and tenant values returned from the previous command.
+
+> Note. You can use these values as environment variables for dotnet by using the launchSettings.json file 
 
 ## Assign RBAC permissions
 
@@ -40,13 +44,13 @@ In Azure EventGrid Namespaces, assign permissions to the Microsoft Entra ID iden
 # from the root folder
 source az.env
 
-az role assigment create \
-  --assignee $clientId \
+az role assignment create \
+  --assignee $spId \
   --role "EventGrid TopicSpaces Publisher" \
   --scope $res_id
 
-az role assigment create \
-  --assignee $clientId \
+az role assignment create \
+  --assignee $spId \
   --role "EventGrid TopicSpaces Subscriber" \
   --scope $res_id
 ```
