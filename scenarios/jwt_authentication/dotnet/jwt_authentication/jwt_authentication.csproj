@@ -9,13 +9,10 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.10.3" />
-    <PackageReference Include="MQTTnet" Version="4.3.2.933" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="MQTTnet.Client.Extensions">
-      <HintPath>..\..\..\..\mqttclients\dotnet\MQTTnet.Client.Extensions\bin\Debug\net7.0\MQTTnet.Client.Extensions.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\..\..\mqttclients\dotnet\MQTTnet.Client.Extensions\MQTTnet.Client.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

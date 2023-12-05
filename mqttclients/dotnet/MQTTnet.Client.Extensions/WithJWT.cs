@@ -13,17 +13,10 @@ namespace MQTTnet.Client.Extensions
             _getTokenCallBack = getTokenCallBack;
 
             builder
-                .WithTcpServer(cs.HostName, cs.TcpPort)
-                .WithClientId(cs.ClientId)
-                .WithProtocolVersion(Formatter.MqttProtocolVersion.V500)
+                .WithConnectionSettings(cs)
                 .WithAuthentication("OAUTH2-JWT", getTokenCallBack());
 
-            if (cs.UseTls)
-            {
-                builder.WithTlsOptions(new MqttClientTlsOptions() { UseTls = true });
-            }
-            
-            _refreshTimer = new Timer(RefreshToken, mqttClient, Convert.ToInt32(refreshPeriod.TotalMilliseconds), Convert.ToInt32(refreshPeriod.TotalMilliseconds));
+            _refreshTimer = new Timer(RefreshToken, mqttClient, 0, Convert.ToInt32(refreshPeriod.TotalMilliseconds));
             return builder;
         }
 
@@ -32,8 +25,6 @@ namespace MQTTnet.Client.Extensions
             IMqttClient mqttClient = (MqttClient)state!;
             if (mqttClient.IsConnected)
             {
-                Console.WriteLine("Refreshing Token " + DateTime.Now.ToString("o"));
-
                 Task.Run(async () =>
                 {
                     await mqttClient.SendExtendedAuthenticationExchangeDataAsync(
