@@ -97,10 +97,22 @@
             "group": "build"
         },
         {
-            "label": "build_ts_command",
+            "label": "build_ts_commandserver",
             "type": "shell",
             "options": {
-                "cwd": "${workspaceFolder}/scenarios/command/ts/command"
+                "cwd": "${workspaceFolder}/scenarios/command/ts/commandServer"
+            },
+            "command": "node ${workspaceFolder}/node_modules/.bin/tsc -p .",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "build_ts_commandclient",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/scenarios/command/ts/commandClient"
             },
             "command": "node ${workspaceFolder}/node_modules/.bin/tsc -p .",
             "problemMatcher": [

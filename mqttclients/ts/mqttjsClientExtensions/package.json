@@ -18,6 +18,10 @@
         "mqtt-match": "^3.0.0",
         "mqtt-pattern": "^2.1.0",
         "pino": "^8.16.2",
-        "pino-pretty": "^10.2.3"
+        "pino-pretty": "^10.2.3",
+        "uuid": "^9.0.1"
+    },
+    "devDependencies": {
+        "@types/uuid": "^9.0.7"
     }
 }

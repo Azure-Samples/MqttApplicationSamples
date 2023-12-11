@@ -4,6 +4,7 @@
     "description": "Guidance to build Pub/Sub applications targeting MQTT Brokers.",
     "scripts": {
         "build": "tsc --build --verbose",
+        "clean": "find . -type f -name tsconfig.tsbuildinfo -delete && rm -rf $(find . -path ./node_modules -prune -o -type d -name 'dist' -print)",
         "eslint": "eslint .",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -20,21 +21,22 @@
         "scenarios/getting_started/ts/gettingStarted",
         "scenarios/telemetry/ts/telemetryproducer",
         "scenarios/telemetry/ts/telemetryconsumer",
-        "scenarios/command/ts/command",
+        "scenarios/command/ts/protoMessages",
+        "scenarios/command/ts/commandServer",
+        "scenarios/command/ts/commandClient",
         "scenarios/alert/ts/alert"
     ],
     "dependencies": {
-        "commander": "^11.0.0",
+        "commander": "^11.1.0",
         "dotenv": "^16.3.1",
-        "mqtt": "^5.0.5",
-        "mqtt-packet": "^9.0.0",
-        "un": "^0.0.0"
+        "mqtt": "^5.3.3",
+        "mqtt-packet": "^9.0.0"
     },
     "devDependencies": {
-        "@types/node": "^20.7.0",
-        "@typescript-eslint/eslint-plugin": "^6.7.3",
-        "@typescript-eslint/parser": "^6.7.3",
-        "eslint": "^8.50.0",
-        "typescript": "^5.2.2"
+        "@types/node": "^20.10.4",
+        "@typescript-eslint/eslint-plugin": "^6.13.2",
+        "@typescript-eslint/parser": "^6.13.2",
+        "eslint": "^8.55.0",
+        "typescript": "^5.3.3"
     }
 }

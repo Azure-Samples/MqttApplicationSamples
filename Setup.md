@@ -188,6 +188,8 @@ TypeScript samples have been tested with NodeJS version 18.16.0 and NPM version 
 
 The TypeScript samples are built using [TypeScript ESLint](https://typescript-eslint.io/blog/announcing-typescript-eslint-v6/) for Visual Studio Code and [TypeScript project references](https://www.typescriptlang.org/docs/handbook/project-references.html). This allows abstracted client and utility classes to be separate dependent projects of the main example scenario projects.
 
+If running a sample that uses protobuf - currently these are the Command Samples. Note that you'll need the protobuf compiler if you are generating code for new proto files. The TypeScript samples use [protoc](https://grpc.io/docs/protoc-installation/) for the compiler and [ts-protoc-gen](https://www.npmjs.com/package/ts-protoc-gen?activeTab=readme) for the TypeScript types.
+
 To setup the initial project references and build the dependencies run the following commands from the main repository root directory:
 ```bash
 npm i

@@ -365,6 +365,10 @@ MigrationBackup/
 # Generated C protobuf files
 *.pb-c.*
 
+# Generated TS protobuf type files
+*-pb.js
+*-pb.d.ts
+
 # TypeScript/Node/JS related files
 node_modules/
 .node_modules/
@@ -382,3 +386,4 @@ package-lock.json
 .eslintcache
 *v8.log
 **/tsconfig.tsbuildinfo
+notes.md

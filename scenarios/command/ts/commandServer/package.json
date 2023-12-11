@@ -1,5 +1,5 @@
 {
-    "name": "@mqttapplicationsamples/command",
+    "name": "@mqttapplicationsamples/commandserver",
     "version": "1.0.0",
     "description": "Request-response messaging pattern - TypeScript",
     "main": "dist/index.js",
@@ -16,6 +16,6 @@
     "license": "MIT",
     "dependencies": {
         "@mqttapplicationsamples/mqttjsclientextensions": "^1.0.0",
-        "protobufjs": "^7.2.5"
+        "@mqttapplicationsamples/protomessages": "^1.0.0"
     }
 }

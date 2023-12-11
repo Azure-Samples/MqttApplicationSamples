@@ -16,7 +16,13 @@
             "path": "./scenarios/telemetry/ts/telemetryConsumer"
         },
         {
-            "path": "./scenarios/command/ts/command"
+            "path": "./scenarios/command/ts/protoMessages"
+        },
+        {
+            "path": "./scenarios/command/ts/commandServer"
+        },
+        {
+            "path": "./scenarios/command/ts/commandClient"
         },
         {
             "path": "./scenarios/alert/ts/alert"

@@ -1,0 +1,25 @@
+{
+    "name": "@mqttapplicationsamples/protomessages",
+    "version": "1.0.0",
+    "description": "Protobuf support for mqtt request-response messaging pattern - TypeScript",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "npm run build:proto && tsc --build && npm run build:copyproto",
+        "build:proto": "../../../../node_modules/.bin/pbjs -t static-module -w commonjs -o ./src/index-pb.js ./src/unlock_command.proto && ../../../../node_modules/.bin/pbts -o ./src/index-pb.d.ts ./src/index-pb.js",
+        "build:copyproto": "cp ./src/index-pb.js ./dist/index.js && cp ./src/index-pb.d.ts ./dist/index.d.ts",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "mqtt",
+        "iot",
+        "azure"
+    ],
+    "author": "Microsoft Corporation",
+    "license": "MIT",
+    "dependencies": {
+        "protobufjs": "^7.2.5"
+    },
+    "devDependencies": {
+        "protobufjs-cli": "^1.1.2"
+    }
+}
