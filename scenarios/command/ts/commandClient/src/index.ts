@@ -9,8 +9,7 @@ import {
     SampleMqttClient
 } from '@mqttapplicationsamples/mqttjsclientextensions';
 import {
-    google,
-    UnlockRequest
+    pb
 } from '@mqttapplicationsamples/protomessages';
 import {
     UnlockCommandClient
@@ -26,7 +25,6 @@ programCommands
 const programOptions = programCommands.opts();
 
 const ModuleName = 'SampleApp';
-const VehicleTelemetryPublishIntervalInSeconds = 3;
 
 let sampleApp: SampleApp;
 
@@ -41,7 +39,7 @@ class SampleApp {
 
     public async startSample(): Promise<void> {
         try {
-            logger.info({ tags: [ModuleName] }, `Starting MQTT command server`);
+            logger.info({ tags: [ModuleName] }, `Starting MQTT command client`);
 
             const cs = MqttConnectionSettings.createFromEnvVars(programOptions.envFile);
 
@@ -54,31 +52,26 @@ class SampleApp {
             // Connect to the MQTT broker using the connection settings from the .env file
             await this.sampleMqttClient.connectAsync();
 
-            // const commandUnlock = new UnlockCommandServer(this.sampleMqttClient.mqttClient);
-            // commandUnlock.onCommandReceived = this.unlock.bind(this);
-
-            // await commandUnlock.startAsync();
-
             const commandClient = new UnlockCommandClient(this.sampleMqttClient.mqttClient);
 
-            const invokeCommand = true;
+            try {
+                logger.info({ tags: [ModuleName] }, `Invoking unlock command: ${new Date().toISOString()}`);
 
-            while (invokeCommand) {
-                logger.info({ tags: [ModuleName] }, `Invoking command: ${new Date().toISOString()}`);
-
-                const unlockRequest = UnlockRequest.create({
-                    when: google.protobuf.Timestamp.create({
+                const unlockRequest = pb.UnlockRequest.create({
+                    when: pb.google.protobuf.Timestamp.create({
                         seconds: Date.now() / 1000,
                         nanos: 0
                     }),
                     requestedFrom: this.sampleMqttClient.mqttClient.options.clientId
                 });
 
-                const response = await commandClient.invokeAsync("vehicle03", unlockRequest, 2000);
+                const response = await commandClient.invokeAsync("vehicle03", unlockRequest, 30000);
 
-                logger.info({ tags: [ModuleName] }, `Command response: ${response.succeed}`);
+                logger.info({ tags: [ModuleName] }, `Command response succeed=${response.succeed}`);
             }
-            logger.info({ tags: [ModuleName] }, 'The End');
+            catch (ex) {
+                logger.error({ tags: [ModuleName] }, `Command response error: ${ex.message}`);
+            }
         }
         catch (ex) {
             logger.error({ tags: [ModuleName] }, `MQTT client sample error: ${ex.message}`);

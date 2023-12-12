@@ -6,8 +6,7 @@ import {
     logger,
     GeoJsonPoint,
     MqttConnectionSettings,
-    SampleMqttClient,
-    TelemetryProducer
+    SampleMqttClient
 } from '@mqttapplicationsamples/mqttjsclientextensions';
 import { Command } from 'commander';
 import { PositionTelemetryProducer } from './positionTelemetryProducer';
@@ -53,8 +52,6 @@ class SampleApp {
             const telemetryProducer = new PositionTelemetryProducer(this.sampleMqttClient.mqttClient);
 
             // Start sending vehicle telemetry data to the 'vehicles/<vehicle-id>/position' topic
-            const vehiclePublishTopic = `vehicles/${cs.clientId}/position`;
-
             while (this.sampleMqttClient) {
                 const latMin = -90;
                 const latMax = 90;

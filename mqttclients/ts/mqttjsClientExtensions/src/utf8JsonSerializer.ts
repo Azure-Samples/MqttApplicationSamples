@@ -1,6 +1,6 @@
 import { IMessageSerializer } from ".";
 
-export class Utf8JsonSerializer<T> implements IMessageSerializer {
+export class Utf8JsonSerializer implements IMessageSerializer {
     public contentType = 'application/json';
 
     public fromBytes<T>(payload: Buffer): T {

@@ -1,20 +1,21 @@
-
 import {
     IMessageSerializer
 } from '@mqttapplicationsamples/mqttjsclientextensions';
-import {
-    IUnlockRequest,
-    UnlockRequest
-} from '@mqttapplicationsamples/protomessages';
 
 export class ProtobufSerializer implements IMessageSerializer {
+    private protoObject: any;
+
+    constructor(protoObject: any) {
+        this.protoObject = protoObject;
+    }
+
     public contentType = "application/protobuf";
 
     public fromBytes<T>(payload: Buffer): T {
-        return UnlockRequest.decode(payload) as T;
+        return this.protoObject.decode(payload) as T;
     }
 
     public toBytes<T>(payload: T): Buffer {
-        return Buffer.from(UnlockRequest.encode(payload as IUnlockRequest).finish());
+        return Buffer.from(this.protoObject.encode(payload).finish());
     }
 }

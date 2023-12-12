@@ -366,6 +366,7 @@ MigrationBackup/
 *.pb-c.*
 
 # Generated TS protobuf type files
+**/generated
 *-pb.js
 *-pb.d.ts
 

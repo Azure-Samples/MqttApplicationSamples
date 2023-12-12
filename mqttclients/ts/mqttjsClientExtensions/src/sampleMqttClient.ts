@@ -2,9 +2,6 @@ import { logger } from './logger';
 import { MqttConnectionSettings } from './mqttConnectionSettings';
 import {
     ErrorWithReasonCode,
-    IConnackPacket,
-    IDisconnectPacket,
-    IPublishPacket,
     MqttClient,
     connect as mqttConnect
 } from 'mqtt';
@@ -37,15 +34,11 @@ export class SampleMqttClient {
 
     public async connectAsync(): Promise<void> {
         try {
-            // Attach MQTT client event handlers
-            // this.mqttClient.on('connect', this.onConnect.bind(this));
-            // this.mqttClient.on('disconnect', this.onDisconnect.bind(this));
-            // this.mqttClient.on('message', this.onMessage.bind(this));
-            // this.mqttClient.on('error', this.onError.bind(this));
-            // this.mqttClient.on('close', this.onClose.bind(this));
-            // this.mqttClient.on('end', this.onEnd.bind(this));
-            // this.mqttClient.on('reconnect', this.onReconnect.bind(this));
-            // this.mqttClient.on('offline', this.onOffline.bind(this));
+            this.mqttClient.on('close', this.onClose.bind(this));
+            this.mqttClient.on('end', this.onEnd.bind(this));
+            this.mqttClient.on('reconnect', this.onReconnect.bind(this));
+            this.mqttClient.on('offline', this.onOffline.bind(this));
+            this.mqttClient.on('error', this.onError.bind(this));
 
             // Connect to MQTT broker
             logger.info({ tags: [ModuleName] }, `Starting connection for clientId: ${this.mqttClient.options.clientId}`);
@@ -73,18 +66,6 @@ export class SampleMqttClient {
         catch (ex) {
             logger.error({ tags: [ModuleName] }, `MQTT client connect error: ${ex.message}`);
         }
-    }
-
-    private onConnect(_packet: IConnackPacket): void {
-        logger.info({ tags: [ModuleName] }, `Connected to MQTT broker: ${this.mqttClient.options.host}:${this.mqttClient.options.port}`);
-    }
-
-    private onDisconnect(_packet: IDisconnectPacket): void {
-        logger.info({ tags: [ModuleName] }, 'Disconnected from MQTT broker');
-    }
-
-    private onMessage(topic: string, payload: Buffer, _packet: IPublishPacket): void {
-        logger.info({ tags: [ModuleName] }, `Received message on topic: ${topic}, with payload: ${payload.toString('utf8')}`);
     }
 
     private onClose(): void {

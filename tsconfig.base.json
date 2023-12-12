@@ -12,7 +12,9 @@
         "sourceMap": true,
         "strict": false,
         "strictNullChecks": true,
-        "noImplicitAny": false
+        "noImplicitAny": false,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
     },
     "compileOnSave": true,
 }

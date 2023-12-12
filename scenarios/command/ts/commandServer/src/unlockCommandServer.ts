@@ -5,19 +5,16 @@ import {
     CommandServer
 } from '@mqttapplicationsamples/mqttjsclientextensions';
 import {
-    IUnlockRequest,
-    IUnlockResponse
-} from '@mqttapplicationsamples/protomessages';
-import {
+    pb,
     ProtobufSerializer
-} from './protobufSerializer';
+} from '@mqttapplicationsamples/protomessages';
 
 export const UnlockCommand = 'unlock';
 export const RequestTopicPattern = 'vehicles/{clientId}/command/{commandName}/request';
 
-export class UnlockCommandServer extends CommandServer<IUnlockRequest, IUnlockResponse>
+export class UnlockCommandServer extends CommandServer<pb.UnlockRequest, pb.UnlockResponse>
 {
     constructor(mqttClient: MqttClient) {
-        super(mqttClient, RequestTopicPattern, UnlockCommand, new ProtobufSerializer());
+        super(mqttClient, RequestTopicPattern, UnlockCommand, new ProtobufSerializer(pb.UnlockRequest));
     }
 }

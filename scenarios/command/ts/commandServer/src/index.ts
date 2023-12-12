@@ -9,9 +9,7 @@ import {
     SampleMqttClient
 } from '@mqttapplicationsamples/mqttjsclientextensions';
 import {
-    IUnlockRequest,
-    IUnlockResponse,
-    UnlockResponse
+    pb
 } from '@mqttapplicationsamples/protomessages';
 import {
     UnlockCommandServer
@@ -27,7 +25,6 @@ programCommands
 const programOptions = programCommands.opts();
 
 const ModuleName = 'SampleApp';
-const VehicleTelemetryPublishIntervalInSeconds = 3;
 
 let sampleApp: SampleApp;
 
@@ -73,10 +70,10 @@ class SampleApp {
         logger.info({ tags: [ModuleName] }, `Mqtt client disconnected with reason: ${packet.reasonCode}`);
     }
 
-    private unlock(unlockRequest: IUnlockRequest): IUnlockResponse {
-        logger.info({ tags: [ModuleName] }, `Received unlock request from ${unlockRequest.requestedFrom}`);
+    private unlock(unlockRequest: pb.UnlockRequest): pb.UnlockResponse {
+        logger.info({ tags: [ModuleName] }, `Handling unlock request from ${unlockRequest.requestedFrom}`);
 
-        return UnlockResponse.create({ succeed: true });
+        return pb.UnlockResponse.create({ succeed: true });
     }
 }
 

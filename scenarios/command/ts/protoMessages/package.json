@@ -4,9 +4,10 @@
     "description": "Protobuf support for mqtt request-response messaging pattern - TypeScript",
     "main": "dist/index.js",
     "scripts": {
-        "build": "npm run build:proto && tsc --build && npm run build:copyproto",
-        "build:proto": "../../../../node_modules/.bin/pbjs -t static-module -w commonjs -o ./src/index-pb.js ./src/unlock_command.proto && ../../../../node_modules/.bin/pbts -o ./src/index-pb.d.ts ./src/index-pb.js",
-        "build:copyproto": "cp ./src/index-pb.js ./dist/index.js && cp ./src/index-pb.d.ts ./dist/index.d.ts",
+        "build": "tsc --build",
+        "clean": "tsc --build --clean",
+        "build:proto": "mkdir -p ./src/generated && pbjs -t static-module -w commonjs -o ./src/generated/command-pb.js ./src/proto/unlock_command.proto && pbts -o ./src/generated/command-pb.d.ts ./src/generated/command-pb.js",
+        "build:copy": "cp ./src/generated/command-pb.d.ts ./dist/generated/command-pb.d.ts",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [
@@ -17,6 +18,7 @@
     "author": "Microsoft Corporation",
     "license": "MIT",
     "dependencies": {
+        "@mqttapplicationsamples/mqttjsclientextensions": "^1.0.0",
         "protobufjs": "^7.2.5"
     },
     "devDependencies": {

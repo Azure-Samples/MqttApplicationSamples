@@ -7,8 +7,7 @@ import {
     GeoJsonPoint,
     MqttConnectionSettings,
     SampleMqttClient,
-    TelemetryMessage,
-    TelemetryConsumer
+    TelemetryMessage
 } from '@mqttapplicationsamples/mqttjsclientextensions';
 import { Command } from 'commander';
 import { PositionTelemetryConsumer } from './positionTelemetryConsumer';
@@ -21,7 +20,6 @@ programCommands
 const programOptions = programCommands.opts();
 
 const ModuleName = 'TelemetryConsumerApp';
-const VehicleTelemetryPublishIntervalInSeconds = 3;
 
 let sampleApp: SampleApp;
 

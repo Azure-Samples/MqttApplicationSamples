@@ -25,8 +25,6 @@ export class CommandServer<T, TResp>
         this.requestTopic = requestTopicPattern.replace('{clientId}', mqttClient.options.clientId ?? '').replace('{commandName}', this.commandName);
 
         this.mqttClient.on('message', async (topic: string, payload: Buffer, packet: IPublishPacket) => {
-            logger.info({ tags: [ModuleName] }, `Message received on topic: ${topic} with mid: ${packet.messageId}`);
-
             if (topic === this.requestTopic) {
                 if (packet.properties?.contentType !== serializer.contentType) {
                     throw new Error(`Invalid content type. Expected :${this.serializer.contentType} Actual :${packet.properties?.contentType}`);
@@ -34,10 +32,11 @@ export class CommandServer<T, TResp>
 
                 const request = this.serializer.fromBytes<T>(payload);
                 const responseTopic = packet.properties.responseTopic ?? '';
-
-                logger.info({ tags: [ModuleName] }, `Sending response on topic: ${responseTopic}`);
+                const requestCorrelationId = packet.properties?.correlationData;
 
                 try {
+                    logger.info({ tags: [ModuleName] }, `Received command request on topic: ${this.requestTopic}, with correlationId: ${requestCorrelationId?.toString()}`);
+
                     const response = this.onCommandReceived(request);
                     const respBytes = this.serializer.toBytes(response);
 
@@ -52,7 +51,7 @@ export class CommandServer<T, TResp>
                         }
                     });
 
-                    logger.info({ tags: [ModuleName] }, `Published success response with mid: ${pubAck?.messageId} on topic: ${responseTopic}`);
+                    logger.info({ tags: [ModuleName] }, `Published success response with mid: ${pubAck?.messageId} on topic: ${responseTopic}, with correlationId: ${requestCorrelationId?.toString()}`);
                 }
                 catch (ex) {
                     const pubAck = await this.mqttClient.publishAsync(responseTopic, Buffer.from(ex.message), {
