@@ -1,7 +1,13 @@
-import * as pb from "./generated/command-pb";
-import { ProtobufSerializer } from "./protobufSerializer";
+import {
+    UnlockRequest,
+    UnlockResponse
+} from './generated/src/proto/unlock_command';
+import { UnlockRequestSerializer } from './unlockRequestSerializer';
+import { UnlockResponseSerializer } from './unlockResponseSerializer';
 
 export {
-    pb,
-    ProtobufSerializer
+    UnlockRequest,
+    UnlockResponse,
+    UnlockRequestSerializer,
+    UnlockResponseSerializer
 };

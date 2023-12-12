@@ -6,8 +6,7 @@
     "scripts": {
         "build": "tsc --build",
         "clean": "tsc --build --clean",
-        "build:proto": "mkdir -p ./src/generated && pbjs -t static-module -w commonjs -o ./src/generated/command-pb.js ./src/proto/unlock_command.proto && pbts -o ./src/generated/command-pb.d.ts ./src/generated/command-pb.js",
-        "build:copy": "cp ./src/generated/command-pb.d.ts ./dist/generated/command-pb.d.ts",
+        "build:proto": "mkdir -p ./src/generated && protoc --plugin=../../../../node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./src/generated ./src/proto/unlock_command.proto",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [
@@ -19,9 +18,6 @@
     "license": "MIT",
     "dependencies": {
         "@mqttapplicationsamples/mqttjsclientextensions": "^1.0.0",
-        "protobufjs": "^7.2.5"
-    },
-    "devDependencies": {
-        "protobufjs-cli": "^1.1.2"
+        "ts-proto": "^1.165.1"
     }
 }

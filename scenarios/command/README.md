@@ -288,7 +288,7 @@ To build the TypeScript sample run:
 
 ```bash
 # from folder scenarios/command
-npm run build:proto --prefix ./ts/protoMessages && npm run build --prefix ./ts/protoMessages && npm run build:copy --prefix ./ts/protoMessages && npm run build --prefix ./ts/commandServer && npm run build --prefix ./ts/commandClient 
+npm run build:proto --prefix ./ts/protoMessages && npm run build --prefix ./ts/protoMessages && npm run build --prefix ./ts/commandServer && npm run build --prefix ./ts/commandClient 
 ```
 
 To run the dotnet sample execute each line below in a different shell/terminal:

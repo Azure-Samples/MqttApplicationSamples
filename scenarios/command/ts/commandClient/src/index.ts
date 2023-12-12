@@ -8,12 +8,8 @@ import {
     MqttConnectionSettings,
     SampleMqttClient
 } from '@mqttapplicationsamples/mqttjsclientextensions';
-import {
-    pb
-} from '@mqttapplicationsamples/protomessages';
-import {
-    UnlockCommandClient
-} from './unlockCommandClient';
+import { UnlockRequest } from '@mqttapplicationsamples/protomessages';
+import { UnlockCommandClient } from './unlockCommandClient';
 
 // Parse command line arguments to get the environment file path
 const programCommands = new Command();
@@ -57,11 +53,8 @@ class SampleApp {
             try {
                 logger.info({ tags: [ModuleName] }, `Invoking unlock command: ${new Date().toISOString()}`);
 
-                const unlockRequest = pb.UnlockRequest.create({
-                    when: pb.google.protobuf.Timestamp.create({
-                        seconds: Date.now() / 1000,
-                        nanos: 0
-                    }),
+                const unlockRequest = UnlockRequest.create({
+                    when: new Date(),
                     requestedFrom: this.sampleMqttClient.mqttClient.options.clientId
                 });
 

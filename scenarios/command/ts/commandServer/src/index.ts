@@ -9,11 +9,10 @@ import {
     SampleMqttClient
 } from '@mqttapplicationsamples/mqttjsclientextensions';
 import {
-    pb
+    UnlockRequest,
+    UnlockResponse
 } from '@mqttapplicationsamples/protomessages';
-import {
-    UnlockCommandServer
-} from './unlockCommandServer';
+import { UnlockCommandServer } from './unlockCommandServer';
 
 // Parse command line arguments to get the environment file path
 const programCommands = new Command();
@@ -70,10 +69,10 @@ class SampleApp {
         logger.info({ tags: [ModuleName] }, `Mqtt client disconnected with reason: ${packet.reasonCode}`);
     }
 
-    private unlock(unlockRequest: pb.UnlockRequest): pb.UnlockResponse {
+    private unlock(unlockRequest: UnlockRequest): UnlockResponse {
         logger.info({ tags: [ModuleName] }, `Handling unlock request from ${unlockRequest.requestedFrom}`);
 
-        return pb.UnlockResponse.create({ succeed: true });
+        return UnlockResponse.create({ succeed: true });
     }
 }
 

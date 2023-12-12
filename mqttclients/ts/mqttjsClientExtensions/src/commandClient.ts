@@ -19,21 +19,23 @@ export class CommandClient<T, TResp>
     private requestTopic: string;
     private responseTopicPattern: string;
     private responseTopic: string;
-    private serializer: IMessageSerializer;
+    private requestSerializer: IMessageSerializer;
+    private responseSerializer: IMessageSerializer;
     private correlationId: string;
     private deferredPromise: DeferredPromise<TResp>;
 
-    constructor(mqttClient: MqttClient, requestTopicPattern: string, responseTopicPattern: string, commandName: string, serializer: IMessageSerializer) {
+    constructor(mqttClient: MqttClient, requestTopicPattern: string, responseTopicPattern: string, commandName: string, requestSerializer: IMessageSerializer, responseSerializer: IMessageSerializer) {
         this.mqttClient = mqttClient;
         this.commandName = commandName;
         this.requestTopicPattern = requestTopicPattern;
         this.responseTopicPattern = responseTopicPattern;
-        this.serializer = serializer;
+        this.requestSerializer = requestSerializer;
+        this.responseSerializer = responseSerializer;
 
         this.mqttClient.on('message', (topic: string, payload: Buffer, packet: IPublishPacket) => {
             if (topic === this.responseTopic) {
-                if (packet.properties?.contentType !== serializer.contentType) {
-                    logger.error({ tags: [ModuleName] }, `Message received on topic ${topic} but with invalid content type. Expected ${this.serializer.contentType} - received ${packet.properties?.contentType}`);
+                if (packet.properties?.contentType !== responseSerializer.contentType) {
+                    logger.error({ tags: [ModuleName] }, `Message received on topic ${topic} but with invalid content type. Expected ${this.responseSerializer.contentType} - received ${packet.properties?.contentType}`);
                 }
 
                 const responseCorrelationId = (packet.properties?.correlationData ?? '').toString();
@@ -44,7 +46,7 @@ export class CommandClient<T, TResp>
 
                 logger.info({ tags: [ModuleName] }, `Message received on topic: ${topic} with correlationId: ${responseCorrelationId}`);
 
-                const response = this.serializer.fromBytes<TResp>(payload);
+                const response = this.responseSerializer.fromBytes<TResp>(payload);
 
                 return this.deferredPromise.resolve(response);
             }
@@ -61,11 +63,11 @@ export class CommandClient<T, TResp>
             qos: 1,
         });
 
-        const respBytes = this.serializer.toBytes(request);
-        const pubAck = await this.mqttClient.publishAsync(this.requestTopic, respBytes, {
+        const requestBytes = this.requestSerializer.toBytes(request);
+        const pubAck = await this.mqttClient.publishAsync(this.requestTopic, requestBytes, {
             qos: 1,
             properties: {
-                contentType: this.serializer.contentType,
+                contentType: this.requestSerializer.contentType,
                 correlationData: Buffer.from(this.correlationId),
                 responseTopic: this.responseTopic,
                 userProperties: {
