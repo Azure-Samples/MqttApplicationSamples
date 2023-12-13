@@ -98,7 +98,9 @@ def create_mqtt_client(client_id, connection_settings):
             password=connection_settings['MQTT_PASSWORD'] if 'MQTT_PASSWORD' in connection_settings else None
         )
     if connection_settings['MQTT_USE_TLS']:
-        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
+        context.maximum_version = ssl.TLSVersion.TLSv1_3
 
         if connection_settings['MQTT_CERT_FILE']:
             context.load_cert_chain(

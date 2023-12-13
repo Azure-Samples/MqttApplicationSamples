@@ -2,8 +2,7 @@
 import sys
 from typing_extensions import Required
 from typing_extensions import TypedDict
-
-from typing import Optional, Final
+from typing import Optional, Final, List
 import dotenv
 import os
 
@@ -23,7 +22,7 @@ class ConnectionSettings(TypedDict, total=False):
     MQTT_KEY_FILE_PASSWORD: str
 
 
-mqtt_setting_names: Final[list[str]] = [
+mqtt_setting_names: Final[List[str]] = [
     'MQTT_HOST_NAME',
     'MQTT_TCP_PORT',
     'MQTT_USE_TLS',
