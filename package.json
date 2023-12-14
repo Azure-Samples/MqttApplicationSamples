@@ -24,8 +24,7 @@
         "scenarios/telemetry/ts/telemetryconsumer",
         "scenarios/command/ts/protoMessages",
         "scenarios/command/ts/commandServer",
-        "scenarios/command/ts/commandClient",
-        "scenarios/alert/ts/alert"
+        "scenarios/command/ts/commandClient"
     ],
     "dependencies": {
         "commander": "^11.1.0",

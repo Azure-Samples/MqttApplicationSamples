@@ -276,14 +276,6 @@ python python/command_invoker.py --env-file=mobile-app.env
 
 ### TypeScript
 
-<!-- To generate the TypeScript files to handle the protobuf payload, install [protoc](https://grpc.io/docs/protoc-installation/) compiler. The TypeScript plugin used to generate the types should already be installed from the initial setup. Note that you only need these to generate the files.
-
-Then, to generate the files, run:
-```bash
-# from the root folder
-protoc --plugin="./node_modules/.bin/protoc-gen-ts" --ts_opt=esModuleInterop=true --ts_out="." "./scenarios/command/ts/commandServer/proto_messages/unlock_command.proto"
-```
- -->
 To build the TypeScript sample run:
 
 ```bash
@@ -291,7 +283,7 @@ To build the TypeScript sample run:
 npm run build:proto --prefix ./ts/protoMessages && npm run build --prefix ./ts/protoMessages && npm run build --prefix ./ts/commandServer && npm run build --prefix ./ts/commandClient 
 ```
 
-To run the dotnet sample execute each line below in a different shell/terminal:
+To run the TypeScript sample execute each line below in a different shell/terminal:
 ```bash
 # from folder scenarios/command
 node ./ts/commandServer/dist/index.js --env-file vehicle03.env

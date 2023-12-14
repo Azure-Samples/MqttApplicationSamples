@@ -48,8 +48,6 @@ public abstract class CommandServer<T, TResp>
                         .WithUserProperty("Status", 200.ToString())
                         .WithCorrelationData(m.ApplicationMessage.CorrelationData)
                         .Build());
-
-                    string status = "test";
                 }
                 catch (Exception ex)
                 {

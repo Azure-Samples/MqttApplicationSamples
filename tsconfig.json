@@ -23,9 +23,6 @@
         },
         {
             "path": "./scenarios/command/ts/commandClient"
-        },
-        {
-            "path": "./scenarios/alert/ts/alert"
         }
     ]
 }
