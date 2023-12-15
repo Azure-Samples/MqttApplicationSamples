@@ -190,6 +190,20 @@ The TypeScript samples are built using [TypeScript ESLint](https://typescript-es
 
 If running a sample that uses protobuf - currently these are the Command Samples. Note that you'll need the protobuf compiler if you are generating code for new proto files. The TypeScript samples use [protoc](https://grpc.io/docs/protoc-installation/) for the compiler and [ts-proto](https://www.npmjs.com/package/ts-proto) for the TypeScript types.
 
+Install Protoc on Linux, using apt or apt-get:
+```bash
+apt install -y protobuf-compiler
+protoc --version  # Ensure compiler version is 3+
+```
+
+Install Protoc on MacOS, using Homebrew:
+```bash
+brew install protobuf
+protoc --version  # Ensure compiler version is 3+
+```
+
+To install the latest up-to-date Protoc binaries directly see [the instructions on the gRPC site](https://grpc.io/docs/protoc-installation/).
+
 To setup the initial project references and build the dependencies run the following commands from the main repository root directory:
 ```bash
 npm i
