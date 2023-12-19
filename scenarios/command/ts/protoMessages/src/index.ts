@@ -1,11 +1,13 @@
+import { Timestamp } from './generated/google/protobuf/timestamp';
 import {
     UnlockRequest,
     UnlockResponse
-} from './generated/src/proto/unlock_command';
+} from './generated/unlock_command';
 import { UnlockRequestSerializer } from './unlockRequestSerializer';
 import { UnlockResponseSerializer } from './unlockResponseSerializer';
 
 export {
+    Timestamp,
     UnlockRequest,
     UnlockResponse,
     UnlockRequestSerializer,

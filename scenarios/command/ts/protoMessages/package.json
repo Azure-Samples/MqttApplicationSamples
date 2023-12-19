@@ -4,9 +4,11 @@
     "description": "Protobuf support for mqtt request-response messaging pattern - TypeScript",
     "main": "dist/index.js",
     "scripts": {
-        "build": "tsc --build",
+        "build": "tsc --build && npm run build:copyproto",
         "clean": "tsc --build --clean",
-        "build:proto": "mkdir -p ./src/generated && protoc --plugin=../../../../node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./src/generated ./src/proto/unlock_command.proto",
+        "build:protojs": "mkdir -p ./src/generated && ../../../../node_modules/.bin/pbjs -t static-module -w commonjs --no-service --force-message -o ./src/generated/unlockCommand.js ./src/proto/unlock_command.proto",
+        "build:protots": "../../../../node_modules/.bin/pbts -o ./src/generated/unlockCommand.d.ts ./src/generated/unlockCommand.js",
+        "build:copyproto": "cp -r ./src/generated/ ./dist/generated/",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [
@@ -18,6 +20,6 @@
     "license": "MIT",
     "dependencies": {
         "@mqttapplicationsamples/mqttjsclientextensions": "^1.0.0",
-        "ts-proto": "^1.165.1"
+        "@protobuf-ts/plugin": "^2.9.3"
     }
 }
