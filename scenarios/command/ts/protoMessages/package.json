@@ -4,11 +4,9 @@
     "description": "Protobuf support for mqtt request-response messaging pattern - TypeScript",
     "main": "dist/index.js",
     "scripts": {
-        "build": "tsc --build && npm run build:copyproto",
+        "build": "npm run build:proto && tsc --build",
         "clean": "tsc --build --clean",
-        "build:protojs": "mkdir -p ./src/generated && ../../../../node_modules/.bin/pbjs -t static-module -w commonjs --no-service --force-message -o ./src/generated/unlockCommand.js ./src/proto/unlock_command.proto",
-        "build:protots": "../../../../node_modules/.bin/pbts -o ./src/generated/unlockCommand.d.ts ./src/generated/unlockCommand.js",
-        "build:copyproto": "cp -r ./src/generated/ ./dist/generated/",
+        "build:proto": "mkdir -p ./src/generated && ../../../../node_modules/.bin/protoc --plugin=../../../../node_modules/.bin/protoc-gen-ts --ts_out ./src/generated --proto_path ./src/proto ./src/proto/unlock_command.proto",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [
