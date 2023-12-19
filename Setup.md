@@ -188,52 +188,10 @@ TypeScript samples have been tested with NodeJS version 18.16.0 and NPM version 
 
 The TypeScript samples are built using [TypeScript ESLint](https://typescript-eslint.io/blog/announcing-typescript-eslint-v6/) for Visual Studio Code and [TypeScript project references](https://www.typescriptlang.org/docs/handbook/project-references.html). This allows abstracted client and utility classes to be separate dependent projects of the main example scenario projects.
 
-If running a sample that uses protobuf - currently these are the Command Samples. Note that you'll need the protobuf compiler if you are generating code for new proto files. The TypeScript samples use [protoc](https://grpc.io/docs/protoc-installation/) for the compiler and [ts-proto](https://www.npmjs.com/package/ts-proto) for the TypeScript types.
-
-Install Protoc on Linux, using apt or apt-get:
-```bash
-apt install -y protobuf-compiler
-protoc --version  # Ensure compiler version is 3+
-```
-
-Install Protoc on MacOS, using Homebrew:
-```bash
-brew install protobuf
-protoc --version  # Ensure compiler version is 3+
-```
-
-To install the latest up-to-date Protoc binaries directly see [the instructions on the gRPC site](https://grpc.io/docs/protoc-installation/).
-
 To setup the initial project references and build the dependencies run the following commands from the main repository root directory:
 ```bash
 npm i
 npm run build
 ```
 
-To setup each sample cd into the TypeScript scenario directory (e.g. ../getting_started/ts) and install all of the dependencies by running:
-```bash
-npm i
-```
-Each of the samples can be run and debugged either from [Visual Studio Code](https://code.visualstudio.com/), or from the command line.
-
-To run the sample from Visual Studio Code, select the Run and Debug option from the left pane then select one of the "TypeScript ..." configurations from the Run and Debug dropdown menu. Then just use F5 or click on the green play button.
-
-To run the sample from the command line, cd into the TypeScript scenario directory (e.g. ../getting_started/ts and run:
-```bash
-node ./dist/index.js
-```
-
-To see detailed MQTT.js debug logging configure the DEBUG environment variable before running the sample.
-
-Using Visual Studio Code, in the /.vscode/launch.json file edit the desired TypeScript configuration and add the environment variable:
-```bash
-"env": {
-    "DEBUG": "mqttjs*"
-},
-
-```
-
-Using the command line:
-```bash
-export DEBUG=mqttjs* && node ./dist/index.js
-```
+Each of the samples can be run and debugged either from [Visual Studio Code](https://code.visualstudio.com/), or from the command line. See the README file in each scenario for specific instructions.

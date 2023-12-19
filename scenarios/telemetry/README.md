@@ -284,12 +284,9 @@ python python/telemetry_producer.py --env-file="vehicle02.env"
 python python/telemetry_consumer.py --env-file=map-app.env
 ```
 ### TypeScript
-To setup the sample cd into the TypeScript scenario directory (e.g. ../telemetry/ts) and install all of the dependencies by running:
-```bash
-npm i
-```
-
 To build the TypeScript sample run:
+>Note: The scenario should already be built from the initial `npm i` command at the root.
+
 ```bash
 # from folder scenarios/telemetry
 npm run build --prefix ./ts/telemetryProducer && npm run build --prefix ./ts/telemetryConsumer

@@ -226,11 +226,9 @@ Run the sample using settings from an envfile
  go/bin/getting_started .env
 ```
 ### TypeScript
-To setup the sample cd into the TypeScript scenario directory (e.g. ../getting_started/ts) and install all of the dependencies by running:
-```bash
-npm i
-```
 To build the TypeScript sample run:
+>Note: The scenario should already be built from the initial `npm i` command at the root.
+
 ```bash
 # from folder scenarios/getting_started
 npm run build --prefix ./ts/gettingStarted

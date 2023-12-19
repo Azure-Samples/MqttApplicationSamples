@@ -277,6 +277,7 @@ python python/command_invoker.py --env-file=mobile-app.env
 ### TypeScript
 
 To build the TypeScript sample run:
+>Note: The scenario should already be built from the initial `npm i` command at the root.
 
 ```bash
 # from folder scenarios/command
