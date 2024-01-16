@@ -10,11 +10,35 @@ To keep the scenario simple, a single client called "sample_client" publishes an
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
-|sample_client|publisher|publish|sample/topic1|
-|sample_client|subscriber|subscribe|sample/+|
+|sample_client|publisher|publish|jwt/topic1|
+|sample_client|subscriber|subscribe|jwt/+|
 
 ## Prerequisites
 This sample involves configuring Event Grid per the specifications in [getting_started](../getting_started). If that sample has not already been set up and run, it should be done before moving onto this one.
+
+## Create topic spaces and permission bindings
+Run the commands to create the "jwt" topic space, and the two permission bindings that provide publish and subscribe access to $all client group on the samples topic space.
+
+```bash
+# from folder scenarios/getting_started
+source ../../az.env
+
+az resource create --id "$res_id/topicSpaces/jwt" --properties '{
+    "topicTemplates": ["sample/#"]
+}'
+
+az resource create --id "$res_id/permissionBindings/jwtPub" --properties '{
+    "clientGroupName":"$all",
+    "topicSpaceName":"jwt",
+    "permission":"Publisher"
+}'
+
+az resource create --id "$res_id/permissionBindings/jwtSub" --properties '{
+    "clientGroupName":"$all",
+    "topicSpaceName":"jwt",
+    "permission":"Subscriber"
+}'
+```
 
 ## Create the .env file with connection details
 
