@@ -16,6 +16,22 @@ To keep the scenario simple, a single client called "sample_client" publishes an
 ## Prerequisites
 This sample involves configuring Event Grid per the specifications in [getting_started](../getting_started). If that sample has not already been set up and run, it should be done before moving onto this one.
 
+## Create the .env file with connection details
+
+The required `.env` files can be configured manually, we provide the script below as a reference to create those files, as they are ignored from git.
+
+```bash
+# from folder scenarios/getting_started
+source ../../az.env
+host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+
+echo "MQTT_HOST_NAME=$host_name" > .env
+echo "MQTT_USERNAME=sample_client" >> .env
+echo "MQTT_CLIENT_ID=sample_client" >> .env
+echo "MQTT_CERT_FILE=sample_client.pem" >> .env
+echo "MQTT_KEY_FILE=sample_client.key" >> .env
+```
+
 ## 🔒 Create an Identity in Microsoft Entra ID
 
 Event Grid namespaces supports JWT authentication for Managed Identities and Service principals only:
@@ -38,7 +54,7 @@ take note of the appId, password and tenant values returned from the previous co
 
 ## Assign RBAC permissions
 
-In Azure EventGrid Namespaces, assign permissions to the Microsoft Entra ID identity using the roles "Event Grid Topic Spaces Publisher/Subscriber"
+In Azure EventGrid Namespaces, assign permissions to the Microsoft Entra ID identity using the  built-in roles `Event Grid Topic Spaces Publisher/Subscriber`.
 
 ```bash
 # from the root folder
@@ -55,6 +71,13 @@ az role assignment create \
   --scope $res_id
 ```
 
+By assigning these roles to an Azure subscription, it allows that subscription to communicate with any Topic Space within an instance of Event Grid owned by the specified Service Principal (e.g., if these roles are assigned at a subscription level, any Topic Space of an Event Grid under the given subscription could be subscribed/published to).
+
+An alternative to using Azure CLI is the Azure Portal:
+1. Locate the resource group that contains the desired instance of Event Grid.
+2. Navigate to `Access control (IAM)` blade.
+3. Under `Role Assignments`, click `Add`, and assign `Event Grid Topic Spaces Publisher/Subscriber` roles.
+4. Assign the role to the desired Azure account, and click `Review + Assign`.
 
 ## 📐 Configure Event Grid Namespaces (Skip if [getting_started](../getting_started) has already been properly configured)
 
