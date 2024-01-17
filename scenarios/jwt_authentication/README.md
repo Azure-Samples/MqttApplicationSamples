@@ -20,7 +20,7 @@ This sample involves configuring Event Grid per the specifications in [getting_s
 Run the commands to create the "jwt" topic space, and the two permission bindings that provide publish and subscribe access to $all client group on the samples topic space.
 
 ```bash
-# from folder scenarios/getting_started
+# from folder scenarios/jwt_authentication
 source ../../az.env
 
 az resource create --id "$res_id/topicSpaces/jwt" --properties '{
@@ -45,7 +45,7 @@ az resource create --id "$res_id/permissionBindings/jwtSub" --properties '{
 The required `.env` files can be configured manually, we provide the script below as a reference to create those files, as they are ignored from git.
 
 ```bash
-# from folder scenarios/getting_started
+# from folder scenarios/jwt_authentication
 source ../../az.env
 host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
 
