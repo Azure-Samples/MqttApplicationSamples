@@ -73,6 +73,9 @@ host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfig
 echo "MQTT_HOST_NAME=$host_name" > .env
 echo "MQTT_USERNAME=sample_client" >> .env
 echo "MQTT_CLIENT_ID=sample_client" >> .env
+echo "AZURE_CLIENT_ID=<your client Id>" >> .env
+echo "AZURE_TENANT_ID=<your tennant Id>" >> .env
+echo "AZURE_CLIENT_SECRET<your client secret>" >> .env
 ```
 
 ## 🔒 Create an Identity in Microsoft Entra ID
