@@ -4,7 +4,7 @@
 
 This scenario showcases how to authenticate to Azure Event Grid via JWT authentication using MQTT 5. This scenario is identical to `getting_started` in functionality. 
 
-JWT authentication is documented in [Microsoft Entra JWT authentication and Azure RBAC authorization to publish or subscribe MQTT messages](https://learn.microsoft.com/en-us/azure/event-grid/mqtt-client-microsoft-entra-token-and-rbac) from Event Grid documentation.
+JWT authentication is documented in [Microsoft Entra JWT authentication and Azure RBAC authorization to publish or subscribe MQTT messages](https://learn.microsoft.com/azure/event-grid/mqtt-client-microsoft-entra-token-and-rbac) from Event Grid documentation.
 
 To keep the scenario simple, a single client called "sample_client" publishes and subscribes to MQTT messages on topics shown in the table.  
 
@@ -14,7 +14,28 @@ To keep the scenario simple, a single client called "sample_client" publishes an
 |sample_client|subscriber|subscribe|jwt/+|
 
 ## Prerequisites
-This sample involves configuring Event Grid per the specifications in [getting_started](../getting_started). If that sample has not already been set up and run, it should be done before moving onto this one.
+This sample involves configuring Event Grid per the specifications in [setup](../../Setup.md).
+
+## Create the Client
+
+We will use the SubjectMatchesAuthenticationName validation scheme for `sample_client` to create the client from the portal or with the script. Note that if this has already been done via [getting_started](../getting_started/README.md), this step can be skipped and you can move onto `Create topic spaces and permission bindings`.
+
+```bash
+# from folder scenarios/jwt_authentication
+source ../../az.env
+
+az resource create --id "$res_id/clients/sample_client" --properties '{
+    "authenticationName": "sample_client",
+    "state": "Enabled",
+    "clientCertificateAuthentication": {
+        "validationScheme": "SubjectMatchesAuthenticationName"
+    },
+    "attributes": {
+        "type": "sample-client"
+    },
+    "description": "This is a test publisher client"
+}'
+```
 
 ## Create topic spaces and permission bindings
 Run the commands to create the "jwt" topic space, and the two permission bindings that provide publish and subscribe access to $all client group on the samples topic space.
@@ -24,7 +45,7 @@ Run the commands to create the "jwt" topic space, and the two permission binding
 source ../../az.env
 
 az resource create --id "$res_id/topicSpaces/jwt" --properties '{
-    "topicTemplates": ["sample/#"]
+    "topicTemplates": ["jwt/#"]
 }'
 
 az resource create --id "$res_id/permissionBindings/jwtPub" --properties '{
@@ -79,8 +100,8 @@ take note of the appId, password and tenant values returned from the previous co
 In Azure EventGrid Namespaces, assign permissions to the Microsoft Entra ID identity using the  built-in roles `Event Grid Topic Spaces Publisher/Subscriber`.
 
 ```bash
-# from the root folder
-source az.env
+# from folder scenarios/jwt_authentication
+source ../../az.env
 
 az role assignment create \
   --assignee $spId \
