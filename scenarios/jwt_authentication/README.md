@@ -14,30 +14,9 @@ To keep the scenario simple, a single client called "sample_client" publishes an
 |sample_client|subscriber|subscribe|jwt/+|
 
 ## Prerequisites
-This sample involves configuring Event Grid per the specifications in [setup](../../Setup.md).
+This sample involves configuring Event Grid per the specifications in [setup](../../Setup.md), but does not require CA certificates to be configured.
 
-## Create the Client
-
-We will use the SubjectMatchesAuthenticationName validation scheme for `sample_client` to create the client from the portal or with the script. Note that if this has already been done via [getting_started](../getting_started/README.md), this step can be skipped and you can move onto `Create topic spaces and permission bindings`.
-
-```bash
-# from folder scenarios/jwt_authentication
-source ../../az.env
-
-az resource create --id "$res_id/clients/sample_client" --properties '{
-    "authenticationName": "sample_client",
-    "state": "Enabled",
-    "clientCertificateAuthentication": {
-        "validationScheme": "SubjectMatchesAuthenticationName"
-    },
-    "attributes": {
-        "type": "sample-client"
-    },
-    "description": "This is a test publisher client"
-}'
-```
-
-## Create topic spaces and permission bindings
+## Create a topic space
 Run the commands to create the "jwt" topic space, and the two permission bindings that provide publish and subscribe access to $all client group on the samples topic space.
 
 ```bash
@@ -46,18 +25,6 @@ source ../../az.env
 
 az resource create --id "$res_id/topicSpaces/jwt" --properties '{
     "topicTemplates": ["jwt/#"]
-}'
-
-az resource create --id "$res_id/permissionBindings/jwtPub" --properties '{
-    "clientGroupName":"$all",
-    "topicSpaceName":"jwt",
-    "permission":"Publisher"
-}'
-
-az resource create --id "$res_id/permissionBindings/jwtSub" --properties '{
-    "clientGroupName":"$all",
-    "topicSpaceName":"jwt",
-    "permission":"Subscriber"
 }'
 ```
 
