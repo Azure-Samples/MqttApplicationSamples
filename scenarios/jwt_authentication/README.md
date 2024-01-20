@@ -92,18 +92,6 @@ An alternative to using Azure CLI is the Azure Portal:
 3. Under `Role Assignments`, click `Add`, and assign `Event Grid Topic Spaces Publisher/Subscriber` roles.
 4. Assign the role to the desired Azure account, and click `Review + Assign`.
 
-## 📐 Configure Event Grid Namespaces (Skip if [getting_started](../getting_started) has already been properly configured)
-
-Ensure to create an Event Grid namespace by following the steps in [setup](../setup).  Event Grid namespace requires registering the client, and the topic spaces to authorize the publish/subscribe permissions.
-
-### Create the Client (Skip if [getting_started](../getting_started) has already been properly configured)
-
-We will use the SubjectMatchesAuthenticationName validation scheme for `sample_client`. Instructions for how to do this can be found in [getting_started](../getting_started). If this has already been done once, it does not have to be done again (unless using a different Azure account).
-
-### Create topic spaces and permission bindings
-
-Run the commands to create the "samples" topic space, and the two permission bindings that provide publish and subscribe access to $all client group on the samples topic space. As for above, the instructions to do this are part of [getting_started](../getting_started) and do not have to be repeated if they have already been done in the Azure account being used to run this sample.
-
 ## :game_die: Run the Sample
 
 All samples are designed to be executed from the root scenario folder.
