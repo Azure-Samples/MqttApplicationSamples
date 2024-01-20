@@ -68,6 +68,7 @@ Follow the instructions in the [Prerequisites](#magic_wand-prerequisites) to con
 | Scenario | Description | dotnet | C | python | go |
 | -------- | ------------|--------|---|------- | -- |
 | [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| &check;| &check;| &check;| &check; |
+| [JWT Authentication](./scenarios/jwt_authentication/)  | This is a quick start scenario that authenticates to Azure Event Grid using Json Web Tokens (JWT) |  &check;| soon| soon| soon |
 | [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | &check;| &check;| &check;| soon | 
 | [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | &check;| &check; | soon | soon |
 | [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  |  &check;| soon| soon| soon |

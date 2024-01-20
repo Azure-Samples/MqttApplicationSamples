@@ -4,17 +4,46 @@
 
 This scenario showcases how to authenticate to Azure Event Grid via JWT authentication using MQTT 5. This scenario is identical to `getting_started` in functionality. 
 
-JWT authentication is documented in [Microsoft Entra JWT authentication and Azure RBAC authorization to publish or subscribe MQTT messages](https://learn.microsoft.com/en-us/azure/event-grid/mqtt-client-microsoft-entra-token-and-rbac) from Event Grid documentation.
+JWT authentication is documented in [Microsoft Entra JWT authentication and Azure RBAC authorization to publish or subscribe MQTT messages](https://learn.microsoft.com/azure/event-grid/mqtt-client-microsoft-entra-token-and-rbac) from Event Grid documentation.
 
 To keep the scenario simple, a single client called "sample_client" publishes and subscribes to MQTT messages on topics shown in the table.  
 
 |Client|Role|Operation|Topic/Topic Filter|
 |------|----|---------|------------------|
-|sample_client|publisher|publish|sample/topic1|
-|sample_client|subscriber|subscribe|sample/+|
+|sample_client|publisher|publish|jwt/topic1|
+|sample_client|subscriber|subscribe|jwt/+|
 
 ## Prerequisites
-This sample involves configuring Event Grid per the specifications in [getting_started](../getting_started). If that sample has not already been set up and run, it should be done before moving onto this one.
+This sample involves configuring Event Grid per the specifications in [setup](../../Setup.md), but does not require CA certificates to be configured.
+
+## Create a topic space
+Run the commands to create the "jwt" topic space, and the two permission bindings that provide publish and subscribe access to $all client group on the samples topic space.
+
+```bash
+# from folder scenarios/jwt_authentication
+source ../../az.env
+
+az resource create --id "$res_id/topicSpaces/jwt" --properties '{
+    "topicTemplates": ["jwt/#"]
+}'
+```
+
+## Create the .env file with connection details
+
+The required `.env` files can be configured manually, we provide the script below as a reference to create those files, as they are ignored from git.
+
+```bash
+# from folder scenarios/jwt_authentication
+source ../../az.env
+host_name=$(az resource show --ids $res_id --query "properties.topicSpacesConfiguration.hostname" -o tsv)
+
+echo "MQTT_HOST_NAME=$host_name" > .env
+echo "MQTT_USERNAME=sample_client" >> .env
+echo "MQTT_CLIENT_ID=sample_client" >> .env
+echo "AZURE_CLIENT_ID=<your client Id>" >> .env
+echo "AZURE_TENANT_ID=<your tennant Id>" >> .env
+echo "AZURE_CLIENT_SECRET<your client secret>" >> .env
+```
 
 ## 🔒 Create an Identity in Microsoft Entra ID
 
@@ -38,11 +67,11 @@ take note of the appId, password and tenant values returned from the previous co
 
 ## Assign RBAC permissions
 
-In Azure EventGrid Namespaces, assign permissions to the Microsoft Entra ID identity using the roles "Event Grid Topic Spaces Publisher/Subscriber"
+In Azure EventGrid Namespaces, assign permissions to the Microsoft Entra ID identity using the  built-in roles `Event Grid Topic Spaces Publisher/Subscriber`.
 
 ```bash
-# from the root folder
-source az.env
+# from folder scenarios/jwt_authentication
+source ../../az.env
 
 az role assignment create \
   --assignee $spId \
@@ -55,6 +84,13 @@ az role assignment create \
   --scope $res_id
 ```
 
+By assigning these roles to an Azure subscription, it allows that subscription to communicate with any Topic Space within an instance of Event Grid owned by the specified Service Principal (e.g., if these roles are assigned at a subscription level, any Topic Space of an Event Grid under the given subscription could be subscribed/published to).
+
+An alternative to using Azure CLI is the Azure Portal:
+1. Locate the resource group that contains the desired instance of Event Grid.
+2. Navigate to `Access control (IAM)` blade.
+3. Under `Role Assignments`, click `Add`, and assign `Event Grid Topic Spaces Publisher/Subscriber` roles.
+4. Assign the role to the desired Azure account, and click `Review + Assign`.
 
 ## 📐 Configure Event Grid Namespaces (Skip if [getting_started](../getting_started) has already been properly configured)
 

@@ -20,7 +20,7 @@ Console.WriteLine($"Client Connected: {mqttClient.IsConnected} with CONNACK: {co
 mqttClient.ApplicationMessageReceivedAsync += m => Console.Out.WriteLineAsync(
    $"Received message on topic: '{m.ApplicationMessage.Topic}' with content: {m.ApplicationMessage.ConvertPayloadToString()}");
 
-MqttClientSubscribeResult suback = await mqttClient.SubscribeAsync("sample/+", MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
+MqttClientSubscribeResult suback = await mqttClient.SubscribeAsync("jwt/+", MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
 suback.Items.ToList().ForEach(s => Console.WriteLine($"subscribed to '{s.TopicFilter.Topic}'  with '{s.ResultCode}'"));
 
 
@@ -29,7 +29,7 @@ int counter = 0;
 while (true)
 {
     Console.WriteLine($"  Sending Message {counter}");
-    MqttClientPublishResult puback = await mqttClient.PublishStringAsync("sample/topic1", "hello world!" + counter++, MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
+    MqttClientPublishResult puback = await mqttClient.PublishStringAsync("jwt/topic1", "hello world!" + counter++, MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
     await Task.Delay(10000);
 }    
 
