@@ -1,0 +1,47 @@
+apiVersion: mq.iotoperations.azure.com/v1beta1
+kind: BrokerAuthentication 
+metadata: 
+  name: "x509-auth-only" 
+spec: 
+  listenerRef: 
+    - "listener8883" 
+  authenticationMethods: 
+    - x509: 
+        trustedClientCaCert: client-ca
+---
+apiVersion: mq.iotoperations.azure.com/v1beta1
+kind: BrokerListener
+metadata:
+  name: listener8883
+  namespace: default
+spec:
+  authenticationEnabled: true
+  authorizationEnabled: false
+  brokerRef: broker
+  serviceType: loadBalancer
+  serviceName: mqtts-iotmq-endpoint
+  port: 8883
+  tls:
+    manual:
+      secretName: localhost-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iotmq-public
+spec:
+  type: LoadBalancer
+  ports:
+  - name: mqtt1
+    port: 1883
+    targetPort: 1883
+  - name: mqtts1
+    port: 8883
+    targetPort: 8883
+  selector:
+    app.kubernetes.io/instance: broker
+    app.kubernetes.io/managed-by: dmqtt-operator
+    app.kubernetes.io/name: dmqtt
+    app: broker
+    tier: frontend
+      
