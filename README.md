@@ -40,7 +40,7 @@ The instructions are provided for the following MQTT Brokers:
         - Use a Linux environment as the samples are optimized to run in Linux.
             - To install and run Linux on Windows, run `wsl --install -d Ubuntu`. After installation is complete, you can run `wsl` to start running commands on your Ubuntu subsystem whenever you open a new terminal window. [Learn more](https://learn.microsoft.com/en-us/windows/wsl/)
             - **Note:** To run in native Windows, you must adapt the scripts to use Windows paths.
-        - Clone this repository to any directory in your Linux environment: `git clone https://github.com/Azure/MQTTBrokerPrivatePreview.git`
+        - Clone this repository to any directory in your Linux environment: `git clone https://github.com/Azure-Samples/MqttApplicationSamples.git`
 - Follow the instructions in the [Setup](./Setup.md) to setup your environment.
 - Navigate to each of the scenario folders and follow its README.md instructions to run the scenario.
     - To configure the MQTT connection, the samples use `.env` files, with variables to specify the host name, port, certificates, etc. The `.env` files must be located in the scenario folder, e.g. `scenarios/getting_started`, and can be reused across samples/languages, including the client certificates.
@@ -71,6 +71,7 @@ Follow the instructions in the [Prerequisites](#magic_wand-prerequisites) to con
 | Scenario | Description | dotnet | C | python | go | TypeScript |
 | :------- | :---------- | :----: |:-:| :-----:|:-: | :--------: |
 | [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| &check;| &check;| &check;| &check; | &check; |
+| [JWT Authentication](./scenarios/jwt_authentication/)  | This is a quick start scenario that authenticates to Azure Event Grid using Json Web Tokens (JWT) |  &check;| soon| soon| soon | soon |
 | [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | &check;| &check;| &check;| soon |  &check; |
 | [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | &check;| &check; | soon | soon | &check; |
 | [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  |  &check;| soon| soon| soon | soon |
