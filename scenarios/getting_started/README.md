@@ -225,3 +225,22 @@ Run the sample using settings from an envfile
 # from folder scenarios/getting_started
  go/bin/getting_started .env
 ```
+
+### Rust
+*The commands below assume you are in the MqttApplicationSamples/scenarios/getting_started directory.*s
+
+To compile the sample run:
+```bash
+cargo build --manifest-path rust/getting_started/Cargo.toml
+```
+TO run the sample do:
+```bash
+cargo run --manifest-path rust/getting_started/Cargo.toml
+```
+
+To set debug level on mqtt client do
+```bash
+RUST_LOG=debug cargo run --manifest-path rust/getting_started/Cargo.toml
+```
+
+
