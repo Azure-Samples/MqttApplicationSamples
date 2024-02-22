@@ -227,7 +227,8 @@ Run the sample using settings from an envfile
 ```
 
 ### Rust
-*The commands below assume you are in the MqttApplicationSamples/scenarios/getting_started directory.*s
+*The commands below assume you are in the MqttApplicationSamples/scenarios/getting_started directory.*
+*Assumes that we have cargo and rust installed as well.*
 
 To compile the sample run:
 ```bash

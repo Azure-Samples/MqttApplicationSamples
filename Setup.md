@@ -181,3 +181,12 @@ See [c extensions](./mqttclients/c/README.md) for more details.
 ### Python
 
 Python samples have been tested with python 3.10.4, to install follow the instructions from https://www.python.org/downloads/ 
+
+### RUST
+
+Rust samples have been tested `rustc 1.76.0` and `cargo 1.76.0`. This codespace would be preconfigured with rust.
+To install rust and cargo otherwise follow instructions from https://doc.rust-lang.org/book/ch01-01-installation.html
+
+Please additionally do `sudo apt install libssl-dev build-essential cmake `to use Paho MQtt Rust libary on linux.
+If there are any problems related to Paho Mqtt Library for rust please follow this page https://github.com/eclipse/paho.mqtt.rust as well.
+
