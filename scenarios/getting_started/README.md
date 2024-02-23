@@ -226,6 +226,37 @@ Run the sample using settings from an envfile
  go/bin/getting_started .env
 ```
 
+### TypeScript
+To build the TypeScript sample run:
+>Note: The scenario should already be built from the initial `npm i` command at the root.
+
+```bash
+# from folder scenarios/getting_started
+npm run build --prefix ./ts/gettingStarted
+```
+
+The sample can be run and debugged either in the [Visual Studio Code IDE](https://code.visualstudio.com/), or from the command line. This will use the `.env` file created in the steps above.
+
+To run the sample from Visual Studio Code, select the Run and Debug option from the left pane then select the "TypeScript Getting Started" configuration from the Run and Debug dropdown menu. Then just use F5 or click on the green play button.
+
+To run the sample from the command line:
+```bash
+# from folder scenarios/getting_started
+node ./ts/gettingStarted/dist/index.js --env-file .env
+```
+
+To see detailed MQTT.js debug logging configure the DEBUG environment variable before running the sample.
+
+Using Visual Studio Code, simply add another entry to the .env file:
+```bash
+DEBUG=mqttjs*
+```
+
+Using the command line:
+```bash
+export DEBUG=mqttjs* && node ./ts/gettingStarted/dist/index.js --env-file .env
+```
+
 ### Rust
 *The commands below assume you are in the MqttApplicationSamples/scenarios/getting_started directory.*
 *Assumes that we have cargo and rust installed as well.*
@@ -243,5 +274,3 @@ To set debug level on mqtt client do
 ```bash
 RUST_LOG=debug cargo run --manifest-path rust/getting_started/Cargo.toml
 ```
-
-

@@ -283,3 +283,30 @@ python python/telemetry_producer.py --env-file="vehicle02.env"
 # from folder scenarios/telemetry
 python python/telemetry_consumer.py --env-file=map-app.env
 ```
+### TypeScript
+To build the TypeScript sample run:
+>Note: The scenario should already be built from the initial `npm i` command at the root.
+
+```bash
+# from folder scenarios/telemetry
+npm run build --prefix ./ts/telemetryProducer && npm run build --prefix ./ts/telemetryConsumer
+```
+
+To run the dotnet sample execute each line below in a different shell/terminal:
+```bash
+# from folder scenarios/telemetry
+node ./ts/telemetryProducer/dist/index.js --env-file vehicle01.env
+```
+```bash
+# from folder scenarios/telemetry
+node ./ts/telemetryProducer/dist/index.js --env-file vehicle02.env
+```
+```bash
+# from folder scenarios/telemetry
+node ./ts/telemetryConsumer/dist/index.js --env-file map-app.env
+```
+
+To see detailed MQTT.js debug logging configure the DEBUG environment variable before running the sample.
+```bash
+export DEBUG=mqttjs* && node ...
+```
