@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "scenarios/getting_started/rust/getting_started",
+    "mqttclients/rust/conn",
+]
