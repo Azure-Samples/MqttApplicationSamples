@@ -181,3 +181,17 @@ See [c extensions](./mqttclients/c/README.md) for more details.
 ### Python
 
 Python samples have been tested with python 3.10.4, to install follow the instructions from https://www.python.org/downloads/ 
+
+### TypeScript
+
+TypeScript samples have been tested with NodeJS version 18.16.0 and NPM version 9.5.1. Version 18 or higher of NodeJS and version 8 or higher of NPM is required. See https://nodejs.org. The samples are written using the [MQTT.js library](https://www.npmjs.com/package/mqtt).
+
+The TypeScript samples are built using [TypeScript ESLint](https://typescript-eslint.io/blog/announcing-typescript-eslint-v6/) for Visual Studio Code and [TypeScript project references](https://www.typescriptlang.org/docs/handbook/project-references.html). This allows abstracted client and utility classes to be separate dependent projects of the main example scenario projects.
+
+To setup the initial project references and build the dependencies run the following commands from the main repository root directory:
+```bash
+npm i
+npm run build
+```
+
+Each of the samples can be run and debugged either from [Visual Studio Code](https://code.visualstudio.com/), or from the command line. See the README file in each scenario for specific instructions.

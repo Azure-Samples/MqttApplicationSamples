@@ -273,3 +273,28 @@ python python/command_receiver.py --env-file=vehicle03.env
 ```bash
 python python/command_invoker.py --env-file=mobile-app.env
 ```
+
+### TypeScript
+
+To build the TypeScript sample run:
+>Note: The scenario should already be built from the initial `npm i` command at the root.
+
+```bash
+# from folder scenarios/command
+npm run build:proto --prefix ./ts/protoMessages && npm run build --prefix ./ts/protoMessages && npm run build --prefix ./ts/commandServer && npm run build --prefix ./ts/commandClient 
+```
+
+To run the TypeScript sample execute each line below in a different shell/terminal:
+```bash
+# from folder scenarios/command
+node ./ts/commandServer/dist/index.js --env-file vehicle03.env
+```
+```bash
+# from folder scenarios/command
+node ./ts/commandClient/dist/index.js --env-file mobile-app.env
+```
+
+To see detailed MQTT.js debug logging configure the DEBUG environment variable before running the sample.
+```bash
+export DEBUG=mqttjs* && node ...
+```

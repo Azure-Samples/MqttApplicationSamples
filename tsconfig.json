@@ -1,0 +1,28 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "rootDir": "./src",
+        "outDir": "./dist"
+    },
+    "files": [],
+    "references": [
+        {
+            "path": "./scenarios/getting_started/ts/gettingStarted"
+        },
+        {
+            "path": "./scenarios/telemetry/ts/telemetryProducer"
+        },
+        {
+            "path": "./scenarios/telemetry/ts/telemetryConsumer"
+        },
+        {
+            "path": "./scenarios/command/ts/protoMessages"
+        },
+        {
+            "path": "./scenarios/command/ts/commandServer"
+        },
+        {
+            "path": "./scenarios/command/ts/commandClient"
+        }
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "name": "@mqttapplicationsamples/protomessages",
+    "version": "1.0.0",
+    "description": "Protobuf support for mqtt request-response messaging pattern - TypeScript",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "npm run build:proto && tsc --build",
+        "clean": "tsc --build --clean",
+        "build:proto": "mkdir -p ./src/generated && ../../../../node_modules/.bin/protoc --plugin=../../../../node_modules/.bin/protoc-gen-ts --ts_out ./src/generated --proto_path ./src/proto ./src/proto/unlock_command.proto",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "mqtt",
+        "iot",
+        "azure"
+    ],
+    "author": "Microsoft Corporation",
+    "license": "MIT",
+    "dependencies": {
+        "@mqttapplicationsamples/mqttjsclientextensions": "^1.0.0",
+        "@protobuf-ts/plugin": "^2.9.3"
+    }
+}
