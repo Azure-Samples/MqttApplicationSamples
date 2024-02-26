@@ -76,7 +76,8 @@ Follow the instructions in the [Prerequisites](#magic_wand-prerequisites) to con
 | [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | &check;| &check; | soon | soon | &check; |
 | [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  |  &check;| soon| soon| soon | soon |
 
->note: soon: in progress and will be added soon
+> [!NOTE]
+> `soon`: in progress and will be added soon
 
 ## Trademarks
 
