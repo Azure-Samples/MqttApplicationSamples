@@ -6,6 +6,7 @@ languages:
 - python
 - TypeScript
 - go
+- rust
 name: "MQTT Application Samples"
 description: "Guidance to build Pub/Sub applications targeting MQTT Brokers."
 products:
@@ -23,6 +24,7 @@ These samples provide guidance to build Pub/Sub applications targeting MQTT Brok
 - Go
 - Python
 - TypeScript
+- Rust
 
 The instructions are provided for the following MQTT Brokers:
 - **Azure Event Grid Namespaces** 
@@ -54,6 +56,7 @@ Each language requires developer tools, such as compilers and SDKs to build and 
 - [Go](./mqttclients/go/README.md)
 - Python (TBD)
 - [TypeScript](./mqttclients/ts/README.md)
+- Rust (TBD)
 
 # Scenarios
 
@@ -68,13 +71,13 @@ Each scenario requires the following configurations:
 
 Follow the instructions in the [Prerequisites](#magic_wand-prerequisites) to configure these scenarios.
 
-| Scenario | Description | dotnet | C | python | go | TypeScript |
-| :------- | :---------- | :----: |:-:| :-----:|:-: | :--------: |
-| [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| &check;| &check;| &check;| &check; | &check; |
-| [JWT Authentication](./scenarios/jwt_authentication/)  | This is a quick start scenario that authenticates to Azure Event Grid using Json Web Tokens (JWT) |  &check;| soon| soon| soon | soon |
-| [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | &check;| &check;| &check;| soon |  &check; |
-| [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | &check;| &check; | soon | soon | &check; |
-| [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  |  &check;| soon| soon| soon | soon |
+| Scenario | Description | dotnet | C | python | go | TypeScript | Rust |
+| :------- | :---------- | :----: |:-:| :-----:|:-: | :--------: |:--------: |
+| [Getting Started](./scenarios/getting_started/) | This quick start scenario simulates basic MQTT tasks.| &check;| &check;| &check;| &check; | &check; | &check; |
+| [JWT Authentication](./scenarios/jwt_authentication/)  | This is a quick start scenario that authenticates to Azure Event Grid using Json Web Tokens (JWT) |  &check;| soon| soon| soon | soon | soon |
+| [Telemetry](./scenarios/telemetry/)  | This scenario simulates multiple clients (the producers) sending data to a different set of topics to be consumed by a single application (the consumer). | &check;| &check;| &check;| soon |  &check; | soon |
+| [Command](./scenarios/command/)  | This scenario simulates the request-response messaging pattern using MQTT v5.  | &check;| &check; | soon | soon | &check; | soon |
+| [Alert](./scenarios/alert/)  | This scenario simulates a fan-out use case where multiple clients receive a singlemessage from the same topic.  |  &check;| soon| soon| soon | soon | soon |
 
 > [!NOTE]
 > `soon`: in progress and will be added soon
