@@ -4,7 +4,7 @@ MQTT_USE_TLS=false
 MQTT_CLEAN_SESSION=false
 MQTT_KEEP_ALIVE_IN_SECONDS=32
 MQTT_CLIENT_ID=sample_client
-MQTT_USERNAME=sample_user
+MQTT_USERNAME=sample_user/api-version=2024-01-01
 MQTT_PASSWORD=foo
 MQTT_CA_FILE=ca.pem
 MQTT_CERT_FILE=cert.pem

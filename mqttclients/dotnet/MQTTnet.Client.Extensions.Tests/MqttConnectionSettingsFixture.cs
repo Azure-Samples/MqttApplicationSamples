@@ -94,7 +94,7 @@ public class MqttConnectionSettingsFixture
         Assert.False(cs.CleanSession);
         Assert.Equal(32, cs.KeepAliveInSeconds);
         Assert.Equal("sample_client", cs.ClientId);
-        Assert.Equal("sample_user", cs.Username);
+        Assert.Equal("sample_user/api-version=2024-01-01", cs.Username);
         Assert.Equal("foo", cs.Password);
         Assert.Equal("ca.pem", cs.CaFile);
         Assert.Equal("cert.pem", cs.CertFile);
@@ -132,13 +132,19 @@ public class MqttConnectionSettingsFixture
     {
         foreach (var line in File.ReadAllLines(envFile))
         {
-            var parts = line.Split('=', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length != 2)
+            int index = line.IndexOf('=');
+            if (index < 0)
             {
                 continue;
             }
 
-            Environment.SetEnvironmentVariable(parts[0], null);
+            string key = line[..index].Trim();
+            if (string.IsNullOrEmpty(key))
+            {
+                continue;
+            }
+
+            Environment.SetEnvironmentVariable(key, null);
         }
     }
 }
