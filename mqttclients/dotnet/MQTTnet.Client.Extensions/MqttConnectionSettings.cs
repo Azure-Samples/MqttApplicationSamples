@@ -61,13 +61,20 @@ public class MqttConnectionSettings
             Trace.TraceInformation("Loading environment variables from {envFile}" + new FileInfo(envFile).FullName);
             foreach (string line in File.ReadAllLines(envFile))
             {
-                string[] parts = line.Split('=', StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length != 2)
+                int index = line.IndexOf('=');
+                if (index < 0)
                 {
                     continue;
                 }
 
-                Environment.SetEnvironmentVariable(parts[0], parts[1]);
+                string key = line[..index].Trim();
+                string value = line[(index + 1)..].Trim();
+                if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(key))
+                {
+                    continue;
+                }
+
+                Environment.SetEnvironmentVariable(key, value);
             }
         }
         else
