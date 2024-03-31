@@ -4,8 +4,11 @@
       "commandName": "Project",
       "environmentVariables": {
         "MQTT_HOST_NAME": "localhost",
-        "MQTT_TCP_PORT": "1883",
-        "MQTT_USE_TLS": "false",
+        "MQTT_TCP_PORT": "8883",
+        "MQTT_USE_TLS": "true",
+        "MQTT_CA_FILE": "../../chain.pem",
+        "MQTT_CERT_FILE": "../../vehicle01.pem",
+        "MQTT_KEY_FILE": "../../vehicle01.key",
         "MQTT_CLIENT_ID": "sample_client",
         "MQTT_USERNAME": "sample_user"
       }
