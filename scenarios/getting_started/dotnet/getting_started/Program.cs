@@ -3,7 +3,7 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Extensions;
 
-//System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
+System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
 
 MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars();
 Console.WriteLine($"Connecting to {cs}");

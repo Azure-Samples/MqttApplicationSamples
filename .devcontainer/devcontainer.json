@@ -12,7 +12,8 @@
 			"extensions": [
 				"ms-dotnettools.csharp",
 				"ms-vscode.cpptools-extension-pack",
-				"golang.go"
+				"golang.go",
+				"ms-dotnettools.csdevkit"
 			]
 		}
 	}

@@ -29,6 +29,7 @@ public class MqttConnectionSettings
     }
     public string? Username { get; set; }
     public string? Password { get; set; }
+      public string? PasswordFile { get; set; }
     public int KeepAliveInSeconds { get; set; }
     public bool CleanSession { get; set; }
     public int TcpPort { get; set; }
@@ -91,6 +92,7 @@ public class MqttConnectionSettings
             KeyFile = Env(nameof(KeyFile)),
             Username = Env(nameof(Username)),
             Password = Env(nameof(Password)),
+            PasswordFile = Env(nameof(PasswordFile)),
             KeepAliveInSeconds = string.IsNullOrEmpty(Env(nameof(KeepAliveInSeconds))) ? Default_KeepAliveInSeconds : CheckForValidIntegerInput(nameof(KeepAliveInSeconds), Env(nameof(KeepAliveInSeconds))),
             CleanSession = Env(nameof(CleanSession)) == "true",
             TcpPort = string.IsNullOrEmpty(Env(nameof(TcpPort))) ? Default_TcpPort : CheckForValidIntegerInput(nameof(TcpPort), Env(nameof(TcpPort))),
@@ -139,6 +141,7 @@ public class MqttConnectionSettings
             CertFile = GetStringValue(map, nameof(CertFile)),
             Username = GetStringValue(map, nameof(Username)),
             Password = GetStringValue(map, nameof(Password)),
+            PasswordFile = GetStringValue(map, nameof(PasswordFile)),
             KeepAliveInSeconds = GetPositiveIntValueOrDefault(map, nameof(KeepAliveInSeconds), Default_KeepAliveInSeconds),
             CleanSession = GetStringValue(map, nameof(CleanSession), Default_CleanSession) == "true",
             TcpPort = GetPositiveIntValueOrDefault(map, nameof(TcpPort), Default_TcpPort),

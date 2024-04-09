@@ -1,0 +1,19 @@
+# Credential #1
+# username: client1
+# password: password
+[client1]
+password = "$pbkdf2-sha512$i=100000,l=64$HqJwOCHweNk1pLryiu3RsA$KVSvxKYcibIG5S5n55RvxKRTdAAfCUtBJoy5IuFzdSZyzkwvUcU+FPawEWFPn+06JyZsndfRTfpiEh+2eSJLkg"
+
+[client1.attributes]
+floor = "floor1"
+site = "site1"
+
+# Credential #2
+# username: client2
+# password: password2
+[client2]
+password = "$pbkdf2-sha512$i=100000,l=64$+H7jXzcEbq2kkyvpxtxePQ$jTzW6fSesiuNRLMIkDDAzBEILk7iyyDZ3rjlEwQap4UJP4TaCR+EXQXNukO7qNJWlPPP8leNnJDCBgX/255Ezw"
+
+[client2.attributes]
+floor = "floor2"
+site = "site1"

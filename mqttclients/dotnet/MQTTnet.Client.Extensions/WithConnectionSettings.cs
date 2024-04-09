@@ -11,12 +11,21 @@ public static partial class MqttNetExtensions
         builder
             .WithTcpServer(cs.HostName, cs.TcpPort)
             .WithKeepAlivePeriod(TimeSpan.FromSeconds(cs.KeepAliveInSeconds))
-            .WithCredentials(cs.Username, cs.Password)
             .WithCleanSession(cs.CleanSession)
+            .WithClientId(cs.ClientId)
             .WithProtocolVersion(Formatter.MqttProtocolVersion.V500)
             .WithTlsSettings(cs);
 
-        builder.WithClientId(cs.ClientId);
+        if (!string.IsNullOrEmpty(cs.Password))
+        {
+            builder.WithCredentials(cs.Username, cs.Password);
+        }
+
+        if (!string.IsNullOrEmpty(cs.PasswordFile))
+        {
+            builder.WithCredentials(cs.Username, File.ReadAllBytes(cs.PasswordFile));
+        }
+
         return builder;
     }
 }

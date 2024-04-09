@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: iotmq-public-svc
+    namespace: azure-iot-operations
+spec:
+    type: LoadBalancer
+    ports:
+    - name: mqtts
+      port: 8883
+      targetPort: 8883
+    selector:
+      app: broker
+      app.kubernetes.io/instance: broker
+      app.kubernetes.io/managed-by: dmqtt-operator
+      app.kubernetes.io/name: dmqtt
+      tier: frontend
