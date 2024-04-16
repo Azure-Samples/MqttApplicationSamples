@@ -125,7 +125,19 @@ az iot ops init --simulate-plc --cluster $cluster_name --resource-group $rg --kv
 The default setup of AIO includes an instance of IoT MQ, with a broker configured with a test certificate. To access the MQTT secure endpoint you must enable the load balancer in your cluster.
 
 ```
+ kubectl patch certificate aio-mq-frontend-server-8883 -n azure-iot-operations \
+   --type='json' -p='[{"op": "add", "path": "/spec/dnsNames/-", "value": "localhost"}]'
+```
 
+```
+step ca init \
+  --root=aio-test-ca.crt \
+  --key=aio-test-private.key \
+  --deployment-type standalone \
+  --name AioTestCA \
+  --dns localhost \
+  --address 127.0.0.1:443 \
+  --provisioner AioCaProvisioner
 
 ```
 

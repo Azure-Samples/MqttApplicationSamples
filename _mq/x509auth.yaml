@@ -1,0 +1,12 @@
+apiVersion: mq.iotoperations.azure.com/v1beta1
+kind: BrokerAuthentication 
+metadata: 
+  name: "x509-auth-only" 
+  namespace: azure-iot-operations 
+spec: 
+  listenerRef: 
+    - "listener" 
+  authenticationMethods: 
+    - x509: 
+        trustedClientCaCert: mqtt-app-samples-root
+        #attributes: x509-attributes

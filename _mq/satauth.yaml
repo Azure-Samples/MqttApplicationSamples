@@ -1,0 +1,12 @@
+apiVersion: mq.iotoperations.azure.com/v1beta1
+kind: BrokerAuthentication 
+metadata: 
+  name: "sat-auth" 
+  namespace: azure-iot-operations 
+spec:
+  listenerRef:
+  - listener
+  authenticationMethods:
+  - sat:
+      audiences:
+      - aio-mq
