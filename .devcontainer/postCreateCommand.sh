@@ -25,7 +25,5 @@ k3d registry create registry.localhost --port 5500
 
 k3d cluster create -i ghcr.io/jlian/k3d-nfs:v1.25.3-k3s1 \
 --registry-use k3d-registry.localhost:5500 \
--p '1883:1883@loadbalancer' \
--p '8883:8883@loadbalancer' \
--p '6001:6001@loadbalancer' \
--p '4000:80@loadbalancer'
+-p '2883:2883@loadbalancer' \
+-p '8883:8883@loadbalancer' 
