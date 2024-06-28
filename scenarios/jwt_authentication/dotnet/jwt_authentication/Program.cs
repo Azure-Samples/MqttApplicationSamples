@@ -12,7 +12,7 @@ MqttConnectionSettings cs = MqttConnectionSettings.CreateFromEnvVars();
 
 IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
 MqttClientConnectResult connAck = await mqttClient!.ConnectAsync(new MqttClientOptionsBuilder()
-    .WithJWT(cs, GetToken, mqttClient, TimeSpan.FromHours(1))
+    .WithJWT(cs, GetToken, mqttClient)
     .Build());
 
 Console.WriteLine($"Client Connected: {mqttClient.IsConnected} with CONNACK: {connAck.ResultCode} with auth method {mqttClient.Options.AuthenticationMethod}");
@@ -33,10 +33,10 @@ while (true)
     await Task.Delay(10000);
 }    
 
-static byte[] GetToken()
+static (byte[], TimeSpan) GetToken()
 {
     DefaultAzureCredential defaultCredential = new();
     Console.WriteLine($"---- Get Token {DateTime.Now.ToString("o")} ----");
     AccessToken jwt = defaultCredential.GetToken(new TokenRequestContext(new string[] { "https://eventgrid.azure.net/.default" }));
-    return Encoding.UTF8.GetBytes(jwt.Token);
+    return (Encoding.UTF8.GetBytes(jwt.Token), jwt.ExpiresOn.Subtract(DateTime.UtcNow));
 }
