@@ -4,19 +4,21 @@ namespace MQTTnet.Client.Extensions
 {
     public static partial class MqttNetExtensions
     {
-        static Func<byte[]> _getTokenCallBack = null!;
+        static Func<(byte[], TimeSpan)> _getTokenCallBack = null!;
         static Timer _refreshTimer = null!;
 
 
-        public static MqttClientOptionsBuilder WithJWT(this MqttClientOptionsBuilder builder, MqttConnectionSettings cs, Func<byte[]> getTokenCallBack, IMqttClient mqttClient, TimeSpan refreshPeriod)
+        public static MqttClientOptionsBuilder WithJWT(this MqttClientOptionsBuilder builder, MqttConnectionSettings cs, Func<(byte[], TimeSpan)> getTokenCallBack, IMqttClient mqttClient)
         {
             _getTokenCallBack = getTokenCallBack;
 
+            (byte[] token, TimeSpan ts) = getTokenCallBack();
+            Trace.TraceInformation($"Token expires in {ts.TotalSeconds} seconds");
             builder
                 .WithConnectionSettings(cs)
-                .WithAuthentication("OAUTH2-JWT", getTokenCallBack());
+                .WithAuthentication("OAUTH2-JWT", token);
 
-            _refreshTimer = new Timer(RefreshToken, mqttClient, 0, Convert.ToInt32(refreshPeriod.TotalMilliseconds));
+            _refreshTimer = new Timer(RefreshToken, mqttClient, 0, (int)ts.TotalSeconds * 1000);
             return builder;
         }
 
@@ -30,7 +32,7 @@ namespace MQTTnet.Client.Extensions
                     await mqttClient.SendExtendedAuthenticationExchangeDataAsync(
                         new MqttExtendedAuthenticationExchangeData()
                         {
-                            AuthenticationData = _getTokenCallBack(),
+                            AuthenticationData = _getTokenCallBack().Item1,
                             ReasonCode = MQTTnet.Protocol.MqttAuthenticateReasonCode.ReAuthenticate
                         });
                 });
