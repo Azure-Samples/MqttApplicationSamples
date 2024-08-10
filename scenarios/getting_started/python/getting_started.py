@@ -37,7 +37,7 @@ def on_connect(client, _userdata, _flags, rc):
             connection_error = Exception(mqtt.connack_string(rc))
         connected_cond.notify_all()
 
-def on_subscribe(client, _userdata, mid, _granted_qos):
+def on_subscribe(client, _userdata, mid, _reason_codes, _properties):
     global subscribed_prop
     print(f"Subscribe for message id {mid} acknowledged by MQTT broker")
     # # In Paho CB thread.
@@ -104,8 +104,7 @@ def wait_for_disconnected(timeout: float = None):
 def create_mqtt_client(client_id, connection_settings):
     mqtt_client = mqtt.Client(
         client_id=client_id,
-        clean_session=connection_settings['MQTT_CLEAN_SESSION'],
-        protocol=mqtt.MQTTv311,
+        protocol=mqtt.MQTTv5,
         transport="tcp",
     )
     if 'MQTT_USERNAME' in connection_settings:
@@ -154,10 +153,12 @@ mqtt_client.enable_logger()
 
 # CONNECT
 print("{}: Starting connection".format(client_id))
-hostname = connection_settings['MQTT_HOST_NAME']
-port = connection_settings['MQTT_TCP_PORT']
-keepalive = connection_settings["MQTT_KEEP_ALIVE_IN_SECONDS"]
-mqtt_client.connect(hostname, port, keepalive)
+mqtt_client.connect(
+    host=connection_settings['MQTT_HOST_NAME'],
+    port=connection_settings['MQTT_TCP_PORT'],
+    keepalive=connection_settings["MQTT_KEEP_ALIVE_IN_SECONDS"],
+    clean_start=connection_settings['MQTT_CLEAN_SESSION'],
+)
 print("Starting network loop")
 mqtt_client.loop_start()
 

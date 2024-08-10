@@ -157,10 +157,12 @@ def main():
 
     # CONNECT
     print("{}: Starting connection".format(client_id))
-    hostname = connection_settings['MQTT_HOST_NAME']
-    port = connection_settings['MQTT_TCP_PORT']
-    keepalive = connection_settings["MQTT_KEEP_ALIVE_IN_SECONDS"]
-    mqtt_client.connect(hostname, port, keepalive, clean_start=connection_settings['MQTT_CLEAN_SESSION'])
+    mqtt_client.connect(
+        host=connection_settings['MQTT_HOST_NAME'],
+        port=connection_settings['MQTT_TCP_PORT'],
+        keepalive=connection_settings["MQTT_KEEP_ALIVE_IN_SECONDS"],
+        clean_start=connection_settings['MQTT_CLEAN_SESSION'],
+    )
     print("Starting network loop")
     mqtt_client.loop_start()
 
